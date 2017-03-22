@@ -17,7 +17,7 @@
         navigationS: [
           { path: "/home/diary", name: "日记" },
           { path: "/home/discipline", name: "功课" },
-          { path: "/home/message", name: "动态" },
+          { path: "/home/dynamic", name: "动态" },
           { path: "/home/personal", name: "我的" }
         ]
       };
