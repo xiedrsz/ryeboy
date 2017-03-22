@@ -8,3 +8,29 @@ $color-text: rgba(0, 0, 0, .87);
 $color-secondary-text: rgba(0, 0, 0, .54);
 $color-hint-text: rgba(0, 0, 0, .38);
 $color-hint-block: #f4f4f4;
+@mixin flex-center {
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+@mixin flex-row {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+@mixin flex-column {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
