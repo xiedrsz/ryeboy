@@ -38,6 +38,7 @@
                     }
                 },
                 "user": {
+                    "description": "该属性仅在登录成功存在",
                     "type": "object",
                     "properties": {
                         "sessionToken": {
