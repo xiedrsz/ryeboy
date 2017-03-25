@@ -14,6 +14,7 @@ export default [{
         to.query.redirect = from.path;
         next();
       }
-    }
+    },
+    { path: "settings", component: require("components/pages/settings.vue") }
   ]
 }, { path: "*", redirect: "/home/diary" }];

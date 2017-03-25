@@ -11,7 +11,7 @@
       <list-item text="我的服务" />
     </list>
     <list>
-      <list-item text="设置" :divider="false" />
+      <list-item text="设置" :divider="false" v-on:click.native="$router.push('/pages/settings')" />
     </list>
   </div>
 </template>
