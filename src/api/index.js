@@ -5,11 +5,9 @@ axios.defaults.baseURL = config.apiAddress;
 
 class api {
   static login(account, password) {
-    return axios.get("/login", {
-      params: {
-        account: account,
-        password: password
-      }
+    return axios.post("/login", {
+      account: account,
+      password: password
     });
   }
 }
