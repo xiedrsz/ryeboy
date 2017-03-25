@@ -8,6 +8,11 @@
       <list-item text="检查版本"
                  :divider="false" />
     </list>
+    <div v-if="authenticated"
+         style="margin-top: 64px; text-align: center">
+      <button-flat text="退出登录"
+                   @click.native="logout" />
+    </div>
   </div>
 </template>
 
@@ -17,8 +22,14 @@ export default {
     this.$store.commit("setTitle", "设置");
   },
   components: {
+    "button-flat": require("components/ui/button-flat.vue"),
     "list": require("components/ui/list.vue"),
     "list-item": require("components/ui/list-item.vue")
+  },
+  methods: {
+    logout() {
+
+    }
   },
   computed: {
     authenticated() {
