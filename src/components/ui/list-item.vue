@@ -6,13 +6,6 @@
 
 <script>
   export default {
-    computed: {
-      dividerClass() {
-        return {
-          "mdl-list__item--bottom-divider": this.divider
-        };
-      }
-    },
     props: {
       text: String,
       divider: {

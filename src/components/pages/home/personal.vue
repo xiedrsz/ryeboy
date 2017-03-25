@@ -1,24 +1,25 @@
 <template>
   <div>
-    <ul v-if="!authenticated" class="mdl-list">
-      <list-item text="登录" />
+    <list v-if="!authenticated">
+      <list-item text="登录" v-on:click.native="$router.push('/pages/login')" />
       <list-item text="注册" />
-    </ul>
-    <ul v-if="authenticated" class="mdl-list">
+    </list>
+    <list v-if="authenticated">
       <list-item text="我的等级" />
       <list-item text="我的日记" />
       <list-item text="我的收藏" />
       <list-item text="我的服务" />
-    </ul>
-    <ul class="mdl-list">
+    </list>
+    <list>
       <list-item text="设置" :divider="false" />
-    </ul>
+    </list>
   </div>
 </template>
 
 <script>
   export default {
     components: {
+      "list": require("components/ui/list.vue"),
       "list-item": require("components/ui/list-item.vue")
     },
     computed: {

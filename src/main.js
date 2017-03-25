@@ -11,8 +11,15 @@ const router = new VueRouter({
   routes
 });
 
-new Vue({
+if (localStorage.authenticated) {
+  store.commit("setUserAuth", {
+    id: localStorage.userid,
+    username: localStorage.username,
+    sessionToken: localStorage.sessionToken
+  });
+}
+
+new Vue(Vue.util.extend({
   router,
-  store,
-  render: h => h(require("components/app.vue"))
-}).$mount("#app");
+  store
+}, require("components/app.vue"))).$mount("#app");

@@ -10,7 +10,8 @@
   },
   "plugins": ["html"],
   "globals": {
-    "componentHandler": false
+    "componentHandler": false,
+    "axios": false
   },
   "rules": {
     "indent": [
