@@ -10,6 +10,10 @@ class api {
       password: password
     });
   }
+
+  static logout() {
+    return axios.post("/logout");
+  }
 }
 
 export default api;

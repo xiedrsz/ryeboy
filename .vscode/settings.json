@@ -17,5 +17,6 @@
     },
     "vue"
   ],
-  "eslint.autoFixOnSave": true
+  "eslint.autoFixOnSave": true,
+  "editor.snippetSuggestions": "top"
 }

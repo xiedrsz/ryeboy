@@ -8,6 +8,9 @@ const mutations = {
   setUserAuth(state, user) {
     state.authenticated = true;
     Object.assign(state, user);
+  },
+  deleteUserAuth(state) {
+    state.authenticated = false;
   }
 };
 

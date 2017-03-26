@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import api from "api";
+
 export default {
   created() {
     this.$store.commit("setTitle", "设置");
@@ -28,7 +30,11 @@ export default {
   },
   methods: {
     logout() {
+      api.logout();
 
+      localStorage.removeItem("authenticated");
+      this.$store.commit("deleteUserAuth");
+      this.$router.replace("/");
     }
   },
   computed: {
