@@ -2,11 +2,11 @@ const state = {
   // 默认频道
   channels: [
     { id: "default", name: "全部" },
-    { id: "masturbation", name: "蜕变史" },
-    { id: "obscenity", name: "麦式" },
-    { id: "NE", name: "饮食" },
-    { id: "prostatitis", name: "作息" },
-    { id: "example", name: "心理" },
+    { id: "tbs", name: "蜕变史" },
+    { id: "ms", name: "麦式" },
+    { id: "ys", name: "饮食" },
+    { id: "zx", name: "作息" },
+    { id: "xl", name: "心理" },
   ],
 
   // 频道过滤
