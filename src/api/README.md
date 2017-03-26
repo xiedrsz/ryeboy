@@ -77,3 +77,27 @@
                 "error": "Incorrect password."
             }
             
+
+# /logout
+用户退出登录
+
+## POST
++ Request (application/json)
+
+    + Schema
+
+            {
+                "userid": {
+                    "type": "string"
+                }
+            }
+
+    + Example
+    
+            {
+                "userid": "56ecdd7c816dfa0052e3d5d5"
+            }
+            
++ Response
+
+    服务端删除对应用户的授权令牌，成功返回 200，错误返回 400。    
