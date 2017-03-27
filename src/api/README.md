@@ -29,13 +29,8 @@
 
             {
                 "error": {
-                    "description": "指示登录成功或失败",
-                    "type": "string",
-                    "values": {
-                        "": "登录成功",
-                        "User not found.": "用户名不存在",
-                        "Incorrect password.": "密码错误"
-                    }
+                    "description": "该属性仅在登录失败存在",
+                    "type": "string"
                 },
                 "user": {
                     "description": "该属性仅在登录成功存在",

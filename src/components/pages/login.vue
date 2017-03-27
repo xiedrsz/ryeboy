@@ -35,7 +35,7 @@
           this.$store.commit("loading", true);
           api.login(this.account, this.password).then(res => {
             let data = res.data;
-            if (data.error != "") {
+            if (data.error) {
               this.errorText = "无效的帐号或密码。";
             } else {
               this.$store.commit("setUserAuth", data.user);
