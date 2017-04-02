@@ -1,7 +1,8 @@
 <template>
   <div class="mdl-layout mdl-layout--fixed-header">
     <header class="mdl-layout__header">
-      <button class="mdl-layout-icon mdl-button mdl-js-button mdl-button--icon" onclick="history.go(-1);">
+      <button class="mdl-layout-icon mdl-button mdl-js-button mdl-button--icon"
+              onclick="history.go(-1);">
         <i class="material-icons">arrow_back</i>
       </button>
       <div class="mdl-layout__header-row">
@@ -16,12 +17,17 @@
 </template>
 
 <script>
-  export default {
-    computed: {
-      title() {
-        return this.$store.state.page.title;
-      }
+import * as types from "store/mutation-types";
+
+export default {
+  computed: {
+    title() {
+      return this.$store.state.page.title;
     }
-  };
+  },
+  mounted() {
+    this.$store.commit(types.SET_PAGE_TITLE, document.querySelector(".page").getAttribute("title"));
+  }
+};
 
 </script>

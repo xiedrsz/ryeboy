@@ -5,5 +5,6 @@
     "indent_size": 2
   },
   "end_with_newline": false,
-  "unformatted": []
+  "unformatted": [],
+  "keep_array_indentation": true
 }

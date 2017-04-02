@@ -3,7 +3,7 @@ var webpack = require("webpack");
 
 module.exports = {
   context: path.resolve(__dirname, "src"),
-  entry: "./main.js",
+  entry: ["babel-polyfill", "./main.js"],
   output: {
     path: path.resolve(__dirname, "src"),
     filename: "bundle.js"
@@ -41,8 +41,10 @@ module.exports = {
       "vue$": "vue/dist/vue.common.js",
       "js": path.resolve(__dirname, "src/js/"),
       "api": path.resolve(__dirname, "src/api/"),
+      "store": path.resolve(__dirname, "src/store/"),
       "scss": path.resolve(__dirname, "src/scss/"),
-      "components": path.resolve(__dirname, "src/components/")
+      "components": path.resolve(__dirname, "src/components/"),
+      "ui": path.resolve(__dirname, "src/components/ui")
     }
   },
   devServer: {

@@ -1,7 +1,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import routes from "js/routes.js";
-import store from "./store";
+import store from "store";
+import * as types from "store/mutation-types";
 
 Vue.use(VueRouter);
 
@@ -12,7 +13,7 @@ const router = new VueRouter({
 });
 
 if (localStorage.authenticated) {
-  store.commit("setUserAuth", {
+  store.commit(types.SET_USER_AUTH, {
     id: localStorage.userid,
     username: localStorage.username,
     sessionToken: localStorage.sessionToken

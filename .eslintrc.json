@@ -6,12 +6,14 @@
   },
   "extends": "eslint:recommended",
   "parserOptions": {
+    "ecmaVersion": 2017,
     "sourceType": "module"
   },
   "plugins": ["html"],
   "globals": {
     "componentHandler": false,
-    "axios": false
+    "axios": false,
+    "Swiper": false
   },
   "rules": {
     "indent": [

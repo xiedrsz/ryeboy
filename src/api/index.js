@@ -6,13 +6,26 @@ axios.defaults.baseURL = config.apiAddress;
 class api {
   static login(account, password) {
     return axios.post("/login", {
-      account: account,
-      password: password
+      account,
+      password
     });
   }
 
   static logout() {
     return axios.post("/logout");
+  }
+
+  static getDiaries(label, filter) {
+    return axios.post("/getDiaries", {
+      label,
+      filter
+    });
+  }
+
+  static getUsers(users) {
+    return axios.post("/getUsers", {
+      users
+    });
   }
 }
 

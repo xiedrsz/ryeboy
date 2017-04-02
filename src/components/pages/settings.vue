@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div class="page"
+       title="设置">
     <list>
       <list-item text="修改密码"
                  v-if="authenticated" />
@@ -18,11 +19,9 @@
 
 <script>
 import api from "api";
+import * as types from "store/mutation-types";
 
 export default {
-  created() {
-    this.$store.commit("setTitle", "设置");
-  },
   components: {
     "button-flat": require("components/ui/button-flat.vue"),
     "list": require("components/ui/list.vue"),
@@ -33,7 +32,7 @@ export default {
       api.logout();
 
       localStorage.removeItem("authenticated");
-      this.$store.commit("deleteUserAuth");
+      this.$store.commit(types.DELETE_USER_AUTH);
       this.$router.replace("/");
     }
   },

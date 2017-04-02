@@ -1,3 +1,5 @@
+import * as types from "store/mutation-types";
+
 const state = {
   authenticated: false,
   username: null,
@@ -5,11 +7,11 @@ const state = {
 };
 
 const mutations = {
-  setUserAuth(state, user) {
+  [types.SET_USER_AUTH](state, user) {
     state.authenticated = true;
     Object.assign(state, user);
   },
-  deleteUserAuth(state) {
+  [types.DELETE_USER_AUTH](state) {
     state.authenticated = false;
   }
 };

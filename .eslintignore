@@ -3,3 +3,5 @@ www/
 plugins/
 platforms/
 hooks/
+src/vendor
+memo

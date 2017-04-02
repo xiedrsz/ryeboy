@@ -19,8 +19,8 @@
 <script>
   export default {
     components: {
-      "list": require("components/ui/list.vue"),
-      "list-item": require("components/ui/list-item.vue")
+      "list": require("ui/list.vue"),
+      "list-item": require("ui/list-item.vue")
     },
     computed: {
       authenticated() {
