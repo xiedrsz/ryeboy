@@ -3,6 +3,7 @@
     <div class="channel-container-wrap">
       <div class="channel-container">
         <div v-for="item in channels"
+             @click="switchChannel"
              :id="item.id"
              :class="{ active: item.active }"
              class="channel">
@@ -14,7 +15,7 @@
       </div>
     </div>
     <div class="page-main">
-      <swipe @slidechanged="slideChanged">
+      <swipe @slidechanged="slideChanged" ref="swipe" >
         <swipe-slide v-for="channel in channels"
                      :id="channel.id">
           <div class="slide-content">
@@ -58,6 +59,7 @@
 
 <script>
 import * as types from "store/mutation-types";
+import _ from "lodash";
 
 export default {
   computed: {
@@ -69,6 +71,11 @@ export default {
     }
   },
   methods: {
+    switchChannel(event) {
+      let label = event.target.id;
+      let index = _.findIndex(this.channels, ["id", label]);
+      this.$refs.swipe.slideTo(index);
+    },
     slideChanged(index) {
       let channel = this.channels[index];
       let label = channel.id;

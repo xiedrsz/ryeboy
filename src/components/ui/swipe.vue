@@ -9,6 +9,11 @@
 <script>
 export default {
   name: "swipe",
+  methods: {
+    slideTo(index) {
+      this.swipe.slide(index, 1);
+    }
+  },
   mounted: function () {
     let self = this;
     this.swipe = new Swipe(this.$el, {

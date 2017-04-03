@@ -13,7 +13,7 @@
   "globals": {
     "componentHandler": false,
     "axios": false,
-    "Swiper": false
+    "Swipe": false
   },
   "rules": {
     "indent": [
