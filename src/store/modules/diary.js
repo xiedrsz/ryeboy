@@ -91,11 +91,17 @@ const mutations = {
     });
   },
 
-  [types.SWITCH_FILTER](state, filter) {
+  [types.SWITCH_FILTER](state, data) {
     let channelData = state.channelDatas[state.activedChannel];
-    channelData.activedFilter = filter;
+    if (channelData.loadstate == "loading") {
+      return;
+    }
+    channelData.activedFilter = data.filter;
+    if (data.reload) {
+      channelData.loadstate = "reload";
+    }
     channelData.filters.forEach(item => {
-      item.active = item.id == filter;
+      item.active = item.id == data.filter;
     });
   },
 
@@ -126,11 +132,17 @@ const actions = {
     let channelData = state.channelDatas[label];
 
     if (channelData) {
-      return;
+      switch (channelData.loadstate) {
+      case "loading":
+      case "ok":
+        return;
+      }
+
+      filter = channelData.activedFilter;
     } else {
       channelData = {
-        loadstate: "loading",
         activedFilter: filter,
+        loadstate: null,
         filters: [{
           id: "recommend",
           name: "精品",
@@ -154,8 +166,12 @@ const actions = {
         diaries: []
       };
       commit(types.ASSIGN_CHANNEL_DATA, channelData);
-      commit(types.SWITCH_FILTER, filter);
+      commit(types.SWITCH_FILTER, {
+        filter
+      });
     }
+
+    channelData.loadstate = "loading";
 
     try {
       let res = await api.getDiaries(label, filter);

@@ -15,10 +15,21 @@
       </div>
     </div>
     <div class="page-main">
-      <swipe @slidechanged="slideChanged" ref="swipe" >
+      <swipe @slidechanged="slideChanged"
+             ref="swipe">
         <swipe-slide v-for="channel in channels"
                      :id="channel.id">
           <div class="slide-content">
+            <div v-if="channelDatas[channel.id]"
+                 class="channel-filter-container">
+              <div v-for="item in channelDatas[channel.id].filters"
+                   @click="switchFilter"
+                   :id="item.id"
+                   :class="{ active: item.active }"
+                   class="channel-filter">
+                {{ item.name }}
+              </div>
+            </div>
             <div v-if="!channelDatas[channel.id]"
                  class="unload">
               (未加载)
@@ -32,14 +43,6 @@
               <spinner />
             </div>
             <div v-else="channelDatas[channel.id].loadstate == 'ok'">
-              <div class="channel-filter-container">
-                <div v-for="item in channelDatas[channel.id].filters"
-                     :id="item.id"
-                     :class="{ active: item.active }"
-                     class="channel-filter">
-                  {{ item.name }}
-                </div>
-              </div>
               <ul class="mdl-list">
                 <diary-item v-for="item in channelDatas[channel.id].diaries"
                             :likeCount="item.likeCount"
@@ -75,6 +78,11 @@ export default {
       let label = event.target.id;
       let index = _.findIndex(this.channels, ["id", label]);
       this.$refs.swipe.slideTo(index);
+    },
+    switchFilter(event) {
+      let filter = event.target.id;
+      this.$store.commit(types.SWITCH_FILTER, { filter, reload: true });
+      this.$store.dispatch("getDiaries");
     },
     slideChanged(index) {
       let channel = this.channels[index];
