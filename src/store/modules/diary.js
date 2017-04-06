@@ -83,6 +83,19 @@ function updateDiaries(diaries) {
   });
 }
 
+const getters = {
+  getChannelLoadstate(state) {
+    let result;
+    try {
+      let channelData = state.channelDatas[state.activedChannel];
+      result = channelData.loadstate;
+    } catch (error) {
+      result = "unload";
+    }
+    return result;
+  }
+};
+
 const mutations = {
   [types.SWITCH_CHANNEL](state, label) {
     state.activedChannel = label;
@@ -96,13 +109,23 @@ const mutations = {
     if (channelData.loadstate == "loading") {
       return;
     }
+    if (channelData.loadstate == "ok" && channelData.activedFilter == data.filter) {
+      return;
+    }
     channelData.activedFilter = data.filter;
     if (data.reload) {
       channelData.loadstate = "reload";
+      channelData.diaries = [];
     }
     channelData.filters.forEach(item => {
       item.active = item.id == data.filter;
     });
+  },
+
+  [types.SET_RELOAD](state) {
+    let channelData = state.channelDatas[state.activedChannel];
+    channelData.loadstate = "reload";
+    channelData.diaries = [];
   },
 
   [types.ASSIGN_CHANNEL_DATA](state, data) {
@@ -201,5 +224,6 @@ const actions = {
 export default {
   state,
   mutations,
-  actions
+  actions,
+  getters
 };

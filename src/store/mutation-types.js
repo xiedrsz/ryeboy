@@ -22,3 +22,5 @@ export const SWITCH_FILTER = "SWITCH_FILTER";
 export const ASSIGN_CHANNEL_DATA= "ASSIGN_CHANNEL_DATA";
 // 设置频道数据
 export const SET_CHANNEL_DATA= "SET_CHANNEL_DATA";
+// 设置频道数据重新加载
+export const SET_RELOAD= "SET_RELOAD";

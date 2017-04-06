@@ -20,6 +20,8 @@
         <swipe-slide v-for="channel in channels"
                      :id="channel.id">
           <div class="slide-content">
+            <pull-to-refresh :disabled="disableRefresh"
+                             @pulltorefresh="pulltorefresh" />
             <div v-if="channelDatas[channel.id]"
                  class="channel-filter-container">
               <div v-for="item in channelDatas[channel.id].filters"
@@ -71,6 +73,10 @@ export default {
     },
     channelDatas() {
       return this.$store.state.diary.channelDatas;
+    },
+    disableRefresh() {
+      let state = this.$store.getters.getChannelLoadstate;
+      return !(state == "ok" || state == "error");
     }
   },
   methods: {
@@ -90,6 +96,10 @@ export default {
 
       this.$store.commit(types.SWITCH_CHANNEL, label);
       this.$store.dispatch("getDiaries");
+    },
+    pulltorefresh() {
+      this.$store.commit(types.SET_RELOAD);
+      this.$store.dispatch("getDiaries");
     }
   },
   components: {
@@ -97,6 +107,7 @@ export default {
     "spinner": require("ui/spinner.vue"),
     "swipe": require("ui/swipe.vue"),
     "swipe-slide": require("ui/swipe-slide.vue"),
+    "pull-to-refresh": require("ui/pull-to-refresh.vue"),
   },
   mounted() {
     // 调整日记列表高度
@@ -106,6 +117,8 @@ export default {
     document.querySelectorAll(".slide-content").forEach(item => {
       item.style.height = slideContentHeight;
     });
+
+
 
     this.slideChanged(0);
   }
