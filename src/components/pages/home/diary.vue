@@ -54,6 +54,9 @@
                             :text="item.escapedText"
                             :time="item.time" />
               </ul>
+              <infinite-scroll :onInfinite="infinite">
+                <div slot="no-more">没有更多内容了</div>
+              </infinite-scroll>
             </div>
           </div>
         </swipe-slide>
@@ -100,6 +103,11 @@ export default {
     pulltorefresh() {
       this.$store.commit(types.SET_RELOAD);
       this.$store.dispatch("getDiaries");
+    },
+    infinite(infiniteScroll) {
+      setTimeout(() => {
+        infiniteScroll.$emit("$InfiniteScroll:complete");
+      }, 2000);
     }
   },
   components: {
@@ -108,6 +116,7 @@ export default {
     "swipe": require("ui/swipe.vue"),
     "swipe-slide": require("ui/swipe-slide.vue"),
     "pull-to-refresh": require("ui/pull-to-refresh.vue"),
+    "infinite-scroll": require("ui/infinite-scroll.vue"),
   },
   mounted() {
     // 调整日记列表高度
@@ -117,8 +126,6 @@ export default {
     document.querySelectorAll(".slide-content").forEach(item => {
       item.style.height = slideContentHeight;
     });
-
-
 
     this.slideChanged(0);
   }
