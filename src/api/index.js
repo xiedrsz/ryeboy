@@ -15,10 +15,11 @@ class api {
     return axios.post("/logout");
   }
 
-  static getDiaries(label, filter) {
+  static getDiaries(label, filter, last) {
     return axios.post("/getDiaries", {
       label,
-      filter
+      filter,
+      last
     });
   }
 

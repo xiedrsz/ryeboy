@@ -1,10 +1,12 @@
 import Vue from "vue";
 import api from "api";
+import _ from "lodash";
 import * as types from "store/mutation-types";
 
 const config = require("js/config.js");
 const datetime = require("js/utils/datetime.js");
 const textHelper = require("js/utils/textHelper.js");
+const pageSize = 10;
 
 const state = {
   // 默认频道
@@ -50,6 +52,7 @@ const state = {
   // 日记用户表
   users: {}
 };
+
 
 function getUnstoredUsers(data) {
   let result = [];
@@ -146,6 +149,44 @@ const mutations = {
 };
 
 const actions = {
+  async getMoreDiaries({
+    commit,
+    state
+  }) {
+    let label = state.activedChannel;
+    let channelData = state.channelDatas[label];
+    let result = {};
+
+    if (!channelData) {
+      result.error = "unload";
+      return result;
+    }
+
+    let filter = channelData.activedFilter;
+
+    try {
+      let res = await api.getDiaries(label, filter, _.last(channelData.diaries).createdAt);
+      let diaries = res.data;
+      let users = getUnstoredUsers(diaries);
+      if (users.length > 0) {
+        res = await api.getUsers(users);
+        addUsers(res.data);
+      }
+      updateDiaries(diaries);
+
+      commit(types.SET_CHANNEL_DATA, {
+        label,
+        diaries
+      });
+
+      result.nomore = diaries.length < pageSize;
+    } catch (error) {
+      result.error = error;
+    }
+
+    return result;
+  },
+
   async getDiaries({
     commit,
     state
@@ -158,6 +199,7 @@ const actions = {
       switch (channelData.loadstate) {
       case "loading":
       case "ok":
+      case "empty":
         return;
       }
 
@@ -166,6 +208,7 @@ const actions = {
       channelData = {
         activedFilter: filter,
         loadstate: null,
+        enableLoadMore: false,
         filters: [{
           id: "recommend",
           name: "精品",
@@ -194,7 +237,10 @@ const actions = {
       });
     }
 
-    channelData.loadstate = "loading";
+    commit(types.SET_CHANNEL_DATA, {
+      label,
+      loadstate: "loading"
+    });
 
     try {
       let res = await api.getDiaries(label, filter);
@@ -208,11 +254,12 @@ const actions = {
 
       commit(types.SET_CHANNEL_DATA, {
         label,
-        loadstate: "ok",
+        loadstate: diaries.length == 0 ? "empty" : "ok",
         diaries
       });
+
+      return diaries.length < pageSize;
     } catch (error) {
-      console.log(error);
       commit(types.SET_CHANNEL_DATA, {
         label,
         loadstate: "error"

@@ -40,6 +40,10 @@
                  class="loadstate">
               (加载错误)
             </div>
+            <div v-else-if="channelDatas[channel.id].loadstate == 'empty'"
+                 class="loadstate">
+              (无内容)
+            </div>
             <div v-else-if="channelDatas[channel.id].loadstate == 'loading'"
                  class="loadstate">
               <spinner />
@@ -54,7 +58,8 @@
                             :text="item.escapedText"
                             :time="item.time" />
               </ul>
-              <infinite-scroll :onInfinite="infinite">
+              <infinite-scroll v-if="showInfiniteScroll"
+                               :onInfinite="infinite">
                 <div slot="no-more">没有更多内容了</div>
               </infinite-scroll>
             </div>
@@ -70,6 +75,11 @@ import * as types from "store/mutation-types";
 import _ from "lodash";
 
 export default {
+  data() {
+    return {
+      showInfiniteScroll: false
+    };
+  },
   computed: {
     channels() {
       return this.$store.state.diary.channels;
@@ -79,10 +89,15 @@ export default {
     },
     disableRefresh() {
       let state = this.$store.getters.getChannelLoadstate;
-      return !(state == "ok" || state == "error");
+      return !(state == "ok" || state == "error" || state == "empty");
     }
   },
   methods: {
+    getDiaries() {
+      this.$store.dispatch("getDiaries").then(nomore => {
+        this.showInfiniteScroll = nomore === false;
+      });
+    },
     switchChannel(event) {
       let label = event.target.id;
       let index = _.findIndex(this.channels, ["id", label]);
@@ -91,23 +106,32 @@ export default {
     switchFilter(event) {
       let filter = event.target.id;
       this.$store.commit(types.SWITCH_FILTER, { filter, reload: true });
-      this.$store.dispatch("getDiaries");
+      this.getDiaries();
     },
     slideChanged(index) {
       let channel = this.channels[index];
       let label = channel.id;
 
       this.$store.commit(types.SWITCH_CHANNEL, label);
-      this.$store.dispatch("getDiaries");
+      this.getDiaries();
     },
     pulltorefresh() {
       this.$store.commit(types.SET_RELOAD);
-      this.$store.dispatch("getDiaries");
+      this.getDiaries();
     },
     infinite(infiniteScroll) {
-      setTimeout(() => {
-        infiniteScroll.$emit("$InfiniteScroll:complete");
-      }, 2000);
+      this.$store.dispatch("getMoreDiaries").then((res) => {
+        if (res.error) {
+          infiniteScroll.$emit("$InfiniteScroll:complete");
+        } else {
+          if (res.nomore) {
+            infiniteScroll.$emit("$InfiniteScroll:complete");
+          }
+          else {
+            infiniteScroll.$emit("$InfiniteScroll:loaded");
+          }
+        }
+      });
     }
   },
   components: {
