@@ -11,10 +11,13 @@ export default [{
   children: [
     { path: "login", component: require("components/pages/login.vue"),
       beforeEnter: (to, from, next) => {
-        to.query.redirect = from.path;
+        if (!to.query.redirect) {
+          to.query.redirect = from.path;
+        }
         next();
       }
     },
-    { path: "settings", component: require("components/pages/settings.vue") }
+    { path: "settings", component: require("components/pages/settings.vue") },
+    { path: "channel-manage", component: require("components/pages/channel-manage.vue") }
   ]
 }, { path: "*", redirect: "/home/diary" }];

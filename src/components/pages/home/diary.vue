@@ -11,7 +11,8 @@
         </div>
       </div>
       <div class="channel-tools">
-        <i class="material-icons md-20">expand_more</i>
+        <i class="material-icons md-20"
+           @click="manageChannel">expand_more</i>
       </div>
     </div>
     <div class="page-main">
@@ -81,6 +82,9 @@ export default {
     };
   },
   computed: {
+    authenticated() {
+      return this.$store.state.user.authenticated;
+    },
     channels() {
       return this.$store.state.diary.channels;
     },
@@ -93,6 +97,20 @@ export default {
     }
   },
   methods: {
+    // 如果已经登录，跳转到目标页面，否则跳转到登录页面
+    authRoute(to) {
+      if (this.authenticated) {
+        this.$router.push(to);
+      } else {
+        this.$router.push({
+          path: "/pages/login",
+          query: { redirect: to }
+        });
+      }
+    },
+    manageChannel() {
+      this.authRoute("/pages/channel-manage");
+    },
     getDiaries() {
       this.$store.dispatch("getDiaries").then(nomore => {
         this.showInfiniteScroll = nomore === false;
@@ -180,6 +198,10 @@ export default {
   min-width: 48px;
   color: $color-hint-text;
   background-color: $color-hint-block;
+}
+
+.channel-tools i {
+  padding: 4px 0px 4px 4px;
 }
 
 .channel-container {

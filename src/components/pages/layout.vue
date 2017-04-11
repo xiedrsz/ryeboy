@@ -20,13 +20,27 @@
 import * as types from "store/mutation-types";
 
 export default {
+  methods: {
+    updateTitle() {
+      let page = document.querySelector(".page");
+      if (page) {
+        this.$store.commit(types.SET_PAGE_TITLE, page.getAttribute("title"));
+      }
+    }
+  },
   computed: {
     title() {
       return this.$store.state.page.title;
     }
   },
   mounted() {
-    this.$store.commit(types.SET_PAGE_TITLE, document.querySelector(".page").getAttribute("title"));
+    this.updateTitle();
+  },
+  updated() {
+    setTimeout(() => {
+      this.updateTitle();
+    }, 0);
+
   }
 };
 
