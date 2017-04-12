@@ -18,6 +18,8 @@ if (localStorage.authenticated) {
     username: localStorage.username,
     sessionToken: localStorage.sessionToken
   });
+
+  store.dispatch("initSubscribedChannels");
 }
 
 new Vue(Vue.util.extend({

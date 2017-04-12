@@ -8,40 +8,43 @@ const datetime = require("js/utils/datetime.js");
 const textHelper = require("js/utils/textHelper.js");
 const pageSize = 10;
 
+// 默认频道
+const defaultChannels = [
+  {
+    id: "default",
+    name: "全部",
+    active: false
+  },
+  {
+    id: "tbs",
+    name: "蜕变史",
+    active: false
+  },
+  {
+    id: "ms",
+    name: "麦式",
+    active: false
+  },
+  {
+    id: "ys",
+    name: "饮食",
+    active: false
+  },
+  {
+    id: "zx",
+    name: "作息",
+    active: false
+  },
+  {
+    id: "xl",
+    name: "心理",
+    active: false
+  },
+];
+
 const state = {
-  // 默认频道
-  channels: [
-    {
-      id: "default",
-      name: "全部",
-      active: false
-    },
-    {
-      id: "tbs",
-      name: "蜕变史",
-      active: false
-    },
-    {
-      id: "ms",
-      name: "麦式",
-      active: false
-    },
-    {
-      id: "ys",
-      name: "饮食",
-      active: false
-    },
-    {
-      id: "zx",
-      name: "作息",
-      active: false
-    },
-    {
-      id: "xl",
-      name: "心理",
-      active: false
-    },
-  ],
+  // 日记频道列表
+  channels: [],
 
   // 当前选择的频道
   activedChannel: null,
@@ -100,6 +103,19 @@ const getters = {
 };
 
 const mutations = {
+  [types.SET_CHANNELS](state, data) {
+    state.channels = _.cloneDeep(data.channels);
+    // 确保有默认频道
+    if (state.channels.length == 0) {
+      state.channels.push(defaultChannels[0]);
+    } else if (state.channels[0].id != defaultChannels[0].id) {
+      state.channels.unshift(defaultChannels[0]);
+    }
+    if (data.save) {
+      localStorage.channels = JSON.stringify(state.channels);
+    }
+  },
+
   [types.SWITCH_CHANNEL](state, label) {
     state.activedChannel = label;
     state.channels.forEach(item => {
@@ -149,6 +165,32 @@ const mutations = {
 };
 
 const actions = {
+  async initSubscribedChannels({
+    commit,
+    rootState
+  }) {
+    let userid = rootState.user.id;
+
+    if (localStorage.channels) {
+      commit(types.SET_CHANNELS, {
+        channels: JSON.parse(localStorage.channels)
+      });
+    } else {
+      try {
+        let res = await api.getSubscribedChannels(userid);
+        let channels = res.data;
+        commit(types.SET_CHANNELS, {
+          channels,
+          save: true
+        });
+      } catch (error) {
+        commit(types.SET_CHANNELS, {
+          channels: defaultChannels
+        });
+      }
+    }
+  },
+
   async getMoreDiaries({
     commit,
     state

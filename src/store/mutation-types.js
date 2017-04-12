@@ -24,3 +24,5 @@ export const ASSIGN_CHANNEL_DATA= "ASSIGN_CHANNEL_DATA";
 export const SET_CHANNEL_DATA= "SET_CHANNEL_DATA";
 // 设置频道数据重新加载
 export const SET_RELOAD= "SET_RELOAD";
+// 设置频道
+export const SET_CHANNELS = "SET_CHANNELS";
