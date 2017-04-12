@@ -20,6 +20,8 @@ if (localStorage.authenticated) {
   });
 
   store.dispatch("initSubscribedChannels");
+} else {
+  store.commit(types.SET_DEFAULT_CHANNELS);
 }
 
 new Vue(Vue.util.extend({

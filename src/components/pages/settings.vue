@@ -6,6 +6,8 @@
                  v-if="authenticated" />
       <list-item text="设置隐私密码"
                  v-if="authenticated" />
+      <list-item text="清除本地缓存"
+                 @click.native="clearLocalStorage" />
       <list-item text="检查版本"
                  :divider="false" />
     </list>
@@ -34,6 +36,9 @@ export default {
       localStorage.removeItem("authenticated");
       this.$store.commit(types.DELETE_USER_AUTH);
       this.$router.replace("/");
+    },
+    clearLocalStorage() {
+      localStorage.clear();
     }
   },
   computed: {

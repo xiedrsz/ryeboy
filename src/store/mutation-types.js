@@ -26,3 +26,5 @@ export const SET_CHANNEL_DATA= "SET_CHANNEL_DATA";
 export const SET_RELOAD= "SET_RELOAD";
 // 设置频道
 export const SET_CHANNELS = "SET_CHANNELS";
+// 设置默认频道列表
+export const SET_DEFAULT_CHANNELS = "SET_DEFAULT_CHANNELS";

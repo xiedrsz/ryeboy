@@ -103,6 +103,10 @@ const getters = {
 };
 
 const mutations = {
+  [types.SET_DEFAULT_CHANNELS](state) {
+    state.channels = _.cloneDeep(defaultChannels);
+  },
+
   [types.SET_CHANNELS](state, data) {
     state.channels = _.cloneDeep(data.channels);
     // 确保有默认频道
@@ -184,9 +188,7 @@ const actions = {
           save: true
         });
       } catch (error) {
-        commit(types.SET_CHANNELS, {
-          channels: defaultChannels
-        });
+        commit(types.SET_DEFAULT_CHANNELS);
       }
     }
   },
