@@ -38,7 +38,12 @@ export default {
       this.$router.replace("/");
     },
     clearLocalStorage() {
-      localStorage.clear();
+      // localStorage.clear();
+      this.$store.commit(types.SHOW_DIALOG, {
+        show: true,
+        type: "alert",
+        content: "本地缓存已经清除"
+      });
     }
   },
   computed: {

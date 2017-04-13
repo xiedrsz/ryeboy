@@ -2,7 +2,13 @@ import * as types from "store/mutation-types";
 
 const state = {
   title: "",
-  loading: false
+  loading: false,
+  dialog: {
+    show: false,
+    type: "alert",
+    title: "",
+    content: ""
+  }
 };
 
 const mutations = {
@@ -11,6 +17,9 @@ const mutations = {
   },
   [types.SHOW_LOADING](state, show) {
     state.loading = show;
+  },
+  [types.SHOW_DIALOG](state, data) {
+    Object.assign(state.dialog, data);
   }
 };
 
