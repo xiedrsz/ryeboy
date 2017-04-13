@@ -39,9 +39,6 @@ export default {
       return this.type != "alert";
     }
   },
-  mounted: function () {
-    // componentHandler.upgradeElement(this.$el);
-  },
   methods: {
     ok() {
       this.$store.commit(types.SHOW_DIALOG, { show: false });

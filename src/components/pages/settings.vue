@@ -38,7 +38,7 @@ export default {
       this.$router.replace("/");
     },
     clearLocalStorage() {
-      // localStorage.clear();
+      localStorage.clear();
       this.$store.commit(types.SHOW_DIALOG, {
         show: true,
         type: "alert",
