@@ -9,7 +9,7 @@ const textHelper = require("js/utils/textHelper.js");
 const pageSize = 10;
 
 // 默认订阅频道
-const defaultChannels = [
+const defaultSubscribedChannels = [
   {
     id: "default",
     name: "全部",
@@ -104,16 +104,16 @@ const getters = {
 
 const mutations = {
   [types.SET_DEFAULT_CHANNELS](state) {
-    state.channels = _.cloneDeep(defaultChannels);
+    state.channels = _.cloneDeep(defaultSubscribedChannels);
   },
 
   [types.SET_CHANNELS](state, data) {
     state.channels = _.cloneDeep(data.channels);
     // 确保有默认频道
     if (state.channels.length == 0) {
-      state.channels.push(defaultChannels[0]);
-    } else if (state.channels[0].id != defaultChannels[0].id) {
-      state.channels.unshift(defaultChannels[0]);
+      state.channels.push(defaultSubscribedChannels[0]);
+    } else if (state.channels[0].id != defaultSubscribedChannels[0].id) {
+      state.channels.unshift(defaultSubscribedChannels[0]);
     }
   },
 

@@ -26,17 +26,14 @@
         <div class="title-row">
           <div>频道推荐</div>
         </div>
-        <!--<draggable v-model="subscribedChannels"
-                       :options="{ group: 'label', animation: 150, ghostClass: 'ghost', disabled: !enableEdit}"
-                       class="label-container">
-              <div v-for="item in subscribedChannels"
-                   :id="item.id"
-                   @click="handleSubscribedLabel"
-                   class="label"
-                   :data-badge="enableEdit ? '×' : ''">
-                <div class="disabled">{{ item.name }}</div>
-              </div>
-            </draggable>-->
+        <div class="label-container">
+          <div v-for="item in recommendedChannels"
+               :id="item.id"
+               @click="handleSubscribedLabel"
+               class="label">
+            <div class="disabled">{{ item.name }}</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -45,13 +42,67 @@
 
 <script>
 import draggable from "vuedraggable";
+import api from "api";
 import * as types from "store/mutation-types";
+
+// 默认推荐订阅频道
+const defaultRecommendedChannels = [
+  {
+    id: "qlxy",
+    name: "前列腺炎"
+  },
+  {
+    id: "yj",
+    name: "遗精",
+  },
+  {
+    id: "yyz",
+    name: "抑郁症",
+  },
+  {
+    id: "kqky",
+    name: "口腔溃疡",
+  },
+  {
+    id: "sm",
+    name: "失眠",
+  },
+  {
+    id: "npnj",
+    name: "尿频尿急",
+  },
+  {
+    id: "tyhc",
+    name: "头晕昏沉",
+  },
+  {
+    id: "bftf",
+    name: "白发脱发",
+  },
+  {
+    id: "yy",
+    name: "意淫",
+  },
+  {
+    id: "sx",
+    name: "肾虚",
+  },
+  {
+    id: "ywzx",
+    name: "阳痿早泄",
+  },
+  {
+    id: "bm",
+    name: "便秘",
+  },
+];
 
 export default {
   data() {
     return {
       enableEdit: false,
-      subscribedChannels: []
+      subscribedChannels: [],
+      recommendedChannels: []
     };
   },
   computed: {
@@ -77,6 +128,12 @@ export default {
   mounted() {
     this.subscribedChannels = this.$store.state.diary.channels.filter(item => {
       return item.id != "default";
+    });
+
+    api.getRecommendedChannels().then(res => {
+      this.recommendedChannels = res.data;
+    }).catch(() => {
+      this.recommendedChannels = defaultRecommendedChannels;
     });
   }
 };
