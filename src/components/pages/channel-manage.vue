@@ -22,6 +22,22 @@
           </div>
         </draggable>
       </div>
+      <div class="unsubscribed">
+        <div class="title-row">
+          <div>频道推荐</div>
+        </div>
+        <!--<draggable v-model="subscribedChannels"
+                       :options="{ group: 'label', animation: 150, ghostClass: 'ghost', disabled: !enableEdit}"
+                       class="label-container">
+              <div v-for="item in subscribedChannels"
+                   :id="item.id"
+                   @click="handleSubscribedLabel"
+                   class="label"
+                   :data-badge="enableEdit ? '×' : ''">
+                <div class="disabled">{{ item.name }}</div>
+              </div>
+            </draggable>-->
+      </div>
     </div>
   </div>
   </div>
@@ -46,10 +62,7 @@ export default {
   methods: {
     edit() {
       if (this.enableEdit) {
-        this.$store.commit(types.SET_CHANNELS, {
-          channels: this.subscribedChannels,
-          save: true
-        });
+        this.$store.dispatch("setSubscribedChannels", this.subscribedChannels);
       }
       this.enableEdit = !this.enableEdit;
     },
@@ -117,5 +130,11 @@ export default {
 
 .sideline {
   border: 1px solid $color-disable
+}
+
+.unsubscribed {
+  margin-top: 32px;
+  border-top: 1px solid $color-disable;
+  padding-top: 16px;
 }
 </style>

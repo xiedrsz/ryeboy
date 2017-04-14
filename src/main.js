@@ -18,7 +18,6 @@ if (localStorage.authenticated) {
     username: localStorage.username,
     sessionToken: localStorage.sessionToken
   });
-
   store.dispatch("initSubscribedChannels");
 } else {
   store.commit(types.SET_DEFAULT_CHANNELS);

@@ -4,6 +4,13 @@ import config from "js/config";
 axios.defaults.baseURL = config.apiAddress;
 
 class api {
+  static setSubscribedChannels(userid, channels) {
+    return axios.post("/setSubscribedChannels", {
+      userid,
+      channels
+    });
+  }
+
   static getSubscribedChannels(userid) {
     return axios.get("/getSubscribedChannels", {
       params: {

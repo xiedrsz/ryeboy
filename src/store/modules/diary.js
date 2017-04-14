@@ -8,7 +8,7 @@ const datetime = require("js/utils/datetime.js");
 const textHelper = require("js/utils/textHelper.js");
 const pageSize = 10;
 
-// 默认频道
+// 默认订阅频道
 const defaultChannels = [
   {
     id: "default",
@@ -115,9 +115,6 @@ const mutations = {
     } else if (state.channels[0].id != defaultChannels[0].id) {
       state.channels.unshift(defaultChannels[0]);
     }
-    if (data.save) {
-      localStorage.channels = JSON.stringify(state.channels);
-    }
   },
 
   [types.SWITCH_CHANNEL](state, label) {
@@ -169,26 +166,52 @@ const mutations = {
 };
 
 const actions = {
-  async initSubscribedChannels({
+  async setSubscribedChannels({
     commit,
+    rootState
+  }, channels) {
+    let userid = rootState.user.id;
+
+    commit(types.SET_CHANNELS, {
+      channels
+    });
+    localStorage[`${userid}_channels`] = JSON.stringify(channels);
+    await api.setSubscribedChannels(userid, channels);
+  },
+
+  async initSubscribedChannels({
+    commit
+  }) {
+    let key = `${localStorage.userid}_channels`;
+    if (localStorage[key]) {
+      commit(types.SET_CHANNELS, {
+        channels: JSON.parse(localStorage[key])
+      });
+    } else {
+      commit(types.SET_DEFAULT_CHANNELS);
+    }
+  },
+
+  async getSubscribedChannels({
+    commit,
+    state,
     rootState
   }) {
     let userid = rootState.user.id;
+    let key = `${userid}_channels`;
 
-    if (localStorage.channels) {
+    try {
+      let res = await api.getSubscribedChannels(userid);
+      let channels = res.data;
       commit(types.SET_CHANNELS, {
-        channels: JSON.parse(localStorage.channels)
+        channels
       });
-    } else {
-      try {
-        let res = await api.getSubscribedChannels(userid);
-        let channels = res.data;
+      localStorage[key] = JSON.stringify(state.channels);
+    } catch (error) {
+      if (localStorage[key]) {
         commit(types.SET_CHANNELS, {
-          channels,
-          save: true
+          channels: JSON.parse(localStorage[key])
         });
-      } catch (error) {
-        commit(types.SET_DEFAULT_CHANNELS);
       }
     }
   },

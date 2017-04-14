@@ -57,7 +57,10 @@ export default {
             localStorage.sessionToken = user.sessionToken;
 
             let redirect = this.$route.query.redirect;
-            this.$router.replace(redirect ? redirect : "/");
+
+            this.$store.dispatch("getSubscribedChannels").then(() => {
+              this.$router.replace(redirect ? redirect : "/");
+            });
           }
           this.$store.commit(types.SHOW_LOADING, false);
         }).catch((err) => {
