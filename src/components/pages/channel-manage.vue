@@ -15,7 +15,7 @@
                    class="label-container">
           <div v-for="item in subscribedChannels"
                :id="item.id"
-               @click="handleSubscribedLabel"
+               @click="removeSubscribed"
                class="label"
                :data-badge="enableEdit ? '×' : ''">
             <div class="disabled">{{ item.name }}</div>
@@ -29,7 +29,7 @@
         <div class="label-container">
           <div v-for="item in recommendedChannels"
                :id="item.id"
-               @click="handleSubscribedLabel"
+               @click="addSubscribed"
                class="label">
             <div class="disabled">{{ item.name }}</div>
           </div>
@@ -43,6 +43,7 @@
 <script>
 import draggable from "vuedraggable";
 import api from "api";
+import _ from "lodash";
 import * as types from "store/mutation-types";
 
 // 默认推荐订阅频道
@@ -101,6 +102,7 @@ export default {
   data() {
     return {
       enableEdit: false,
+      modified: false,
       subscribedChannels: [],
       recommendedChannels: []
     };
@@ -110,15 +112,40 @@ export default {
       return this.$store.state.user.authenticated;
     },
   },
+  watch: {
+    subscribedChannels: function () {
+      this.modified = true;
+    }
+  },
   methods: {
     edit() {
-      if (this.enableEdit) {
+      if (this.enableEdit && this.modified) {
         this.$store.dispatch("setSubscribedChannels", this.subscribedChannels);
       }
       this.enableEdit = !this.enableEdit;
+      if (this.enableEdit) {
+        this.modified = false;
+      }
     },
-    handleSubscribedLabel(e) {
-      console.log("handleSubscribedLabel", e.target, e.target.id);
+    removeSubscribed(event) {
+      if (!this.enableEdit) return;
+      if (this.subscribedChannels.length <= 1) {
+        this.$store.commit(types.SHOW_DIALOG, {
+          show: true,
+          type: "alert",
+          content: "至少保留一个频道。"
+        });
+        return;
+      }
+      let item = _.find(this.subscribedChannels, { "id": event.target.id });
+      _.pull(this.subscribedChannels, item);
+      this.recommendedChannels.unshift(item);
+    },
+    addSubscribed(event) {
+      if (!this.enableEdit) return;
+      let item = _.find(this.recommendedChannels, { "id": event.target.id });
+      _.pull(this.recommendedChannels, item);
+      this.subscribedChannels.push(item);
     }
   },
   components: {
@@ -129,7 +156,7 @@ export default {
     this.subscribedChannels = this.$store.state.diary.channels.filter(item => {
       return item.id != "default";
     });
-
+    this.modified = false;
     api.getRecommendedChannels().then(res => {
       this.recommendedChannels = res.data;
     }).catch(() => {

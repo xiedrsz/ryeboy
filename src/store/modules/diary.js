@@ -176,7 +176,12 @@ const actions = {
       channels
     });
     localStorage[`${userid}_channels`] = JSON.stringify(channels);
-    await api.setSubscribedChannels(userid, channels);
+
+    try {
+      await api.setSubscribedChannels(userid, channels);
+    } catch (error) {
+      console.log(error);
+    }
   },
 
   async initSubscribedChannels({
