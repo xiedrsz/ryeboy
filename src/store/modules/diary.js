@@ -154,8 +154,8 @@ const mutations = {
 
   [types.SET_CHANNEL_DATA](state, data) {
     let label = data.label;
-    if (data.loadstate) {
-      state.channelDatas[label].loadstate = data.loadstate;
+    if (data.assign) {
+      Object.assign(state.channelDatas[label], data.assign);
     }
     if (data.diaries) {
       data.diaries.forEach(item => {
@@ -224,15 +224,9 @@ const actions = {
   async getMoreDiaries({
     commit,
     state
-  }) {
+  }, infiniteScroll) {
     let label = state.activedChannel;
     let channelData = state.channelDatas[label];
-    let result = {};
-
-    if (!channelData) {
-      result.error = "unload";
-      return result;
-    }
 
     let filter = channelData.activedFilter;
 
@@ -246,17 +240,24 @@ const actions = {
       }
       updateDiaries(diaries);
 
+      let nomore = diaries.length < pageSize;
+
       commit(types.SET_CHANNEL_DATA, {
         label,
+        assign: {
+          nomore
+        },
         diaries
       });
 
-      result.nomore = diaries.length < pageSize;
+      if (nomore) {
+        infiniteScroll.$emit("$InfiniteScroll:complete");
+      } else {
+        infiniteScroll.$emit("$InfiniteScroll:loaded");
+      }
     } catch (error) {
-      result.error = error;
+      infiniteScroll.$emit("$InfiniteScroll:complete");
     }
-
-    return result;
   },
 
   async getDiaries({
@@ -280,7 +281,7 @@ const actions = {
       channelData = {
         activedFilter: filter,
         loadstate: null,
-        enableLoadMore: false,
+        nomore: true,
         filters: [{
           id: "recommend",
           name: "精品",
@@ -311,7 +312,9 @@ const actions = {
 
     commit(types.SET_CHANNEL_DATA, {
       label,
-      loadstate: "loading"
+      assign: {
+        loadstate: "loading"
+      }
     });
 
     try {
@@ -326,15 +329,18 @@ const actions = {
 
       commit(types.SET_CHANNEL_DATA, {
         label,
-        loadstate: diaries.length == 0 ? "empty" : "ok",
+        assign: {
+          nomore: diaries.length < pageSize,
+          loadstate: diaries.length == 0 ? "empty" : "ok",
+        },
         diaries
       });
-
-      return diaries.length < pageSize;
     } catch (error) {
       commit(types.SET_CHANNEL_DATA, {
         label,
-        loadstate: "error"
+        assign: {
+          loadstate: "error"
+        }
       });
     }
   }

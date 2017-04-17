@@ -59,7 +59,7 @@
                             :text="item.escapedText"
                             :time="item.time" />
               </ul>
-              <infinite-scroll v-if="showInfiniteScroll"
+              <infinite-scroll v-if="channelDatas[channel.id].nomore == false"
                                :onInfinite="infinite">
                 <div slot="no-more">没有更多内容了</div>
               </infinite-scroll>
@@ -112,9 +112,7 @@ export default {
       this.authRoute("/pages/channel-manage");
     },
     getDiaries() {
-      this.$store.dispatch("getDiaries").then(nomore => {
-        this.showInfiniteScroll = nomore === false;
-      });
+      this.$store.dispatch("getDiaries");
     },
     switchChannel(event) {
       let label = event.target.id;
@@ -138,18 +136,7 @@ export default {
       this.getDiaries();
     },
     infinite(infiniteScroll) {
-      this.$store.dispatch("getMoreDiaries").then((res) => {
-        if (res.error) {
-          infiniteScroll.$emit("$InfiniteScroll:complete");
-        } else {
-          if (res.nomore) {
-            infiniteScroll.$emit("$InfiniteScroll:complete");
-          }
-          else {
-            infiniteScroll.$emit("$InfiniteScroll:loaded");
-          }
-        }
-      });
+      this.$store.dispatch("getMoreDiaries", infiniteScroll);
     }
   },
   components: {
