@@ -49,6 +49,31 @@ import * as types from "store/mutation-types";
 // 默认推荐订阅频道
 const defaultRecommendedChannels = [
   {
+    id: "tbs",
+    name: "蜕变史",
+    active: false
+  },
+  {
+    id: "ms",
+    name: "麦式",
+    active: false
+  },
+  {
+    id: "ys",
+    name: "饮食",
+    active: false
+  },
+  {
+    id: "zx",
+    name: "作息",
+    active: false
+  },
+  {
+    id: "xl",
+    name: "心理",
+    active: false
+  },
+  {
     id: "qlxy",
     name: "前列腺炎"
   },
@@ -113,8 +138,12 @@ export default {
     },
   },
   watch: {
-    subscribedChannels: function () {
-      this.modified = true;
+    subscribedChannels: {
+      handler: function () {
+        console.log("modified");
+        this.modified = true;
+      },
+      deep: true
     }
   },
   methods: {
@@ -137,15 +166,26 @@ export default {
         });
         return;
       }
-      let item = _.find(this.subscribedChannels, { "id": event.target.id });
-      _.pull(this.subscribedChannels, item);
-      this.recommendedChannels.unshift(item);
+      let index = _.findIndex(this.subscribedChannels, { "id": event.target.id });
+      // let item = _.find(this.subscribedChannels, { "id": event.target.id });
+      // _.pull(this.subscribedChannels, item);
+      this.recommendedChannels.unshift(this.subscribedChannels[index]);
+      this.subscribedChannels.splice(index, 1);
     },
     addSubscribed(event) {
       if (!this.enableEdit) return;
       let item = _.find(this.recommendedChannels, { "id": event.target.id });
       _.pull(this.recommendedChannels, item);
       this.subscribedChannels.push(item);
+    },
+    initRecommendedChannels(channels) {
+      channels.forEach(channel => {
+        if (_.findIndex(this.subscribedChannels, function (subscribedChannel) {
+          return subscribedChannel.id == channel.id;
+        }) == -1) {
+          this.recommendedChannels.push(channel);
+        }
+      });
     }
   },
   components: {
@@ -158,9 +198,9 @@ export default {
     });
     this.modified = false;
     api.getRecommendedChannels().then(res => {
-      this.recommendedChannels = res.data;
+      this.initRecommendedChannels(res.data);
     }).catch(() => {
-      this.recommendedChannels = defaultRecommendedChannels;
+      this.initRecommendedChannels(defaultRecommendedChannels);
     });
   }
 };
