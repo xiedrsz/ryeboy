@@ -140,7 +140,6 @@ export default {
   watch: {
     subscribedChannels: {
       handler: function () {
-        console.log("modified");
         this.modified = true;
       },
       deep: true
@@ -149,6 +148,7 @@ export default {
   methods: {
     edit() {
       if (this.enableEdit && this.modified) {
+        this.$store.commit(types.SET_CHANNEL_CHANGED);
         this.$store.dispatch("setSubscribedChannels", this.subscribedChannels);
       }
       this.enableEdit = !this.enableEdit;
@@ -167,8 +167,6 @@ export default {
         return;
       }
       let index = _.findIndex(this.subscribedChannels, { "id": event.target.id });
-      // let item = _.find(this.subscribedChannels, { "id": event.target.id });
-      // _.pull(this.subscribedChannels, item);
       this.recommendedChannels.unshift(this.subscribedChannels[index]);
       this.subscribedChannels.splice(index, 1);
     },
@@ -193,8 +191,13 @@ export default {
     "button-flat": require("components/ui/button-flat.vue"),
   },
   mounted() {
-    this.subscribedChannels = this.$store.state.diary.channels.filter(item => {
-      return item.id != "default";
+    this.$store.state.diary.channels.forEach(item => {
+      if (item.id != "default") {
+        this.subscribedChannels.push({
+          id: item.id,
+          name: item.name
+        });
+      }
     });
     this.modified = false;
     api.getRecommendedChannels().then(res => {

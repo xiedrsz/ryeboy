@@ -12,33 +12,27 @@ const pageSize = 10;
 const defaultSubscribedChannels = [
   {
     id: "default",
-    name: "全部",
-    active: false
+    name: "全部"
   },
   {
     id: "tbs",
-    name: "蜕变史",
-    active: false
+    name: "蜕变史"
   },
   {
     id: "ms",
-    name: "麦式",
-    active: false
+    name: "麦式"
   },
   {
     id: "ys",
-    name: "饮食",
-    active: false
+    name: "饮食"
   },
   {
     id: "zx",
-    name: "作息",
-    active: false
+    name: "作息"
   },
   {
     id: "xl",
-    name: "心理",
-    active: false
+    name: "心理"
   },
 ];
 
@@ -53,7 +47,10 @@ const state = {
   channelDatas: {},
 
   // 日记用户表
-  users: {}
+  users: {},
+
+  // 日记频道修改标志
+  channelChanged: false,
 };
 
 
@@ -103,12 +100,17 @@ const getters = {
 };
 
 const mutations = {
+  [types.SET_CHANNEL_CHANGED](state, changed) {
+    state.channelChanged = changed === undefined ? true : changed;
+  },
+
   [types.SET_DEFAULT_CHANNELS](state) {
-    state.channels = _.cloneDeep(defaultSubscribedChannels);
+    state.channels = _.clone(defaultSubscribedChannels);
   },
 
   [types.SET_CHANNELS](state, data) {
-    state.channels = _.cloneDeep(data.channels);
+    // console.log(data.channels);
+    state.channels = _.clone(data.channels);
     // 确保有默认频道
     if (state.channels.length == 0) {
       state.channels.push(defaultSubscribedChannels[0]);
@@ -142,6 +144,10 @@ const mutations = {
     });
   },
 
+  [types.CLEAR_CHANNEL_DATA](state) {
+    state.channelDatas = {};
+  },
+
   [types.SET_RELOAD](state) {
     let channelData = state.channelDatas[state.activedChannel];
     channelData.loadstate = "reload";
@@ -154,13 +160,16 @@ const mutations = {
 
   [types.SET_CHANNEL_DATA](state, data) {
     let label = data.label;
-    if (data.assign) {
-      Object.assign(state.channelDatas[label], data.assign);
-    }
-    if (data.diaries) {
-      data.diaries.forEach(item => {
-        state.channelDatas[label].diaries.push(item);
-      });
+    let channelData = state.channelDatas[label];
+    if (channelData) {
+      if (data.assign) {
+        Object.assign(channelData, data.assign);
+      }
+      if (data.diaries) {
+        data.diaries.forEach(item => {
+          channelData.diaries.push(item);
+        });
+      }
     }
   },
 };
@@ -172,13 +181,14 @@ const actions = {
   }, channels) {
     let userid = rootState.user.id;
 
+    let _channels = JSON.parse(JSON.stringify(channels));
     commit(types.SET_CHANNELS, {
-      channels
+      channels: _channels
     });
-    localStorage[`${userid}_channels`] = JSON.stringify(channels);
+    localStorage[`${userid}_channels`] = JSON.stringify(_channels);
 
     try {
-      await api.setSubscribedChannels(userid, channels);
+      await api.setSubscribedChannels(userid, _channels);
     } catch (error) {
       console.log(error);
     }
@@ -228,9 +238,8 @@ const actions = {
     let label = state.activedChannel;
     let channelData = state.channelDatas[label];
 
-    let filter = channelData.activedFilter;
-
     try {
+      let filter = channelData.activedFilter;
       let res = await api.getDiaries(label, filter, _.last(channelData.diaries).createdAt);
       let diaries = res.data;
       let users = getUnstoredUsers(diaries);

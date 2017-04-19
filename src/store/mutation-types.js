@@ -24,9 +24,13 @@ export const SWITCH_FILTER = "SWITCH_FILTER";
 export const ASSIGN_CHANNEL_DATA = "ASSIGN_CHANNEL_DATA";
 // 设置频道数据
 export const SET_CHANNEL_DATA = "SET_CHANNEL_DATA";
+// 清除频道数据
+export const CLEAR_CHANNEL_DATA = "CLEAR_CHANNEL_DATA";
 // 设置频道数据重新加载
 export const SET_RELOAD = "SET_RELOAD";
 // 设置频道
 export const SET_CHANNELS = "SET_CHANNELS";
 // 设置默认频道列表
 export const SET_DEFAULT_CHANNELS = "SET_DEFAULT_CHANNELS";
+// 设置日记频道改变
+export const SET_CHANNEL_CHANGED = "SET_CHANNEL_CHANGED";

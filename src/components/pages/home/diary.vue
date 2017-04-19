@@ -78,7 +78,7 @@ import _ from "lodash";
 export default {
   data() {
     return {
-      showInfiniteScroll: false
+      slideContentHeight: 0
     };
   },
   computed: {
@@ -94,6 +94,9 @@ export default {
     disableRefresh() {
       let state = this.$store.getters.getChannelLoadstate;
       return !(state == "ok" || state == "error" || state == "empty");
+    },
+    channelChanged() {
+      return this.$store.state.diary.channelChanged;
     }
   },
   methods: {
@@ -107,6 +110,11 @@ export default {
           query: { redirect: to }
         });
       }
+    },
+    setSlideContentHeight() {
+      document.querySelectorAll(".slide-content").forEach(item => {
+        item.style.height = this.slideContentHeight;
+      });
     },
     manageChannel() {
       this.authRoute("/pages/channel-manage");
@@ -147,15 +155,23 @@ export default {
     "pull-to-refresh": require("ui/pull-to-refresh.vue"),
     "infinite-scroll": require("ui/infinite-scroll.vue"),
   },
+  activated() {
+    if (this.channelChanged) {
+      this.setSlideContentHeight();
+      this.$store.commit(types.SET_CHANNEL_CHANGED, false);
+      this.$store.commit(types.CLEAR_CHANNEL_DATA);
+      setTimeout(() => {
+        this.$refs.swipe.reset();
+        this.slideChanged(0);
+      }, 0);
+    }
+  },
   mounted() {
     // 调整日记列表高度
     let mainContentHeight = document.querySelector("main").clientHeight;
     this.$el.style.height = mainContentHeight + "px";
-    let slideContentHeight = (mainContentHeight - document.querySelector(".channel-container").clientHeight - 1) + "px";
-    document.querySelectorAll(".slide-content").forEach(item => {
-      item.style.height = slideContentHeight;
-    });
-
+    this.slideContentHeight = (mainContentHeight - document.querySelector(".channel-container").clientHeight - 1) + "px";
+    this.setSlideContentHeight();
     this.slideChanged(0);
   }
 };
