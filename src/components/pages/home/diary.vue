@@ -59,7 +59,7 @@
                             :text="item.escapedText"
                             :time="item.time" />
               </ul>
-              <infinite-scroll v-if="channelDatas[channel.id].nomore == false"
+              <infinite-scroll v-if="enableInfiniteScroll && channelDatas[channel.id].nomore == false"
                                :onInfinite="infinite">
                 <div slot="no-more">没有更多内容了</div>
               </infinite-scroll>
@@ -78,7 +78,8 @@ import _ from "lodash";
 export default {
   data() {
     return {
-      slideContentHeight: 0
+      slideContentHeight: 0,
+      enableInfiniteScroll: false
     };
   },
   computed: {
@@ -155,7 +156,12 @@ export default {
     "pull-to-refresh": require("ui/pull-to-refresh.vue"),
     "infinite-scroll": require("ui/infinite-scroll.vue"),
   },
+  deactivated() {
+    this.enableInfiniteScroll = false;
+  },
   activated() {
+    this.enableInfiniteScroll = true;
+    
     if (this.channelChanged) {
       this.setSlideContentHeight();
       this.$store.commit(types.SET_CHANNEL_CHANGED, false);
