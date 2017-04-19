@@ -4,6 +4,8 @@ import routes from "js/routes.js";
 import store from "store";
 import * as types from "store/mutation-types";
 
+require("lazysizes");
+
 Vue.use(VueRouter);
 
 const router = new VueRouter({

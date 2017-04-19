@@ -1,7 +1,8 @@
 <template>
   <li class="item-container">
     <div class="item-avatar">
-      <img :src="avatar" />
+      <img :data-src="avatar"
+           class="lazyload" />
     </div>
     <div class="item-content">
       <div>{{ username }}</div>
@@ -98,5 +99,15 @@ export default {
 
 .counts span {
   margin-left: 4px;
+}
+
+.lazyload,
+.lazyloading {
+  opacity: 0;
+}
+
+.lazyloaded {
+  opacity: 1;
+  transition: opacity 300ms;
 }
 </style>
