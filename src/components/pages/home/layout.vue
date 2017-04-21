@@ -12,16 +12,18 @@
       </div>
     </header>
     <main class="mdl-layout__content">
-      <router-view></router-view>
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
     </main>
     <navbar></navbar>
   </div>
 </template>
 
 <script>
-  export default {
-    components: {
-      "navbar": require("components/ui/navbar.vue")
-    } 
-  };
+export default {
+  components: {
+    "navbar": require("components/ui/navbar.vue")
+  }
+};
 </script>

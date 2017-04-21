@@ -9,14 +9,7 @@ export default [{
 }, {
   path: "/pages", component: require("components/pages/layout.vue"),
   children: [
-    { path: "login", component: require("components/pages/login.vue"),
-      beforeEnter: (to, from, next) => {
-        if (!to.query.redirect) {
-          to.query.redirect = from.path;
-        }
-        next();
-      }
-    },
+    { path: "login", component: require("components/pages/login.vue") },
     { path: "settings", component: require("components/pages/settings.vue") },
     { path: "channel-manage", component: require("components/pages/channel-manage.vue") }
   ]
