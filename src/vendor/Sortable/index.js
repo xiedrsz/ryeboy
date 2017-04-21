@@ -313,13 +313,6 @@
     return draggableComponent
   }
 
-  if (typeof exports == "object") {
-    var Sortable = require("./Sortable.js")
-    module.exports = buildDraggable(Sortable)
-  } else if (typeof define == "function" && define.amd) {
-    define(['sortablejs'], function (Sortable) { return buildDraggable(Sortable); });
-  } else if (window && (window.Vue) && (window.Sortable)) {
-    var sortable = buildDraggable(window.Sortable)
-    Vue.component('sortable', sortable)
-  }
+  var Sortable = require("./Sortable.js")
+  module.exports = buildDraggable(Sortable)
 })();
