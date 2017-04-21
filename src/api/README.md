@@ -290,3 +290,176 @@
                     commentCount: 6 
                 }
             ]
+
+
+# /getSubscribedChannels
+获取订阅的频道
+
+## GET
++ Request (application/json)
+
+    + Schema
+
+            {
+                "userid": {
+                    "type": "string"
+                } 
+            }
+
+    + Example
+    
+            {
+                userid: "587c44479a469177ac52ff8f" 
+            }
+            
++ Response 200 (application/json)
+
+    + Schema
+
+            [
+                {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    } 
+                },
+                ...
+            ]
+
+    + Example
+
+            [ 
+                {
+                    id: "tbs",
+                    name: "蜕变史"
+                },
+                {
+                    id: "ms",
+                    name: "麦式"
+                },
+                {
+                    id: "ys",
+                    name: "饮食"
+                },
+                {
+                    id: "zx",
+                    name: "作息"
+                },
+                {
+                    id: "xl",
+                    name: "心理"
+                }
+            ]
+
+
+# /getRecommendedChannels
+获取后台推荐的频道（用户可订阅的全部频道）
+
+## GET
++ Request (无参数)
+
++ Response 200 (application/json)
+
+    + Schema
+
+            [
+                {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    } 
+                },
+                ...
+            ]
+
+    + Example
+
+            [ 
+                {
+                    id: "tbs",
+                    name: "蜕变史"
+                },
+                {
+                    id: "ms",
+                    name: "麦式"
+                },
+                {
+                    id: "ys",
+                    name: "饮食"
+                },
+                {
+                    id: "zx",
+                    name: "作息"
+                },
+                {
+                    id: "xl",
+                    name: "心理"
+                },
+                {
+                    id: "qlxy",
+                    name: "前列腺炎"
+                },
+                {
+                    id: "yj",
+                    name: "遗精"
+                }
+            ]
+
+
+# /setSubscribedChannels
+更新订阅的频道
+
+## POST
++ Request (application/json)
+
+    + Schema
+
+            {
+                "userid": {
+                    "type": "string"
+                },
+                "channels": {
+                    "description": "添加、删除、排序后的频道",
+                    "type": "array"
+                }
+            }
+
+    + Example
+    
+            {
+                userid: "587c44479a469177ac52ff8f",
+                channels: [
+                    {
+                        id: "ms",
+                        name: "麦式"
+                    }, 
+                    {
+                        id: "tbs",
+                        name: "蜕变史"
+                    },
+                    {
+                        id: "ys",
+                        name: "饮食"
+                    },
+                    {
+                        id: "zx",
+                        name: "作息"
+                    },
+                    {
+                        id: "xl",
+                        name: "心理"
+                    },
+                    {
+                        id: "yj",
+                        name: "遗精"
+                    }
+                ]
+            }
+            
++ Response 200 (application/json)
+
+    成功返回 200，错误返回 400。
