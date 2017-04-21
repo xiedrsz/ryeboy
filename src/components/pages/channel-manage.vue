@@ -10,7 +10,7 @@
                        :text="enableEdit ? '完成' : '编辑'"
                        @click.native="edit" />
         </div>
-        <draggable v-model="subscribedChannels"
+        <sortable v-model="subscribedChannels"
                    :options="{ group: 'label', animation: 150, ghostClass: 'ghost', disabled: !enableEdit}"
                    class="label-container">
           <div v-for="item in subscribedChannels"
@@ -20,7 +20,7 @@
                :data-badge="enableEdit ? '×' : ''">
             <div class="disabled">{{ item.name }}</div>
           </div>
-        </draggable>
+        </sortable>
       </div>
       <div class="unsubscribed">
         <div class="title-row">
@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import draggable from "vuedraggable";
+import sortable from "vendor/sortable";
 import api from "api";
 import _ from "lodash";
 import * as types from "store/mutation-types";
@@ -187,7 +187,7 @@ export default {
     }
   },
   components: {
-    draggable,
+    sortable,
     "button-flat": require("components/ui/button-flat.vue"),
   },
   mounted() {

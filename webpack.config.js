@@ -44,6 +44,7 @@ module.exports = {
       "store": path.resolve(__dirname, "src/store/"),
       "scss": path.resolve(__dirname, "src/scss/"),
       "components": path.resolve(__dirname, "src/components/"),
+      "vendor": path.resolve(__dirname, "src/vendor/"),
       "ui": path.resolve(__dirname, "src/components/ui")
     }
   },
