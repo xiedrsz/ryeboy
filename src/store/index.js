@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import user from "./modules/user";
 import page from "./modules/page";
 import diary from "./modules/diary";
+import discipline from "./modules/discipline";
 
 Vue.use(Vuex);
 
@@ -10,6 +11,7 @@ export default new Vuex.Store({
   modules: {
     user,
     page,
-    diary
+    diary,
+    discipline
   },
 });

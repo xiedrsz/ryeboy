@@ -6,5 +6,6 @@
   },
   "end_with_newline": false,
   "unformatted": [],
+  "wrap_attributes": "force-aligned",
   "keep_array_indentation": true
 }
