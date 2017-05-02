@@ -8,13 +8,15 @@
       <div class="action">发布</div>
     </div>
     <div class="card-container">
-      <div v-for="weight in cards" class="weight-container">
+      <div v-for="weight in cards"
+           class="weight-container">
         <div class="weight-block">
           <div class="weight-text">{{ weight.name }}</div>
           <div class="mdl-layout-spacer"></div>
           <div>
-            <checkbox :id="weight.name"
-                      text="全选"></checkbox>
+            <checkbox :id="weight.value"
+                      text="全选"
+                      :changed="weightSelectAll"></checkbox>
           </div>
         </div>
         <div class="card-list">
@@ -23,6 +25,8 @@
             <img class="card-icon"
                  :src="'../../img/card-' + card.id + '.png'">
             <div class="card-name">{{ card.name }}</div>
+            <checkbox :id="card.id"
+                      :selected="card.selected"></checkbox>
           </div>
         </div>
       </div>
@@ -33,12 +37,12 @@
 <script>
   function getWeightName(weight) {
     switch (weight) {
-      case 1:
-        return "最重要功课";
-      case 2:
-        return "重要功课";
-      case 3:
-        return "次重要功课";
+    case 1:
+      return "最重要功课";
+    case 2:
+      return "重要功课";
+    case 3:
+      return "次重要功课";
     }
   }
 
@@ -51,7 +55,9 @@
         }
       }
       if (item.weight == weight) {
-        result.push(item);
+        result.push(Object.assign({
+          selected: false
+        }, item));
       }
     });
     return result;
@@ -63,11 +69,22 @@
         cards: []
       };
     },
+    methods: {
+      weightSelectAll(data) {
+        this.cards.forEach(item => {
+          if (item.value == data.id) {
+            item.cards.forEach(card => {
+              card.selected = data.selected;
+            });
+          }
+        });
+      }
+    },
     mounted() {
       let cards = require("store/cards.json");
       for (var weight = 1; weight < 4; weight++) {
         this.cards.push({
-          weight,
+          value: weight,
           name: getWeightName(weight),
           cards: getWeightCards(cards, weight, this.$store.state.discipline.selectedCards)
         });
@@ -135,8 +152,6 @@
     -webkit-flex-wrap: wrap;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
-    // width: 100%;
-    // padding: 8px 16px;
   }
 
   .card {
@@ -149,9 +164,8 @@
   .card-icon {
     width: 48px;
     height: 48px;
-    opacity: 0.75;
     border-radius: 8px 4px 4px 4px;
-    background-color: $color-blue;
+    background-color: $color-disable;
   }
 
   .card-name {

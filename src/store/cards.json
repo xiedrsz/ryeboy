@@ -95,19 +95,19 @@
 }, {
   "id": 411,
   "weight": 1,
-  "name": "07点前起床",
+  "name": "07点起床",
   "group": 411,
   "value": 1
 }, {
   "id": 412,
   "weight": 1,
-  "name": "06点前起床",
+  "name": "06点起床",
   "group": 411,
   "value": 1
 }, {
   "id": 413,
   "weight": 1,
-  "name": "05点前起床",
+  "name": "05点起床",
   "group": 411,
   "value": 1
 }, {
