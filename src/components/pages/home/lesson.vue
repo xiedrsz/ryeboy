@@ -3,7 +3,7 @@
     <div class="action-container">
       <div class="action">2月6日</div>
       <div class="mdl-layout-spacer"></div>
-      <div class="action">管理</div>
+      <div class="action" @click="$router.push('/pages/lesson-manage')">管理</div>
       <div class="action">保存</div>
       <div class="action">发布</div>
     </div>
@@ -86,7 +86,7 @@
         this.cards.push({
           value: weight,
           name: getWeightName(weight),
-          cards: getWeightCards(cards, weight, this.$store.state.discipline.selectedCards)
+          cards: getWeightCards(cards, weight, this.$store.state.lesson.selectedCards)
         });
       }
     },
