@@ -35,34 +35,6 @@
 </template>
 
 <script>
-  function getWeightName(weight) {
-    switch (weight) {
-    case 1:
-      return "最重要功课";
-    case 2:
-      return "重要功课";
-    case 3:
-      return "次重要功课";
-    }
-  }
-
-  function getWeightCards(cards, weight, selectedCards) {
-    let result = [];
-    cards.forEach(item => {
-      if (item.group) {
-        if (selectedCards[item.group] != item.id) {
-          return;
-        }
-      }
-      if (item.weight == weight) {
-        result.push(Object.assign({
-          selected: false
-        }, item));
-      }
-    });
-    return result;
-  }
-
   export default {
     data() {
       return {
@@ -81,14 +53,7 @@
       }
     },
     mounted() {
-      let cards = require("store/cards.json");
-      for (var weight = 1; weight < 4; weight++) {
-        this.cards.push({
-          value: weight,
-          name: getWeightName(weight),
-          cards: getWeightCards(cards, weight, this.$store.state.lesson.selectedCards)
-        });
-      }
+      this.cards = this.$store.getters.lesson_getOptionalCards;
     },
     components: {
       "checkbox": require("ui/checkbox.vue"),

@@ -256,12 +256,12 @@ export default {
 }
 
 .sideline {
-  border: 1px solid $color-disable
+  border: 1px solid $color-divider
 }
 
 .unsubscribed {
   margin-top: 32px;
-  border-top: 1px solid $color-disable;
+  border-top: 1px solid $color-divider;
   padding-top: 16px;
 }
 </style>

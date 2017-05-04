@@ -43,6 +43,7 @@ module.exports = {
       "api": path.resolve(__dirname, "src/api/"),
       "store": path.resolve(__dirname, "src/store/"),
       "scss": path.resolve(__dirname, "src/scss/"),
+      "css": path.resolve(__dirname, "src/css/"),
       "components": path.resolve(__dirname, "src/components/"),
       "vendor": path.resolve(__dirname, "src/vendor/"),
       "ui": path.resolve(__dirname, "src/components/ui")
