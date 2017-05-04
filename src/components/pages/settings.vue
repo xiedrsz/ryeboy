@@ -20,37 +20,35 @@
 </template>
 
 <script>
-import api from "api";
-import * as types from "store/mutation-types";
+  import api from "api";
 
-export default {
-  components: {
-    "button-flat": require("components/ui/button-flat.vue"),
-    "list": require("components/ui/list.vue"),
-    "list-item": require("components/ui/list-item.vue")
-  },
-  methods: {
-    logout() {
-      api.logout();
-
-      localStorage.removeItem("authenticated");
-      this.$store.commit(types.DELETE_USER_AUTH);
-      this.$router.replace("/");
+  export default {
+    components: {
+      "button-flat": require("components/ui/button-flat.vue"),
+      "list": require("components/ui/list.vue"),
+      "list-item": require("components/ui/list-item.vue")
     },
-    clearLocalStorage() {
-      localStorage.clear();
-      this.$store.commit(types.SHOW_DIALOG, {
-        show: true,
-        type: "alert",
-        content: "本地缓存已经清除"
-      });
-    }
-  },
-  computed: {
-    authenticated() {
-      return this.$store.state.user.authenticated;
-    }
-  }
-};
+    methods: {
+      logout() {
+        api.logout();
 
+        localStorage.removeItem("authenticated");
+        this.$store.commit("user_deleteAuth");
+        this.$router.replace("/");
+      },
+      clearLocalStorage() {
+        localStorage.clear();
+        this.$store.commit("page_showDialog", {
+          show: true,
+          type: "alert",
+          content: "本地缓存已经清除"
+        });
+      }
+    },
+    computed: {
+      authenticated() {
+        return this.$store.state.user.authenticated;
+      }
+    }
+  };
 </script>

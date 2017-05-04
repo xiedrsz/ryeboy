@@ -2,7 +2,6 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import routes from "js/routes.js";
 import store from "store";
-import * as types from "store/mutation-types";
 
 require("lazysizes");
 
@@ -15,14 +14,14 @@ const router = new VueRouter({
 });
 
 if (localStorage.authenticated) {
-  store.commit(types.SET_USER_AUTH, {
+  store.commit("user_setAuth", {
     id: localStorage.userid,
     username: localStorage.username,
     sessionToken: localStorage.sessionToken
   });
   store.dispatch("initSubscribedChannels");
 } else {
-  store.commit(types.SET_DEFAULT_CHANNELS);
+  store.commit("diary_setDefaultChannels");
 }
 
 new Vue(Vue.util.extend({

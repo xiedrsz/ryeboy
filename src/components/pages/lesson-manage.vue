@@ -58,7 +58,6 @@
 <script>
   // import api from "api";
   import _ from "lodash";
-  // import * as types from "store/mutation-types";
   import Multiselect from "vue-multiselect";
 
   export default {

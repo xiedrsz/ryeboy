@@ -72,7 +72,6 @@
 </template>
 
 <script>
-  import * as types from "store/mutation-types";
   import _ from "lodash";
 
   export default {
@@ -132,7 +131,7 @@
       },
       switchFilter(event) {
         let filter = event.target.id;
-        this.$store.commit(types.SWITCH_FILTER, {
+        this.$store.commit("diary_switchFilter", {
           filter,
           reload: true
         });
@@ -142,11 +141,11 @@
         let channel = this.channels[index];
         let label = channel.id;
 
-        this.$store.commit(types.SWITCH_CHANNEL, label);
+        this.$store.commit("diary_switchChannel", label);
         this.getDiaries();
       },
       pulltorefresh() {
-        this.$store.commit(types.SET_RELOAD);
+        this.$store.commit("diary_setReload");
         this.getDiaries();
       },
       infinite(infiniteScroll) {
@@ -169,8 +168,8 @@
 
       if (this.channelChanged) {
         this.setSlideContentHeight();
-        this.$store.commit(types.SET_CHANNEL_CHANGED, false);
-        this.$store.commit(types.CLEAR_CHANNEL_DATA);
+        this.$store.commit("diary_setChannelChanged", false);
+        this.$store.commit("diary_clearChannelData");
         setTimeout(() => {
           this.$refs.swipe.reset();
           this.slideChanged(0);

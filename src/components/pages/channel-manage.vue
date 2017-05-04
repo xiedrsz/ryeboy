@@ -44,7 +44,6 @@
 import sortable from "vendor/sortable";
 import api from "api";
 import _ from "lodash";
-import * as types from "store/mutation-types";
 
 // 默认推荐订阅频道
 const defaultRecommendedChannels = [
@@ -148,7 +147,7 @@ export default {
   methods: {
     edit() {
       if (this.enableEdit && this.modified) {
-        this.$store.commit(types.SET_CHANNEL_CHANGED);
+        this.$store.commit("diary_setChannelChanged");
         this.$store.dispatch("setSubscribedChannels", this.subscribedChannels);
       }
       this.enableEdit = !this.enableEdit;
@@ -159,7 +158,7 @@ export default {
     removeSubscribed(event) {
       if (!this.enableEdit) return;
       if (this.subscribedChannels.length <= 1) {
-        this.$store.commit(types.SHOW_DIALOG, {
+        this.$store.commit("page_showDialog", {
           show: true,
           type: "alert",
           content: "至少保留一个频道。"

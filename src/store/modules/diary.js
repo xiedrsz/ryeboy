@@ -1,7 +1,6 @@
 import Vue from "vue";
 import api from "api";
 import _ from "lodash";
-import * as types from "store/mutation-types";
 
 const config = require("js/config.js");
 const datetime = require("js/utils/datetime.js");
@@ -100,15 +99,15 @@ const getters = {
 };
 
 const mutations = {
-  [types.SET_CHANNEL_CHANGED](state, changed) {
+  diary_setChannelChanged(state, changed) {
     state.channelChanged = changed === undefined ? true : changed;
   },
 
-  [types.SET_DEFAULT_CHANNELS](state) {
+  diary_setDefaultChannels(state) {
     state.channels = _.clone(defaultSubscribedChannels);
   },
 
-  [types.SET_CHANNELS](state, data) {
+  diary_setChannels(state, data) {
     // console.log(data.channels);
     state.channels = _.clone(data.channels);
     // 确保有默认频道
@@ -119,14 +118,14 @@ const mutations = {
     }
   },
 
-  [types.SWITCH_CHANNEL](state, label) {
+  diary_switchChannel(state, label) {
     state.activedChannel = label;
     state.channels.forEach(item => {
       item.active = item.id == label;
     });
   },
 
-  [types.SWITCH_FILTER](state, data) {
+  diary_switchFilter(state, data) {
     let channelData = state.channelDatas[state.activedChannel];
     if (channelData.loadstate == "loading") {
       return;
@@ -144,21 +143,21 @@ const mutations = {
     });
   },
 
-  [types.CLEAR_CHANNEL_DATA](state) {
+  diary_clearChannelData(state) {
     state.channelDatas = {};
   },
 
-  [types.SET_RELOAD](state) {
+  diary_setReload(state) {
     let channelData = state.channelDatas[state.activedChannel];
     channelData.loadstate = "reload";
     channelData.diaries = [];
   },
 
-  [types.ASSIGN_CHANNEL_DATA](state, data) {
+  diary_assignChannelData(state, data) {
     Vue.set(state.channelDatas, state.activedChannel, data);
   },
 
-  [types.SET_CHANNEL_DATA](state, data) {
+  diary_setChannelData(state, data) {
     let label = data.label;
     let channelData = state.channelDatas[label];
     if (channelData) {
@@ -182,7 +181,7 @@ const actions = {
     let userid = rootState.user.id;
 
     let _channels = JSON.parse(JSON.stringify(channels));
-    commit(types.SET_CHANNELS, {
+    commit("diary_setChannels", {
       channels: _channels
     });
     localStorage[`${userid}_channels`] = JSON.stringify(_channels);
@@ -199,11 +198,11 @@ const actions = {
   }) {
     let key = `${localStorage.userid}_channels`;
     if (localStorage[key]) {
-      commit(types.SET_CHANNELS, {
+      commit("diary_setChannels", {
         channels: JSON.parse(localStorage[key])
       });
     } else {
-      commit(types.SET_DEFAULT_CHANNELS);
+      commit("diary_setDefaultChannels");
     }
   },
 
@@ -218,13 +217,13 @@ const actions = {
     try {
       let res = await api.getSubscribedChannels(userid);
       let channels = res.data;
-      commit(types.SET_CHANNELS, {
+      commit("diary_setChannels", {
         channels
       });
       localStorage[key] = JSON.stringify(state.channels);
     } catch (error) {
       if (localStorage[key]) {
-        commit(types.SET_CHANNELS, {
+        commit("diary_setChannels", {
           channels: JSON.parse(localStorage[key])
         });
       }
@@ -251,7 +250,7 @@ const actions = {
 
       let nomore = diaries.length < pageSize;
 
-      commit(types.SET_CHANNEL_DATA, {
+      commit("diary_setChannelData", {
         label,
         assign: {
           nomore
@@ -313,13 +312,13 @@ const actions = {
         }],
         diaries: []
       };
-      commit(types.ASSIGN_CHANNEL_DATA, channelData);
-      commit(types.SWITCH_FILTER, {
+      commit("diary_assignChannelData", channelData);
+      commit("diary_switchFilter", {
         filter
       });
     }
 
-    commit(types.SET_CHANNEL_DATA, {
+    commit("diary_setChannelData", {
       label,
       assign: {
         loadstate: "loading"
@@ -336,7 +335,7 @@ const actions = {
       }
       updateDiaries(diaries);
 
-      commit(types.SET_CHANNEL_DATA, {
+      commit("diary_setChannelData", {
         label,
         assign: {
           nomore: diaries.length < pageSize,
@@ -345,7 +344,7 @@ const actions = {
         diaries
       });
     } catch (error) {
-      commit(types.SET_CHANNEL_DATA, {
+      commit("diary_setChannelData", {
         label,
         assign: {
           loadstate: "error"

@@ -1,5 +1,3 @@
-import * as types from "store/mutation-types";
-
 const state = {
   title: "",
   loading: false,
@@ -12,13 +10,13 @@ const state = {
 };
 
 const mutations = {
-  [types.SET_PAGE_TITLE](state, title) {
+  page_setTitle(state, title) {
     state.title = title;
   },
-  [types.SHOW_LOADING](state, show) {
+  page_showLoading(state, show) {
     state.loading = show;
   },
-  [types.SHOW_DIALOG](state, data) {
+  page_showDialog(state, data) {
     Object.assign(state.dialog, data);
   }
 };

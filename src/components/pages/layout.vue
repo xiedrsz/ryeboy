@@ -17,14 +17,12 @@
 </template>
 
 <script>
-import * as types from "store/mutation-types";
-
 export default {
   methods: {
     updateTitle() {
       let page = document.querySelector(".page");
       if (page) {
-        this.$store.commit(types.SET_PAGE_TITLE, page.getAttribute("title"));
+        this.$store.commit("page_setTitle", page.getAttribute("title"));
       }
     }
   },
