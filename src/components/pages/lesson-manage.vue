@@ -61,13 +61,11 @@
 <script>
   // import api from "api";
   import _ from "lodash";
-  import Multiselect from "vue-multiselect";
 
   export default {
     components: {
       "checkbox": require("ui/checkbox.vue"),
-      "selectfield": require("ui/selectfield.vue"),
-      Multiselect
+      "selectfield": require("ui/selectfield.vue")
     },
     data() {
       return {
@@ -126,11 +124,8 @@
   };
 </script>
 
-<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
-
 <style lang="scss"
        scoped>
-  @import "~css/vue-multiselect-overlay.css";
   @import "~scss/main.scss";
   .title-row {
     @include flex-row;
