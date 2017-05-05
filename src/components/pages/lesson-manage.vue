@@ -4,7 +4,7 @@
     <div class="page-content">
       <div class="difficulty-container">
         <div class="title-row">
-          <div>更换难度</div>
+          <div style="font-weight: bold">更换难度</div>
           <div class="mdl-layout-spacer"></div>
           <div class="hint">难度越大效果越好</div>
         </div>
@@ -13,20 +13,23 @@
           <div class="difficulty-select"
                v-for="options in difficulties">
             <div class="groupname">{{ getGroupName(options[0].group) }}</div>
-            <multiselect v-model="selectedDifficulty[options[0].group]"
+            <!--<multiselect v-model="selectedDifficulty[options[0].group]"
                          track-by="id"
                          label="name"
+                         :showPointer="false"
                          :allowEmpty="false"
                          :searchable="false"
                          :showLabels="false"
                          :options="options">
-            </multiselect>
+            </multiselect>-->
+            <selectfield :options="options"/>
           </div>
+          
         </div>
       </div>
       <div class="switch-container">
         <div class="title-row">
-          <div>开启功课</div>
+          <div style="font-weight: bold">开启功课</div>
           <div class="mdl-layout-spacer"></div>
         </div>
         <div class="card-container">
@@ -63,6 +66,7 @@
   export default {
     components: {
       "checkbox": require("ui/checkbox.vue"),
+      "selectfield": require("ui/selectfield.vue"),
       Multiselect
     },
     data() {
@@ -72,6 +76,11 @@
         selectedLessons: [],
         lessons: []
       };
+    },
+    computed: {
+      userlv() {
+        return this.$store.state.user;
+      }
     },
     methods: {
       getUnlockText(value) {
@@ -91,6 +100,7 @@
       }
     },
     mounted() {
+      console.log(this.userlv);
       let cards = this.$store.getters.lesson_getCards;
       let lessons = {};
       let selectedDifficulties = this.$store.state.lesson.selectedDifficulties;
@@ -176,16 +186,16 @@
 
   .card {
     @include flex-row;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
     -webkit-align-items: center;
     -ms-flex-align: center;
     align-items: center;
+    width: 160px;
   }
 
   .card-unlock {
     color: $color-hint-text;
     font-size: 12px;
-    margin-right: 24px;
     @include flex-row;
     -webkit-align-items: center;
     -ms-flex-align: center;

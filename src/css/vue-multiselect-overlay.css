@@ -27,3 +27,8 @@
   background: rgba(0, 0, 0, .12);
   color: rgba(0, 0, 0, .87)
 }
+
+.multiselect__content {
+  background: #fff;
+  z-index: 100
+}
