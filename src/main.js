@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import routes from "js/routes.js";
 import store from "store";
+import api from "api";
 
 require("lazysizes");
 
@@ -14,12 +15,9 @@ const router = new VueRouter({
 });
 
 if (localStorage.authenticated) {
-  store.commit("user_setAuth", {
-    id: localStorage.userid,
-    username: localStorage.username,
-    sessionToken: localStorage.sessionToken
-  });
+  store.commit("user_assignAuth", JSON.parse(localStorage.user));
   store.dispatch("initSubscribedChannels");
+  store.dispatch("lesson_loadSettings");
 } else {
   store.commit("diary_setDefaultChannels");
 }

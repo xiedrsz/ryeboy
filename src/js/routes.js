@@ -1,17 +1,51 @@
-export default [{
-  path: "/home", component: require("components/pages/home/layout.vue"),
-  children: [
-    { path: "diary", component: require("components/pages/home/diary.vue"), name: "diary", meta: { keepAlive: true }},
-    { path: "lesson", component: require("components/pages/home/lesson.vue"), meta: { keepAlive: true }},
-    { path: "dynamic", component: require("components/pages/home/dynamic.vue"), meta: { keepAlive: true }},
-    { path: "personal", component: require("components/pages/home/personal.vue"), meta: { keepAlive: true }}
-  ]
+const home = [
+  "diary", "lesson", "dynamic", "personal"
+];
+
+const pages = [
+  "login", "settings", "channel-manage", "lesson-manage", "change-password"
+];
+
+const routes = [{
+  path: "/home",
+  component: require("components/pages/home/layout.vue"),
 }, {
-  path: "/pages", component: require("components/pages/layout.vue"),
-  children: [
-    { path: "login", component: require("components/pages/login.vue") },
-    { path: "settings", component: require("components/pages/settings.vue") },
-    { path: "channel-manage", component: require("components/pages/channel-manage.vue") },
-    { path: "lesson-manage", component: require("components/pages/lesson-manage.vue") }
-  ]
-}, { path: "*", redirect: "/home/diary" }];
+  path: "/pages",
+  component: require("components/pages/layout.vue"),
+}, {
+  path: "*",
+  redirect: "/home/diary"
+}];
+
+routes.forEach(item => {
+  if (item.path == "*") {
+    return;
+  }
+
+  if (item.path == "/home") {
+    item.children = [];
+    home.forEach(childrenPath => {
+      item.children.push({
+        path: childrenPath,
+        name: childrenPath,
+        meta: {
+          keepAlive: true
+        },
+        component: require(`components/pages/home/${childrenPath}.vue`)
+      });
+    });
+  }
+
+  if (item.path == "/pages") {
+    item.children = [];
+    pages.forEach(childrenPath => {
+      item.children.push({
+        path: childrenPath,
+        name: childrenPath,
+        component: require(`components/pages/${childrenPath}.vue`)
+      });
+    });
+  }
+});
+
+export default routes;

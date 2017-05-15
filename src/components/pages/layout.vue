@@ -8,6 +8,12 @@
       <div class="mdl-layout__header-row">
         <span class="mdl-layout-title">{{ title }}</span>
         <div class="mdl-layout-spacer"></div>
+        <nav class="mdl-navigation"
+             v-if="actions && actions.length > 0">
+          <div class="mdl-navigation__link"
+               v-for="action in actions"
+               @click="emit(action.name)">{{ action.text }}</div>
+        </nav>
       </div>
     </header>
     <main class="mdl-layout__content">
@@ -17,29 +23,37 @@
 </template>
 
 <script>
-export default {
-  methods: {
-    updateTitle() {
-      let page = document.querySelector(".page");
-      if (page) {
-        this.$store.commit("page_setTitle", page.getAttribute("title"));
+  export default {
+    watch: {
+      "$route" () {
+        this.$nextTick(() => {
+          this.updateHeader();
+        });
       }
-    }
-  },
-  computed: {
-    title() {
-      return this.$store.state.page.title;
-    }
-  },
-  mounted() {
-    this.updateTitle();
-  },
-  updated() {
-    setTimeout(() => {
-      this.updateTitle();
-    }, 0);
+    },
+    methods: {
+      emit(name) {
+        this.$children[0].$emit(name);
+      },
+      updateHeader() {
+        let page = document.querySelector(".page");
+        if (page) {
+          this.$store.commit("page_setTitle", page.getAttribute("title"));
+          this.$store.commit("page_setActions", page.getAttribute("actions"));
+        }
+      }
+    },
+    computed: {
+      title() {
+        return this.$store.state.page.title;
+      },
+      actions() {
+        return this.$store.state.page.actions;
+      }
+    },
 
-  }
-};
-
+    mounted() {
+      this.updateHeader();
+    }
+  };
 </script>

@@ -3,7 +3,8 @@
     <div class="action-container">
       <div class="action">2月6日</div>
       <div class="mdl-layout-spacer"></div>
-      <div class="action" @click="$router.push('/pages/lesson-manage')">管理</div>
+      <div class="action"
+           @click="$router.push('/pages/lesson-manage')">管理</div>
       <div class="action">保存</div>
       <div class="action">发布</div>
     </div>
@@ -16,7 +17,7 @@
           <div>
             <checkbox :id="weight.value"
                       text="全选"
-                      :changed="weightSelectAll"></checkbox>
+                      :changed="selectAllCards"></checkbox>
           </div>
         </div>
         <div class="card-list">
@@ -26,7 +27,7 @@
                  :src="'../../img/card-' + card.id + '.png'">
             <div class="card-name">{{ card.name }}</div>
             <checkbox :id="card.id"
-                      :selected="card.selected"></checkbox>
+                      v-model="card.selected"></checkbox>
           </div>
         </div>
       </div>
@@ -35,6 +36,28 @@
 </template>
 
 <script>
+  function getSelected(cards) {
+    let selected = [];
+    cards.forEach(weight => {
+      weight.cards.forEach(card => {
+        if (card.selected === true) {
+          selected.push(card.id);
+        }
+      });
+    });
+    return selected;
+  }
+
+  function setSelected(cards, selected) {
+    cards.forEach(weight => {
+      weight.cards.forEach(card => {
+        if (selected.indexOf(card.id) >= 0) {
+          card.selected = true;
+        }
+      });
+    });
+  }
+
   export default {
     data() {
       return {
@@ -42,18 +65,24 @@
       };
     },
     methods: {
-      weightSelectAll(data) {
-        this.cards.forEach(item => {
-          if (item.value == data.id) {
-            item.cards.forEach(card => {
-              card.selected = data.selected;
+      cardVisibled(card) {
+        return this.userlv >= card.unlock;
+      },
+      selectAllCards(data) {
+        this.cards.forEach(weight => {
+          if (weight.value == data.id) {
+            weight.cards.forEach(card => {
+              card.selected = data.checked;
             });
           }
         });
       }
     },
-    mounted() {
-      this.cards = this.$store.getters.lesson_getOptionalCards;
+    mounted() {},
+    activated() {
+      let selected = getSelected(this.cards);
+      this.cards = this.$store.getters.lesson_getAvailableCards;
+      setSelected(this.cards, selected);
     },
     components: {
       "checkbox": require("ui/checkbox.vue"),

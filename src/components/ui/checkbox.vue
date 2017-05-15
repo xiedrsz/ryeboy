@@ -3,7 +3,8 @@
          class="mdl-checkbox mdl-js-checkbox">
     <input type="checkbox"
            :id="id"
-           v-model="checked"
+           :disabled="disabled"
+           v-model="model"
            class="mdl-checkbox__input">
     <span class="mdl-checkbox__label">{{ text }}</span>
   </label>
@@ -11,39 +12,42 @@
 
 <script>
   export default {
+    model: {
+      prop: "checked",
+      event: "change",
+    },
     props: {
       id: [Number, String],
       text: String,
-      selected: Boolean,
+      checked: Boolean,
+      disabled: Boolean,
       changed: Function
     },
-    data() {
-      return {
-        checked: this.selected
-      };
-    },
     watch: {
-      selected(newVal) {
-        this.checked = newVal;
-      },
-      checked(newVal, oldVal) {
-        if (newVal == oldVal) {
-          return;
-        }
-
+      checked(newVal) {
         if (newVal) {
           this.$el.MaterialCheckbox.check();
         } else {
           this.$el.MaterialCheckbox.uncheck();
         }
-
-        if (this.changed) {
-          this.changed({
-            id: this.id,
-            selected: newVal
-          });
-        }
       }
+    },
+    computed: {
+      model: {
+        get() {
+          return this.checked;
+        },
+        set(newVal) {
+          this.$emit("change", newVal);
+
+          if (this.changed) {
+            this.changed({
+              id: this.id,
+              checked: newVal
+            });
+          }
+        },
+      },
     },
     mounted() {
       componentHandler.upgradeElement(this.$el);

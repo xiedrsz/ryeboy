@@ -2,10 +2,11 @@
   <div class="mdl-selectfield mdl-js-selectfield"
        style="width:100px">
     <select :id="id"
+            v-model="model"
             class="mdl-selectfield__select"
             required>
       <option v-for="option in options"
-              :value="option.id">{{ option.name}}</option>
+              :value="option.value">{{ option.text}}</option>
     </select>
   </div>
 </template>
@@ -485,10 +486,36 @@
   })();
 
   export default {
-    props: {
-      id: String,
-      options: Array,
+    model: {
+      prop: "selected",
+      event: "change",
     },
+    props: {
+      id: [Number, String],
+      options: Array,
+      selected: [String, Number],
+      changed: Function
+    },
+    computed: {
+      model: {
+        get() {
+          return this.selected;
+        },
+        set(newVal) {
+          this.$emit("change", newVal);
+
+          if (this.changed) {
+            this.changed({
+              id: this.id,
+              selected: newVal
+            });
+          }
+        },
+      },
+    },
+    mounted() {
+      componentHandler.upgradeElement(this.$el);
+    }
   };
 </script>
 

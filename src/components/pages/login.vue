@@ -53,16 +53,9 @@
             if (data.error) {
               this.errorText = "无效的帐号或密码。";
             } else {
-              this.$store.commit("user_setAuth", data.user);
-              let user = data.user;
-
               localStorage.authenticated = true;
-              localStorage.userid = user.id;
-              localStorage.username = user.username;
-              localStorage.sessionToken = user.sessionToken;
-
+              this.$store.commit("user_setAuth", data.user);
               let redirect = this.$route.query.redirect;
-
               this.$store.dispatch("getSubscribedChannels").then(() => {
                 this.$router.replace(redirect ? redirect : "/");
               });

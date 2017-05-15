@@ -1,5 +1,6 @@
 const state = {
   title: "",
+  actions: [],
   loading: false,
   dialog: {
     show: false,
@@ -12,6 +13,9 @@ const state = {
 const mutations = {
   page_setTitle(state, title) {
     state.title = title;
+  },
+  page_setActions(state, actions) {
+    state.actions = JSON.parse(actions);
   },
   page_showLoading(state, show) {
     state.loading = show;

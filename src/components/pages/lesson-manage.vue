@@ -1,6 +1,7 @@
 <template>
   <div class="page"
-       title="功课管理">
+       title="功课管理"
+       :actions="actions">
     <div class="page-content">
       <div class="difficulty-container">
         <div class="title-row">
@@ -11,20 +12,13 @@
         <div class="difficulty-list"
              style="margin-top: 8px">
           <div class="difficulty-select"
-               v-for="options in difficulties">
-            <div class="groupname">{{ getGroupName(options[0].group) }}</div>
-            <!--<multiselect v-model="selectedDifficulty[options[0].group]"
-                         track-by="id"
-                         label="name"
-                         :showPointer="false"
-                         :allowEmpty="false"
-                         :searchable="false"
-                         :showLabels="false"
-                         :options="options">
-            </multiselect>-->
-            <selectfield :options="options"/>
+               v-for="group in difficulties">
+            <div class="groupname">{{ getGroupName(group.id) }}</div>
+            <selectfield v-model="selectedDifficulties[group.id]"
+                         :id="group.id"
+                         :options="group.options"
+                         :changed="difficultyChange" />
           </div>
-          
         </div>
       </div>
       <div class="switch-container">
@@ -42,11 +36,14 @@
               <div v-for="card in weight.cards"
                    class="card">
                 <div style="margin-right: 8px">
-                  <checkbox :id="card.id"
-                            :text="card.name"
-                            :selected="card.selected"></checkbox>
+                  <checkbox v-model="card.selected"
+                            :id="card.id"
+                            :disabled="userlv < card.unlock"
+                            :text="card.group ? getGroupName(card.group) : card.name"
+                            :changed="lessonChanged"></checkbox>
                 </div>
-                <div class="card-unlock">
+                <div class="card-unlock"
+                     v-if="userlv < card.unlock">
                   {{ getUnlockText(card.unlock) }}</div>
               </div>
             </div>
@@ -60,7 +57,6 @@
 
 <script>
   // import api from "api";
-  import _ from "lodash";
 
   export default {
     components: {
@@ -69,18 +65,40 @@
     },
     data() {
       return {
-        selectedDifficulty: {},
         difficulties: [],
-        selectedLessons: [],
         lessons: []
       };
     },
     computed: {
+      actions() {
+        return JSON.stringify([{
+          text: "完成",
+          name: "finish"
+        }]);
+      },
+      userid() {
+        return this.$store.state.user._id;
+      },
       userlv() {
-        return this.$store.state.user;
+        return this.$store.state.user.grade.lv;
+      },
+      selectedDifficulties() {
+        return this.$store.state.lesson.difficulties;
       }
     },
     methods: {
+      difficultyChange(data) {
+        this.$store.commit("lesson_setDifficulty", data);
+      },
+      lessonChanged(data) {
+        this.$store.commit("lesson_setDeselect", data);
+      },
+      save() {
+        this.$store.dispatch("lesson_saveSettings");
+      },
+      finish() {
+        history.go(-1);
+      },
       getUnlockText(value) {
         return `[${value}级]`;
       },
@@ -97,28 +115,13 @@
         }
       }
     },
+    beforeDestroy(){
+      this.save();
+    },
     mounted() {
-      console.log(this.userlv);
-      let cards = this.$store.getters.lesson_getCards;
-      let lessons = {};
-      let selectedDifficulties = this.$store.state.lesson.selectedDifficulties;
+      this.$on("finish", this.finish);
 
-      cards.forEach(card => {
-        if (card.group) {
-          if (!lessons[card.group]) {
-            lessons[card.group] = [];
-          }
-          lessons[card.group].push(card);
-          if (selectedDifficulties[card.group] && selectedDifficulties[card.group] == card.id) {
-            this.selectedDifficulty[card.group] = card;
-          }
-        }
-      });
-
-      _.each(lessons, item => {
-        this.difficulties.push(item);
-      });
-
+      this.difficulties = this.$store.getters.lesson_getDifficultCards;
       this.lessons = this.$store.getters.lesson_getOptionalCards;
     }
   };
@@ -189,7 +192,7 @@
   }
 
   .card-unlock {
-    color: $color-hint-text;
+    color: $color-secondary-text;
     font-size: 12px;
     @include flex-row;
     -webkit-align-items: center;

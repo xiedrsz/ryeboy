@@ -3,6 +3,7 @@
        title="设置">
     <list>
       <list-item text="修改密码"
+                 @click.native="$router.push('/pages/change-password')"
                  v-if="authenticated" />
       <list-item text="设置隐私密码"
                  v-if="authenticated" />
@@ -33,6 +34,7 @@
         api.logout();
 
         localStorage.removeItem("authenticated");
+        localStorage.removeItem("user");
         this.$store.commit("user_deleteAuth");
         this.$router.replace("/");
       },

@@ -178,7 +178,7 @@ const actions = {
     commit,
     rootState
   }, channels) {
-    let userid = rootState.user.id;
+    let userid = rootState.user._id;
 
     let _channels = JSON.parse(JSON.stringify(channels));
     commit("diary_setChannels", {
@@ -194,9 +194,12 @@ const actions = {
   },
 
   async initSubscribedChannels({
-    commit
+    commit,
+    rootState
   }) {
-    let key = `${localStorage.userid}_channels`;
+    let userid = rootState.user._id;
+
+    let key = `${userid}_channels`;
     if (localStorage[key]) {
       commit("diary_setChannels", {
         channels: JSON.parse(localStorage[key])
@@ -211,7 +214,7 @@ const actions = {
     state,
     rootState
   }) {
-    let userid = rootState.user.id;
+    let userid = rootState.user._id;
     let key = `${userid}_channels`;
 
     try {
