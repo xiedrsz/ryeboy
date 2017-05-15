@@ -56,7 +56,7 @@
 </template>
 
 <script>
-  // import api from "api";
+  import textHelper from "js/utils/textHelper";
 
   export default {
     components: {
@@ -73,7 +73,7 @@
       actions() {
         return JSON.stringify([{
           text: "完成",
-          name: "finish"
+          clickHandler: "finish"
         }]);
       },
       userid() {
@@ -103,19 +103,10 @@
         return `[${value}级]`;
       },
       getGroupName(group) {
-        switch (group) {
-          case 304:
-            return "麦式运动";
-
-          case 401:
-            return "早睡";
-
-          case 411:
-            return "早起";
-        }
+        return textHelper.getLessonGroupName(group);
       }
     },
-    beforeDestroy(){
+    beforeDestroy() {
       this.save();
     },
     mounted() {

@@ -12,7 +12,7 @@
              v-if="actions && actions.length > 0">
           <div class="mdl-navigation__link"
                v-for="action in actions"
-               @click="emit(action.name)">{{ action.text }}</div>
+               @click="emit(action.clickHandler)">{{ action.text }}</div>
         </nav>
       </div>
     </header>
@@ -32,8 +32,8 @@
       }
     },
     methods: {
-      emit(name) {
-        this.$children[0].$emit(name);
+      emit(clickHandler) {
+        this.$children[0].$emit(clickHandler);
       },
       updateHeader() {
         let page = document.querySelector(".page");

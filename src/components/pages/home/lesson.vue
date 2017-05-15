@@ -78,7 +78,9 @@
         });
       }
     },
-    mounted() {},
+    mounted() {
+      document.querySelector(".card-container").style.height = (document.querySelector("main").clientHeight - document.querySelector(".action-container").clientHeight - 1) + "px";
+    },
     activated() {
       let selected = getSelected(this.cards);
       this.cards = this.$store.getters.lesson_getAvailableCards;

@@ -25,6 +25,19 @@ class textHelper {
     }
     return text;
   }
+
+  getLessonGroupName(group) {
+    switch (group) {
+    case 304:
+      return "麦式运动";
+
+    case 401:
+      return "早睡";
+
+    case 411:
+      return "早起";
+    }
+  }
 }
 
 module.exports = new textHelper();
