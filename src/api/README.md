@@ -1,3 +1,48 @@
+# /getLessonDetail
+获取功课详情
+
+## GET
+
++ Request (application/json)
+
+    + Schema
+
+            {
+                "id": {
+                    "description": "功课标识",
+                    "type": "string"
+                }
+            }
+
+    + Example
+    
+            {
+                "id": "304"
+            }
+            
++ Response 200 (application/json)
+
+    + Schema
+
+            {
+                "tutorial": {
+                    "description": "功课教程内容，HTML",
+                    "type": "string"
+                },
+                "faq": {
+                    "description": "常见问答内容，仅允许纯文本",
+                    "type": "string"
+                }
+            }
+
+    + Example
+    
+            {
+                "tutorial": "<p>功课教程<br/></p><p><br/>",
+                "faq": "起初做的时候太别扭，也总是忘记。"
+            }
+            
+
 # /login
 用户登录
 

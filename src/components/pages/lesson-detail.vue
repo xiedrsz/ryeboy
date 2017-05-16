@@ -76,7 +76,7 @@
       }
     },
     mounted() {
-      api.getLessonDetail(this.card.id).then(res => {
+      api.getLessonDetail(String(this.card.id)).then(res => {
         this.tabs.find(item => {
           return item.id == "tutorial";
         }).content = res.data.tutorial;
