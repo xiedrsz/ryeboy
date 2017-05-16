@@ -2,7 +2,13 @@ body {
   font-family: "Microsoft YaHei", "Helvetica", "Arial", sans-serif;
 }
 
-.page-content {
+.page-content,
+.content-block {
   display: block;
   padding: 16px;
+}
+
+.html-content img,
+.html-content iframe {
+  max-width: 100%;
 }

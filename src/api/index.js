@@ -4,6 +4,14 @@ import config from "js/config";
 axios.defaults.baseURL = config.apiAddress;
 
 class api {
+  static getLessonDetail(id) {
+    return axios.get("/getLessonDetail", {
+      params: {
+        id
+      }
+    });
+  }
+
   static getUser(userid) {
     return axios.get("/getUser", {
       params: {

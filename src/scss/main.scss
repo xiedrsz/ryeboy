@@ -34,3 +34,15 @@ $color-hint-block: #f4f4f4;
   -ms-flex-direction: column;
   flex-direction: column;
 }
+
+@mixin flex-vertical-center {
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+@mixin flex-horizontal-center {
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}

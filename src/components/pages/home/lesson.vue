@@ -24,6 +24,7 @@
           <div v-for="card in weight.cards"
                class="card">
             <img class="card-icon"
+                 @click="$router.push('/pages/lesson-detail?id=' + card.id)"
                  :src="'../../img/card-' + card.id + '.png'">
             <div class="card-name">{{ card.name }}</div>
             <checkbox :id="card.id"

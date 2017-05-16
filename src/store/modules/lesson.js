@@ -14,6 +14,7 @@ function getWeightName(weight) {
 
 const state = {
   settingsLoaded: false,
+  cards,
   deselects: [],
   difficulties: {
     "304": 304,
