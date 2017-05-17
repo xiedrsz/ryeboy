@@ -24,7 +24,7 @@
           <div v-for="card in weight.cards"
                class="card">
             <img class="card-icon"
-                 @click="$router.push('/pages/lesson-detail?id=' + card.id)"
+                 @click="cardDetail(card.id)"
                  :src="'../../img/card-' + card.id + '.png'">
             <div class="card-name">{{ card.name }}</div>
             <checkbox :id="card.id"
@@ -66,6 +66,13 @@
       };
     },
     methods: {
+      cardDetail(cardId) {
+        if (cardId == 100) {
+          this.$router.push("/pages/lesson-diary");
+        } else {
+          this.$router.push(`/pages/lesson-detail?id=${cardId}`);
+        }
+      },
       cardVisibled(card) {
         return this.userlv >= card.unlock;
       },

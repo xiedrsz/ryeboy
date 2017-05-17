@@ -2,6 +2,11 @@ body {
   font-family: "Microsoft YaHei", "Helvetica", "Arial", sans-serif;
 }
 
+textarea {
+  font-family: "Microsoft YaHei", "Helvetica", "Arial", sans-serif;
+  font-size: 14px;
+}
+
 .page-content,
 .content-block {
   display: block;
