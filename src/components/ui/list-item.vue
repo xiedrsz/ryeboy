@@ -1,6 +1,8 @@
 <template>
   <li class="mdl-list__item" :class="{'mdl-list__item--bottom-divider': divider}">
+    <img class="mdl-list__item-icon" v-if="lIcon" :src="lIcon"></img>
     <span class="mdl-list__item-primary-content">{{ text }}</span>
+    <span class="mdl-list__item-note" v-if="note">{{ note }}</span>
   </li>
 </template>
 
@@ -8,6 +10,8 @@
   export default {
     props: {
       text: String,
+      note: String,
+      lIcon: String,
       divider: {
         type: Boolean,
         default: true
@@ -16,3 +20,19 @@
   };
 
 </script>
+
+<style lang="scss" scoped>
+  @import "~scss/main.scss";
+  .mdl-list__item-note{
+      font-size: 12px;
+      color: #a5a5a5;
+      border: 1px solid #a5a5a5;
+      padding: 3px 5px;
+      border-radius: 6px;
+      line-height: 1;
+      display: inline-block;
+  }
+  .mdl-list__item-icon{
+    margin-right:10px;
+  }
+</style>

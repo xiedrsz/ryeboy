@@ -1,5 +1,7 @@
 import axios from "axios";
 import config from "js/config";
+// 引入 mocks
+import "../../mocks"
 
 axios.defaults.baseURL = config.apiAddress;
 
@@ -63,6 +65,40 @@ class api {
       users
     });
   }
+
+  // 动态部分接口
+  // 获取 关注、粉丝 数目
+  static getFansNum() {
+    return axios.post("/getFansNum");
+  }
+
+  //动态日记接口
+  //获取 日记发布者的头像、用户名，日记内容、发布时间、日记标签，点赞的数量，评论的数量、内容，用户是否已点赞
+  //authorAvater,authorName,content,time,goodNum,commentNum,lable,isGood
+  static getDynamicDiaries() {
+    return axios.post("/getDynamicDiaries");
+  }
+
+  //已关注接口
+  //获取已关注的用户总数，关注用户上限，用户头像，用户名，是否取消关注
+  static getConcerns() {
+    return axios.post("/getConcerns")
+  }
+
+  //粉丝接口
+  //获取粉丝总数，粉丝头像，用户名，粉丝ID号，点击头像进入个人页面
+  static getFans() {
+    return axios.post("/getFans")
+  }
+
+  //添加接口
+  //获取符合条件的用户头像，用户名，ID号，是否关注，已关注的数量，推举关注总数量
+  static addConcern() {
+    return axios.post("/addConcern")
+  }
 }
+
+// 暂时暴露到全局
+window.api = api;
 
 export default api;

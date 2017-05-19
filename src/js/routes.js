@@ -13,6 +13,54 @@ const routes = [{
   path: "/pages",
   component: require("components/pages/layout.vue"),
 }, {
+  path: "/dynamic",
+  component: require("components/pages/layout.vue"),
+  children: [
+    {
+      path: "subscrible",
+      component: require("components/pages/dynamic/subscrible.vue"),
+      name: "subscrible",
+      meta: {
+        keepAlive: true
+      }
+    }, {
+      path: "concern",
+      component: require("components/pages/dynamic/concern.vue"),
+      name: "concern",
+      meta: {
+        keepAlive: true
+      },
+      children: [{
+        path: "dynamic",
+        component: require("components/pages/dynamic/concern/dynamic.vue"),
+        name: "concern-dynamic",
+        meta: {
+          keepAlive: true
+        }
+      }, {
+        path: "concern",
+        component: require("components/pages/dynamic/concern/concern.vue"),
+        name: "concern-concern",
+        meta: {
+          keepAlive: true
+        }
+      }, {
+        path: "fans",
+        component: require("components/pages/dynamic/concern/fans.vue"),
+        name: "concern-fans",
+        meta: {
+          keepAlive: true
+        }
+      }]
+    }, {
+      path: "concernadd",
+      component: require("components/pages/dynamic/concern-add.vue"),
+      name: "concern-add",
+      meta: {
+        keepAlive: true
+      }
+    }]
+}, {
   path: "*",
   redirect: "/home/diary"
 }];

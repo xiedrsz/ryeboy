@@ -5,3 +5,4 @@ www/
 *.log
 *.log.*
 memo
+node_modules.zip
