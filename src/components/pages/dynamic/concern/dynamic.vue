@@ -5,14 +5,7 @@
         <div class="slide-content">
           <pull-to-refresh :disabled="disableRefresh" @pulltorefresh="pulltorefresh" />
           <ul class="mdl-list">
-            <dynamic-item v-for="item in dynamic" 
-                        :likeCount="item.likeCount" 
-                        :commentCount="item.commentCount" 
-                        :avatar="item.avatar" 
-                        :username="item.username" 
-                        :text="item.escapedText" 
-                        :time="item.time" 
-                        :overflow="item.overflow"/>
+            <dynamic-item v-for="item in dynamic" :likeCount="item.likeCount" :commentCount="item.commentCount" :avatar="item.avatar" :username="item.username" :text="item.escapedText" :time="item.time" :overflow="item.overflow" />
           </ul>
           <div v-if="false" class="unload">
             (未加载)
@@ -41,32 +34,28 @@
   export default {
     data() {
         return {
-          slideContentHeight: 0
+          slideContentHeight: 0,
+          disableRefresh: false
         };
       },
       computed: {
-        disableRefresh() {
-            let state = this.$store.getters.getChannelLoadstate;
-            return !(state == "ok" || state == "error" || state == "empty");
-          },
-          // 关注动态
-          dynamic() {
-            return this.$store.state.concern.dynamic;
-          }
+        // 关注动态
+        dynamic() {
+          return this.$store.state.concern.dynamic;
+        }
       },
       methods: {
         setSlideContentHeight() {
             document.querySelector(".slide-content").style.height = this.slideContentHeight;
           },
           pulltorefresh() {
-            this.$store.commit(types.SET_RELOAD);
-            this.getDiaries();
+            this.getDynamic();
           },
           slideChanged() {
-            this.getDiaries();
+            this.getDynamic();
           },
-          getDiaries() {
-            this.$store.dispatch("getDiaries");
+          getDynamic() {
+            this.$store.dispatch("getDynamic");
           },
           infinite(infiniteScroll) {
             this.$store.dispatch("getMoreDiaries", infiniteScroll);
@@ -90,12 +79,12 @@
             this.slideChanged(0);
           }, 0);
         }
-        let fulltext = document.getElementsByClassName('text')
+
+        /*let fulltext = document.getElementsByClassName('text')
         for(let t=0;t<fulltext.length;t++){
-          /*fulltext[t].style.height = fulltext[t].clientHeight + 'px';*/
           fulltext[t].clientHeight == 60 ? this.dynamic[t].overflow = true : this.dynamic[t].overflow = false
         } 
-        console.log(this.dynamic[0].overflow)   
+        console.log(this.dynamic[0].overflow)  */
       },
       mounted() {
         // 调整动态列表高度

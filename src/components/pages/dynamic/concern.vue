@@ -23,6 +23,7 @@
       }
     },
     mounted() {
+      // 监听 添加 事件
       this.$on("concern-add", () => {
         this.$router.push({
           path: '/dynamic/concernadd'
@@ -30,10 +31,8 @@
       })
     },
     activated() {
-      this.$store.commit("concern_setOverview", {
-        cons: 50,
-        fans: 50
-      });
+      // 获取 关注概述
+      this.$store.dispatch("getOverview");
     }
   };
 </script>
