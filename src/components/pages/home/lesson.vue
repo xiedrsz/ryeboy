@@ -1,12 +1,20 @@
 <template>
   <div class="page-layout">
     <div class="action-container">
-      <div class="action">2月6日</div>
+      <div class="action date-selector"
+           @click="selectDate">
+        <span>{{ selectedDateText}}</span>
+        <i class="material-icons md-20"
+           style="margin-left: 8px"
+           @click="selectDate">expand_more</i>
+      </div>
       <div class="mdl-layout-spacer"></div>
       <div class="action"
            @click="$router.push('/pages/lesson-manage')">管理</div>
-      <div class="action">保存</div>
-      <div class="action">发布</div>
+      <div class="action"
+           @click="save">保存</div>
+      <div class="action"
+           @click="publish">发布</div>
     </div>
     <div class="card-container">
       <div v-for="weight in cards"
@@ -16,6 +24,7 @@
           <div class="mdl-layout-spacer"></div>
           <div>
             <checkbox :id="weight.value"
+                      v-model="weight.selected"
                       text="全选"
                       :changed="selectAllCards"></checkbox>
           </div>
@@ -37,35 +46,17 @@
 </template>
 
 <script>
-  function getSelected(cards) {
-    let selected = [];
-    cards.forEach(weight => {
-      weight.cards.forEach(card => {
-        if (card.selected === true) {
-          selected.push(card.id);
-        }
-      });
-    });
-    return selected;
-  }
-
-  function setSelected(cards, selected) {
-    cards.forEach(weight => {
-      weight.cards.forEach(card => {
-        if (selected.indexOf(card.id) >= 0) {
-          card.selected = true;
-        }
-      });
-    });
-  }
+  const flatpickr = require("flatpickr");
+  const datetime = require("js/utils/datetime");
+  const moment = require("moment");
 
   export default {
-    data() {
-      return {
-        cards: []
-      };
-    },
     methods: {
+      save() {},
+      publish() {},
+      selectDate() {
+        this.flatpickr.open();
+      },
       cardDetail(cardId) {
         if (cardId == 100) {
           this.$router.push("/pages/lesson-diary");
@@ -86,19 +77,71 @@
         });
       }
     },
+    computed: {
+      selectedDateText() {
+        let _selectedDate = moment(this.selectedDate);
+        let suffix = "";
+        let diffDays = _selectedDate.diff(datetime.date(moment()), "days");
+        if (diffDays == -1) {
+          suffix = "昨天";
+        } else if (diffDays == 0) {
+          suffix = "今天";
+        } else
+        if (diffDays == -2) {
+          suffix = "前天";
+        }
+        return _selectedDate.format("M[月]D[日]" + suffix);
+      },
+      selectedDate() {
+        return this.$store.state.lesson.selectedDate;
+      },
+      cards() {
+        return this.$store.getters.lesson_getCards;
+      }
+    },
     mounted() {
       document.querySelector(".card-container").style.height = (document.querySelector("main").clientHeight - document.querySelector(".action-container").clientHeight - 1) + "px";
+      let store = this.$store;
+
+      // this.$store.dispatch("lesson_getDateRecord").then((cards) => {
+      //   this.cards = cards;
+      // });
+
+      console.log(this.selectedDate);
+
+      this.flatpickr = new flatpickr(document.querySelector(".date-selector"), {
+        clickOpens: false,
+        disableMobile: true,
+        defaultDate: this.selectedDate,
+        locale: require("flatpickr/dist/l10n/zh.js").zh,
+        disable: [
+          function(date) {
+            return datetime.date(date).isAfter(datetime.date(moment()));
+          }
+        ],
+        onChange(selectedDates) {
+          store.state.lesson.selectedDate = selectedDates[0];
+        }
+      });
+    },
+    destroyed() {
+      if (this.flatpickr) {
+        this.flatpickr.destroy();
+        delete this.flatpickr;
+      }
     },
     activated() {
-      let selected = getSelected(this.cards);
-      this.cards = this.$store.getters.lesson_getAvailableCards;
-      setSelected(this.cards, selected);
+      // let selected = getSelected(this.cards);
+      // this.cards = this.$store.getters.lesson_getAvailableCards;
+      // setSelected(this.cards, selected);
     },
     components: {
       "checkbox": require("ui/checkbox.vue"),
     }
   };
 </script>
+
+<style src="flatpickr/dist/themes/material_blue.css"></style>
 
 <style lang="scss"
        scoped>
@@ -174,5 +217,10 @@
 
   .card-name {
     font-size: 12px;
+  }
+
+  .date-selector {
+    @include flex-row;
+    @include flex-vertical-center;
   }
 </style>

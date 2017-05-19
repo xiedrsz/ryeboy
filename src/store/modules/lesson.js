@@ -1,5 +1,8 @@
+import Vue from "vue";
 import _ from "lodash";
 const cards = require("store/cards.json");
+const datetime = require("js/utils/datetime");
+const moment = require("moment");
 
 function getWeightName(weight) {
   switch (weight) {
@@ -14,84 +17,108 @@ function getWeightName(weight) {
 
 const state = {
   settingsLoaded: false,
+  selectedDate: datetime.date(moment()).subtract(1, "days").toDate(),
   cards,
   deselects: [],
   difficulties: {
     "304": 304,
     "401": 401,
     "411": 411
-  }
+  },
+  records: {}
 };
 
 const getters = {
-  lesson_getAvailableCards(state, getters, rootState) {
-    let collated = [];
+  lesson_getCards(state, getters, rootState) {
+    let key = moment(state.selectedDate).format("YYYY-MM-DD");
+
+    if (state.records[key] === undefined) {
+      Vue.set(state.records, key, {
+        diary: {
+          text: ""
+        },
+        weightedCards: []
+      });
+    }
+
+    let weightedCards = state.records[key].weightedCards;
+
+    let selectedWeights = {};
+    weightedCards.forEach(weight => {
+      if (weight.selected === true) {
+        selectedWeights[weight.value] = true;
+      }
+    });
+
+    let selectedCards = {};
+    weightedCards.forEach(weight => {
+      weight.cards.forEach(card => {
+        if (card.selected === true) {
+          selectedCards[card.id] = true;
+        }
+      });
+    });
+
+    weightedCards.splice(0, weightedCards.length);
 
     cards.forEach(card => {
-      let cardset = collated[card.weight - 1];
+      let cardset = weightedCards[card.weight - 1];
       if (cardset === undefined) {
         cardset = {
           value: card.weight,
           name: getWeightName(card.weight),
+          selected: selectedWeights[card.weight] ? true : false,
           cards: []
         };
-        collated[card.weight - 1] = cardset;
+        weightedCards.push(cardset);
+      }
+      if (rootState.user.grade.lv < card.unlock) {
+        return;
       }
 
       if (card.group) {
         if (state.difficulties[card.group] != card.id) {
           return;
         }
-      }
-
-      if (rootState.user.grade.lv < card.unlock) {
-        return;
-      }
-
-      if (_.indexOf(state.deselects, card.id) != -1) {
-        return;
+        if (_.indexOf(state.deselects, card.group) != -1) {
+          return;
+        }
+      } else {
+        if (_.indexOf(state.deselects, card.id) != -1) {
+          return;
+        }
       }
 
       cardset.cards.push(Object.assign({
-        selected: false
+        selected: selectedCards[card.id] ? true : false
       }, card));
     });
 
-    let result = [];
-    collated.forEach(cardset => {
-      if (cardset.cards.length > 0) {
-        result.push(cardset);
-      }
-    });
-
-    return result;
+    return weightedCards;
   },
   lesson_getDifficultCards() {
-    let collated = {};
+    let result = [];
+    let group;
 
     cards.forEach(card => {
       if (card.group) {
-        if (!collated[card.group]) {
-          collated[card.group] = {
+        if (group === undefined || group.id != card.group) {
+          group = {
             id: card.group,
             options: []
           };
+          result.push(group);
         }
-        let option = {
+        group.options.push({
           value: card.id,
           text: card.name
-        };
-        collated[card.group].options.push(option);
+        });
       }
     });
 
-    let result = [];
-    _.each(collated, item => {
-      result.push(item);
-    });
     return result;
   },
-  lesson_getOptionalCards(state) {
+  lesson_getManagedCards(state) {
     let result = [];
 
     cards.forEach(card => {
@@ -102,13 +129,11 @@ const getters = {
           name: getWeightName(card.weight),
           cards: []
         };
-        result[card.weight - 1] = cardset;
+        result.push(cardset);
       }
 
-      if (card.group) {
-        if (state.difficulties[card.group] != card.id) {
-          return;
-        }
+      if (card.group && card.group != card.id) {
+        return;
       }
 
       cardset.cards.push(Object.assign({
@@ -143,6 +168,58 @@ const mutations = {
 };
 
 const actions = {
+  // lesson_getDateRecord({
+  //   state,
+  //   rootState
+  // }) {
+  //   let key = getDateKey(state.selectedDate);
+  //   if (state.records[key] === undefined) {
+  //     state.records[key] = {
+  //       diary: "",
+  //       cards: []
+  //     };
+  //   }
+
+  //   let collated = [];
+
+  //   cards.forEach(card => {
+  //     let cardset = collated[card.weight - 1];
+  //     if (cardset === undefined) {
+  //       cardset = {
+  //         value: card.weight,
+  //         name: getWeightName(card.weight),
+  //         cards: []
+  //       };
+  //       collated[card.weight - 1] = cardset;
+  //     }
+
+  //     if (card.group) {
+  //       if (state.difficulties[card.group] != card.id) {
+  //         return;
+  //       }
+  //     }
+
+  //     if (rootState.user.grade.lv < card.unlock) {
+  //       return;
+  //     }
+
+  //     if (_.indexOf(state.deselects, card.id) != -1) {
+  //       return;
+  //     }
+
+  //     cardset.cards.push(Object.assign({
+  //       selected: false
+  //     }, card));
+  //   });
+
+  //   collated.forEach(cardset => {
+  //     if (cardset.cards.length > 0) {
+  //       state.records[key].cards.push(cardset);
+  //     }
+  //   });
+
+  //   return state.records[key].cards;
+  // },
   lesson_loadSettings({
     commit,
     rootState

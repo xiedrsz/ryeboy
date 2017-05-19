@@ -1,6 +1,10 @@
 const moment = require("moment");
 
 class datetime {
+  date(date){
+    return moment(date).hours(0).minutes(0).seconds(0).millisecond(0);
+  }
+
   formatDiaryCreated(createdAt) {
     let current = moment(createdAt);
     let now = moment();

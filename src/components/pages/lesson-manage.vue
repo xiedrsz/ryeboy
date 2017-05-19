@@ -15,7 +15,7 @@
                v-for="group in difficulties">
             <div class="groupname">{{ getGroupName(group.id) }}</div>
             <selectfield v-model="selectedDifficulties[group.id]"
-                         :id="group.id"
+                         :id="'_' + group.id"
                          :options="group.options"
                          :changed="difficultyChange" />
           </div>
@@ -88,6 +88,7 @@
     },
     methods: {
       difficultyChange(data) {
+        data.id = Number(data.id.slice(1));
         this.$store.commit("lesson_setDifficulty", data);
       },
       lessonChanged(data) {
@@ -113,7 +114,7 @@
       this.$on("finish", this.finish);
 
       this.difficulties = this.$store.getters.lesson_getDifficultCards;
-      this.lessons = this.$store.getters.lesson_getOptionalCards;
+      this.lessons = this.$store.getters.lesson_getManagedCards;
     }
   };
 </script>
