@@ -7,7 +7,9 @@
           <list>
             <list-item v-for="item in concern" :text="item.username" note="取消" lIcon="/img/default-avatar.png" />
           </list>
-          <div v-if="false" class="unload">
+          <unusual-loading  @dateReloader="reloadDynamic"></unusual-loading>
+          <!-- kkk -->
+          <!-- <div v-if="false" class="unload">
             (未加载)
           </div>
           <div v-else-if="false" class="loadstate">
@@ -18,7 +20,8 @@
           </div>
           <div v-else-if="false" class="loadstate">
             <spinner />
-          </div>
+          </div> -->
+          <!-- kkk -->
           <infinite-scroll v-if="true" :onInfinite="infinite">
             <div slot="no-more">没有更多内容了</div>
           </infinite-scroll>
@@ -63,10 +66,13 @@
           infinite(infiniteScroll) {
             console.log("KKK")
             this.$store.dispatch("getMoreDiaries", infiniteScroll);
+          },
+          reloadDynamic(){
+            this.getDiaries()
           }
       },
       components: {
-        "spinner": require("ui/spinner.vue"),
+        "unusual-loading": require("ui/unusual-loading.vue"),
         "swipe": require("ui/swipe.vue"),
         "swipe-slide": require("ui/swipe-slide.vue"),
         "pull-to-refresh": require("ui/pull-to-refresh.vue"),
@@ -89,7 +95,7 @@
         // 调整动态列表高度
         let mainContentHeight = document.querySelector("main").clientHeight;
         this.slideContentHeight = (mainContentHeight - document.querySelector(".mdl-grid").clientHeight - 1) + "px";
-        this.setSlideContentHeight();
+        this.setSlideContentHeight();        
       }
   };
 </script>
