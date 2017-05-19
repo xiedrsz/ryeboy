@@ -3,7 +3,7 @@
        title="写日记"
        :actions="actions">
     <div class="page-content">
-      <div class="input-hint">记录当天的进步并肯定自己</div>
+      <div class="input-hint">{{ dateText }}，记录当天的进步并肯定自己</div>
       <div class="input-container">
         <textarea class="input-box"
                   type="text"
@@ -14,13 +14,22 @@
 </template>
 
 <script>
+  const moment = require("moment");
+
   export default {
     data() {
       return {};
     },
     methods: {
+      init() {
+        this.$el.getElementsByClassName("input-box")[0].value = this.$store.getters.lesson_getDiary;
+      },
+      save() {
+        let content = this.$el.getElementsByClassName("input-box")[0].value;
+        this.$store.commit("lesson_setDiary", content);
+      },
       finish() {
-
+        history.go(-1);
       }
     },
     computed: {
@@ -30,10 +39,19 @@
           clickHandler: "finish"
         }]);
       },
+      dateText() {
+        return moment(this.selectedDate).format("M[月]D[日]");
+      },
+      selectedDate() {
+        return this.$store.state.lesson.selectedDate;
+      },
+    },
+    beforeDestroy() {
+      this.save();
     },
     mounted() {
+      this.init();
       this.$on("finish", this.finish);
-
       document.querySelector("textarea").focus();
     }
   };

@@ -52,7 +52,15 @@
 
   export default {
     methods: {
-      save() {},
+      save() {
+        this.$store.dispatch("lesson_save");
+        let dateText = moment(this.selectedDate).format("M[月]D[日]");
+        this.$store.commit("page_showDialog", {
+          show: true,
+          type: "alert",
+          content: `${dateText}的日记已保存在本地`
+        });
+      },
       publish() {},
       selectDate() {
         this.flatpickr.open();
@@ -79,9 +87,9 @@
     },
     computed: {
       selectedDateText() {
-        let _selectedDate = moment(this.selectedDate);
+        let date = moment(this.selectedDate);
         let suffix = "";
-        let diffDays = _selectedDate.diff(datetime.date(moment()), "days");
+        let diffDays = date.diff(datetime.date(moment()), "days");
         if (diffDays == -1) {
           suffix = "昨天";
         } else if (diffDays == 0) {
@@ -90,7 +98,7 @@
         if (diffDays == -2) {
           suffix = "前天";
         }
-        return _selectedDate.format("M[月]D[日]" + suffix);
+        return date.format("M[月]D[日]" + suffix);
       },
       selectedDate() {
         return this.$store.state.lesson.selectedDate;
@@ -106,8 +114,6 @@
       // this.$store.dispatch("lesson_getDateRecord").then((cards) => {
       //   this.cards = cards;
       // });
-
-      console.log(this.selectedDate);
 
       this.flatpickr = new flatpickr(document.querySelector(".date-selector"), {
         clickOpens: false,

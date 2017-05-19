@@ -2,6 +2,7 @@ import Vue from "vue";
 import _ from "lodash";
 const cards = require("store/cards.json");
 const datetime = require("js/utils/datetime");
+const ch = require("js/utils/collectionHelper");
 const moment = require("moment");
 
 function getWeightName(weight) {
@@ -13,6 +14,15 @@ function getWeightName(weight) {
   case 3:
     return "次重要功课";
   }
+}
+
+function getDateKey(state) {
+  return moment(state.selectedDate).format("YYYY-MM-DD");
+}
+
+function getSelectedDateRecord(state) {
+  let key = getDateKey(state);
+  return state.records[key];
 }
 
 const state = {
@@ -30,18 +40,18 @@ const state = {
 
 const getters = {
   lesson_getCards(state, getters, rootState) {
-    let key = moment(state.selectedDate).format("YYYY-MM-DD");
-
-    if (state.records[key] === undefined) {
-      Vue.set(state.records, key, {
+    let record = getSelectedDateRecord(state);
+    if (record === undefined) {
+      record = {
         diary: {
           text: ""
         },
         weightedCards: []
-      });
+      };
+      Vue.set(state.records, getDateKey(state), record);
     }
 
-    let weightedCards = state.records[key].weightedCards;
+    let weightedCards = record.weightedCards;
 
     let selectedWeights = {};
     weightedCards.forEach(weight => {
@@ -142,16 +152,34 @@ const getters = {
     });
 
     return result;
+  },
+  lesson_getDiary(state) {
+    let record = getSelectedDateRecord(state);
+    return record ? record.diary.text : "";
   }
 };
 
 const mutations = {
+  lesson_setDiary(state, data) {
+    try {
+      let record = getSelectedDateRecord(state);
+      let card = _.find(record.weightedCards[0].cards, card => {
+        return card.id == 100;
+      });
+      if (data) {
+        record.diary.text = data;
+        card.selected = true;
+      } else {
+        record.diary.text = "";
+        card.selected = false;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
   lesson_setDeselect(state, data) {
     if (data.checked) {
-      let index = _.indexOf(state.deselects, data.id);
-      if (index >= 0) {
-        state.deselects.splice(index, 1);
-      }
+      ch.remove(state.deselects, data.id);
     } else {
       state.deselects.push(data.id);
     }
@@ -167,59 +195,34 @@ const mutations = {
   }
 };
 
-const actions = {
-  // lesson_getDateRecord({
-  //   state,
-  //   rootState
-  // }) {
-  //   let key = getDateKey(state.selectedDate);
-  //   if (state.records[key] === undefined) {
-  //     state.records[key] = {
-  //       diary: "",
-  //       cards: []
-  //     };
-  //   }
+const actions = { 
+  lesson_save({
+    state,
+    rootState
+  }) {
+    let userid = rootState.user._id;
 
-  //   let collated = [];
+    let record = getSelectedDateRecord(state);
 
-  //   cards.forEach(card => {
-  //     let cardset = collated[card.weight - 1];
-  //     if (cardset === undefined) {
-  //       cardset = {
-  //         value: card.weight,
-  //         name: getWeightName(card.weight),
-  //         cards: []
-  //       };
-  //       collated[card.weight - 1] = cardset;
-  //     }
+    // 得到勾选的功课
+    let checkedCards = [];
+    record.weightedCards.forEach(weight => {
+      weight.cards.forEach(card => {
+        if (card.selected === true) {
+          checkedCards.push(card.id);
+        }
+      });
+    });
 
-  //     if (card.group) {
-  //       if (state.difficulties[card.group] != card.id) {
-  //         return;
-  //       }
-  //     }
+    // 本地存储的数据
+    let data = {
+      diary: record.diary,
+      checkedCards
+    };
 
-  //     if (rootState.user.grade.lv < card.unlock) {
-  //       return;
-  //     }
-
-  //     if (_.indexOf(state.deselects, card.id) != -1) {
-  //       return;
-  //     }
-
-  //     cardset.cards.push(Object.assign({
-  //       selected: false
-  //     }, card));
-  //   });
-
-  //   collated.forEach(cardset => {
-  //     if (cardset.cards.length > 0) {
-  //       state.records[key].cards.push(cardset);
-  //     }
-  //   });
-
-  //   return state.records[key].cards;
-  // },
+    let date = getDateKey(state);
+    localStorage[`${userid}_lesson_${date}`] = data;
+  },
   lesson_loadSettings({
     commit,
     rootState
