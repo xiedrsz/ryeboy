@@ -46,6 +46,7 @@ const getters = {
         diary: {
           text: ""
         },
+        loaded: false,
         weightedCards: []
       };
       Vue.set(state.records, getDateKey(state), record);
@@ -61,13 +62,29 @@ const getters = {
     });
 
     let selectedCards = {};
-    weightedCards.forEach(weight => {
-      weight.cards.forEach(card => {
-        if (card.selected === true) {
-          selectedCards[card.id] = true;
-        }
+    if (record.loaded) {
+      weightedCards.forEach(weight => {
+        weight.cards.forEach(card => {
+          if (card.selected === true) {
+            selectedCards[card.id] = true;
+          }
+        });
       });
-    });
+    } else {
+      let userid = rootState.user._id;
+      let date = getDateKey(state);
+      let storagedItem = localStorage[`${userid}_lesson_${date}`];
+      if (storagedItem) {
+        let data = JSON.parse(storagedItem);
+        console.log(data);
+        record.diary = data.diary;
+        data.checkedCards.forEach(item => {
+          selectedCards[item] = true;
+        });
+      }
+
+      record.loaded = true;
+    }
 
     weightedCards.splice(0, weightedCards.length);
 
@@ -195,7 +212,7 @@ const mutations = {
   }
 };
 
-const actions = { 
+const actions = {
   lesson_save({
     state,
     rootState
@@ -221,7 +238,8 @@ const actions = {
     };
 
     let date = getDateKey(state);
-    localStorage[`${userid}_lesson_${date}`] = data;
+    console.log("save lesson");
+    localStorage[`${userid}_lesson_${date}`] = JSON.stringify(data);
   },
   lesson_loadSettings({
     commit,
