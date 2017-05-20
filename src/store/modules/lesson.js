@@ -76,7 +76,6 @@ const getters = {
       let storagedItem = localStorage[`${userid}_lesson_${date}`];
       if (storagedItem) {
         let data = JSON.parse(storagedItem);
-        console.log(data);
         record.diary = data.diary;
         data.checkedCards.forEach(item => {
           selectedCards[item] = true;
@@ -238,7 +237,6 @@ const actions = {
     };
 
     let date = getDateKey(state);
-    console.log("save lesson");
     localStorage[`${userid}_lesson_${date}`] = JSON.stringify(data);
   },
   lesson_loadSettings({

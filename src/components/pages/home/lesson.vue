@@ -61,7 +61,9 @@
           content: `${dateText}的日记已保存在本地`
         });
       },
-      publish() {},
+      publish() {
+        this.$router.push("/pages/lesson-publish");
+      },
       selectDate() {
         this.flatpickr.open();
       },
