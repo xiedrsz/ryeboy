@@ -12,7 +12,8 @@
         <div>{{ time }}</div>
         <div class="mdl-layout-spacer" />
         <div class="counts">
-          <i class="material-icons md-16">favorite_border</i><span style="margin-right: 24px">{{ likeCount }}</span><i class="material-icons md-16">comment</i><span>{{ commentCount }}</span>
+          <i class="material-icons md-16">favorite_border</i><span style="margin-right: 24px">{{ likeCount }}</span>
+          <i class="material-icons md-16">comment</i><span>{{ commentCount }}</span>
         </div>
       </div>
     </div>
