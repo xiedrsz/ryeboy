@@ -5,7 +5,7 @@
         <div class="slide-content">
           <pull-to-refresh :disabled="disableRefresh" @pulltorefresh="pulltorefresh" />
           <ul class="mdl-list">
-            <dynamic-item v-for="item in dynamic" :likeCount="item.likeCount" :commentCount="item.commentCount" :avatar="item.avatar" :username="item.username" :text="item.escapedText" :time="item.time" :overflow="item.overflow" />
+            <dynamic-item v-for="(item, index) in dynamic" :likeCount="item.likeCount" :commentCount="item.commentCount" :avatar="item.avatar" :username="item.username" :text="item.escapedText" :time="item.time" :overflow="item.overflow" :likeIt="item.likeIt" :index="index"/>
           </ul>
           <unusual-loading @dateReloader="getDynamic"></unusual-loading>
           <infinite-scroll v-if="false" :onInfinite="infinite">

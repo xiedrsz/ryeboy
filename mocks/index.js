@@ -16,7 +16,8 @@ Mock
       "username": Random.cname(),
       "escapedText": Random.cparagraph(),
       "time": "2月8日 22:56",
-      "overflow": true
+      "overflow": true,
+      "likeIt": Random.boolean()
     });
 
     return result

@@ -13,7 +13,7 @@
         <div>{{ time }}</div>
         <div class="mdl-layout-spacer" />
         <div class="counts">
-          <i class="material-icons md-16"  @click="likeIt">favorite_border</i><span style="margin-right: 24px">{{ likeCount }}</span>
+          <i class="material-icons md-16"  @click="likeItChange" v-html="likeIt ? 'favorite' : 'favorite_border'" :class="{'like-it':likeIt}"></i><span style="margin-right: 24px">{{ likeCount }}</span>
           <i class="material-icons md-16" @click="commentIt">comment</i><span>{{ commentCount }}</span>
         </div>
       </div>
@@ -41,7 +41,8 @@
         type: Number,
         default: 0
       },
-      overflow:Boolean
+      overflow:Boolean,
+      likeIt: Boolean
     },
     data(){
       return {
@@ -57,7 +58,8 @@
       isshowfull(){
         this.fulltext = !this.fulltext
       },
-      likeIt(){
+      likeItChange(){
+        api(/getDynamicDiaries/)
         console.log("点赞")
       },
       commentIt(){
@@ -171,6 +173,9 @@
     line-height: 1; 
     font-size: 12px;
     color: #a5a5a5;     
+}
+.material-icons.like-it{
+  color:$color-red;
 }
 /*   .dynamic-list {
     padding: 16px;

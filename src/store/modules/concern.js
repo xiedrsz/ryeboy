@@ -103,6 +103,14 @@ const mutations = {
      */
     concern_initNewConcern(state, list) {
       state.newconcern = list;
+    },
+    /**
+     * @function 点赞
+     * @Param index Aray 关注人列表
+     */
+    concern_like(state, index) {
+      state.dynamic[index].likeCount ++;
+      state.dynamic[index].likeIt = true;
     }
 };
 
@@ -154,6 +162,16 @@ const actions = {
         list = res.data;
       console.log(list);
       commit("concern_initNewConcern", list);
+    },
+
+    //获取点赞
+    async getLike({
+      commit,
+      rootState
+    }){
+      let res await api.getDynamicDiaries(),
+        list = res.data;
+      commit("concern_like", list);
     }
 };
 
