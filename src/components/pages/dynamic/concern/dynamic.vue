@@ -7,18 +7,7 @@
           <ul class="mdl-list">
             <dynamic-item v-for="item in dynamic" :likeCount="item.likeCount" :commentCount="item.commentCount" :avatar="item.avatar" :username="item.username" :text="item.escapedText" :time="item.time" :overflow="item.overflow" />
           </ul>
-          <div v-if="false" class="unload">
-            (未加载)
-          </div>
-          <div v-else-if="false" class="loadstate">
-            (加载错误)
-          </div>
-          <div v-else-if="false" class="loadstate">
-            (无内容)
-          </div>
-          <div v-else-if="false" class="loadstate">
-            <spinner />
-          </div>
+          <unusual-loading @dateReloader="getDynamic"></unusual-loading>
           <infinite-scroll v-if="false" :onInfinite="infinite">
             <div slot="no-more">没有更多内容了</div>
           </infinite-scroll>
@@ -62,6 +51,7 @@
           }
       },
       components: {
+        "unusual-loading": require("ui/unusual-loading.vue"),
         "spinner": require("ui/spinner.vue"),
         "swipe": require("ui/swipe.vue"),
         "swipe-slide": require("ui/swipe-slide.vue"),

@@ -4,7 +4,9 @@
       <swipe-slide>
         <div class="slide-content">
           <list>
-            <list-item v-for="item in concern" :text="item.username" note="取消" lIcon="/img/default-avatar.png" />
+            <list-item v-for="item in concern" :text="item.username" lIcon="/img/default-avatar.png">
+              <span slot="note" class="mdl-list__item-note">取消</span>
+            </list-item>
           </list>
           <unusual-loading @dateReloader="getConcern"></unusual-loading>
           <!--<infinite-scroll v-if="true" :onInfinite="infinite">

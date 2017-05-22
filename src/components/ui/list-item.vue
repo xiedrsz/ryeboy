@@ -3,6 +3,7 @@
     <img class="mdl-list__item-icon" v-if="lIcon" :src="lIcon"></img>
     <span class="mdl-list__item-primary-content">{{ text }}</span>
     <span class="mdl-list__item-note" v-if="note">{{ note }}</span>
+    <slot name="note"></slot>
   </li>
 </template>
 
@@ -18,21 +19,21 @@
       }
     }
   };
-
 </script>
 
 <style lang="scss" scoped>
   @import "~scss/main.scss";
-  .mdl-list__item-note{
-      font-size: 12px;
-      color: #a5a5a5;
-      border: 1px solid #a5a5a5;
-      padding: 3px 5px;
-      border-radius: 6px;
-      line-height: 1;
-      display: inline-block;
+  .mdl-list__item-note {
+    font-size: 12px;
+    color: #a5a5a5;
+    border: 1px solid #a5a5a5;
+    padding: 3px 5px;
+    border-radius: 6px;
+    line-height: 1;
+    display: inline-block;
   }
-  .mdl-list__item-icon{
-    margin-right:10px;
+  
+  .mdl-list__item-icon {
+    margin-right: 10px;
   }
 </style>
