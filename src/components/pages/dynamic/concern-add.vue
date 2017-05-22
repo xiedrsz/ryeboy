@@ -4,8 +4,8 @@
       <swipe-slide>
         <div class="slide-content">
           <list>
-            <list-item v-for="item in newconcern" :text="item.username" lIcon="/img/default-avatar.png" >
-              <span slot="note" class="mdl-list__item-note">关注</span>
+            <list-item v-for="(item,index) in newconcern" :text="item.username" lIcon="/img/default-avatar.png" >
+              <span slot="note" class="mdl-list__item-note" @click="concernItClick(index)" v-html="concernItVal?'关注':'已关注'"></span>
             </list-item>
           </list>
           <unusual-loading @dateReloader="getNewConcern"></unusual-loading>
@@ -22,7 +22,8 @@
   export default {
     data() {
         return {
-          slideContentHeight: 0
+          slideContentHeight: 0,
+          concernItVal: true
         };
       },
       computed: {
@@ -35,7 +36,10 @@
             this.$store.dispatch("getNewConcern");
           },
           // 暂留
-          infinite() {}
+          infinite() {},
+          concernItClick(){
+            this.concernItVal = !this.concernItVal;
+          }
       },
       components: {
         "list": require("ui/list.vue"),

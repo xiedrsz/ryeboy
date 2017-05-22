@@ -66,7 +66,7 @@ const mutations = {
    * @Description 设置概述
    * @Param obj [eg:{cons: 50, fans: 50}]
    */
-  concern_setOverview(state, obj) {
+    concern_setOverview(state, obj) {
       state.overview[1].name = "关注" + obj.cons;
       state.overview[2].name = "粉丝" + obj.fans;
     },
@@ -108,14 +108,15 @@ const mutations = {
      * @function 点赞
      * @Param index Aray 关注人列表
      */
-    concern_like(state, index) {
-      state.dynamic[index].likeCount ++;
-      state.dynamic[index].likeIt = true;
+    concern_like(state, obj) {
+      console.log(obj)
+      state.dynamic[obj.index].likeCount = state.dynamic[obj.index].likeCount + obj.val
+      state.dynamic[obj.index].likeIt = obj.val == 1 ? true : false
     }
 };
 
 const actions = {
-  async getOverview({
+    async getOverview({
       commit,
       rootState
     }) {
@@ -131,6 +132,9 @@ const actions = {
       let res = await api.getDynamicDiaries(),
         obj = res.data;
       commit("concern_addDynamic", obj);
+    },
+    getLike:function(dis,item){
+         dis.commit('concern_like',item);
     },
 
     // 获取关注人
@@ -162,16 +166,6 @@ const actions = {
         list = res.data;
       console.log(list);
       commit("concern_initNewConcern", list);
-    },
-
-    //获取点赞
-    async getLike({
-      commit,
-      rootState
-    }){
-      let res await api.getDynamicDiaries(),
-        list = res.data;
-      commit("concern_like", list);
     }
 };
 

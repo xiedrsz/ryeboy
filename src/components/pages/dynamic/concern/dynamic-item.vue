@@ -13,7 +13,7 @@
         <div>{{ time }}</div>
         <div class="mdl-layout-spacer" />
         <div class="counts">
-          <i class="material-icons md-16"  @click="likeItChange" v-html="likeIt ? 'favorite' : 'favorite_border'" :class="{'like-it':likeIt}"></i><span style="margin-right: 24px">{{ likeCount }}</span>
+          <i class="material-icons md-16"  @click="likeItChange" v-html="likeItCom ? 'favorite' : 'favorite_border'" :class="{'like-it':likeItCom}"></i><span style="margin-right: 24px">{{ likeCount }}</span>
           <i class="material-icons md-16" @click="commentIt">comment</i><span>{{ commentCount }}</span>
         </div>
       </div>
@@ -42,13 +42,15 @@
         default: 0
       },
       overflow:Boolean,
-      likeIt: Boolean
+      likeIt: Boolean,
+      index: Number
     },
     data(){
       return {
         fulltext: false,
         showfull: false,
-        isComment: false
+        isComment: false,
+        likeItCom: this.likeIt
       }
     },
     computed:{
@@ -59,8 +61,8 @@
         this.fulltext = !this.fulltext
       },
       likeItChange(){
-        api(/getDynamicDiaries/)
-        console.log("点赞")
+        this.likeItCom = !this.likeItCom
+        this.likeItCom ? this.$store.dispatch('getLike',{"index":this.index,"val":1}) : this.$store.dispatch('getLike',{"index":this.index,"val":-1})
       },
       commentIt(){
         this.isComment = !this.isComment
