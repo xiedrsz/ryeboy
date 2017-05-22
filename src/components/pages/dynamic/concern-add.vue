@@ -4,7 +4,9 @@
       <swipe-slide>
         <div class="slide-content">
           <list>
-            <list-item v-for="item in newconcern" :text="item.username" note="关注" lIcon="/img/default-avatar.png" />
+            <list-item v-for="item in newconcern" :text="item.username" lIcon="/img/default-avatar.png" >
+              <span slot="note" class="mdl-list__item-note">关注</span>
+            </list-item>
           </list>
           <unusual-loading @dateReloader="getNewConcern"></unusual-loading>
           <!--<infinite-scroll v-if="true" :onInfinite="infinite">
@@ -43,7 +45,7 @@
         "unusual-loading": require("ui/unusual-loading.vue"),
         "infinite-scroll": require("ui/infinite-scroll.vue"),
       },
-      activated() {
+      created() {
         this.getNewConcern();
       },
       mounted() {
