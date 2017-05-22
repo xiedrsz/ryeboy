@@ -78,8 +78,35 @@ Mock
 
     return result.list;
   })
-  //获取符合条件的用户头像，用户名，ID号，是否关注，已关注的数量，推举关注总数量
-  .mock(/addConcern/, function() {
+  // 关注
+  .mock(/\/concern/, function() {
+    return {
+      "data": null,
+      "datas": {},
+      "status": 200,
+      "statusText": null
+    }
+  })
+  // 取消关注
+  .mock(/cancelConcern/, function() {
+    return {
+      "data": null,
+      "datas": {},
+      "status": 200,
+      "statusText": null
+    }
+  })
+  // 点赞
+  .mock(/like/, function() {
+    return {
+      "data": null,
+      "datas": {},
+      "status": 200,
+      "statusText": null
+    }
+  })
+  // 评论
+  .mock(/comment/, function() {
     return {
       "data": null,
       "datas": {},

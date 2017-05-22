@@ -96,10 +96,24 @@ class api {
     return axios.post("/getNewConcern")
   }
 
-  //添加接口
-  //获取符合条件的用户头像，用户名，ID号，是否关注，已关注的数量，推举关注总数量
-  static addConcern() {
-    return axios.post("/addConcern")
+  // 关注 
+  static concern() {
+    return axios.post("/concern")
+  }
+
+  // 取消关注
+  static cancelConcern() {
+    return axios.post("/cancelConcern")
+  }
+
+  // 点赞
+  static like() {
+    return axios.post("/like")
+  }
+  
+  // 评论
+  static comment() {
+    return axios.post("/comment")
   }
 }
 
