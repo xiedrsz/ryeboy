@@ -13,7 +13,8 @@
         <div>{{ time }}</div>
         <div class="mdl-layout-spacer" />
         <div class="counts">
-          <i class="material-icons md-16">favorite_border</i><span style="margin-right: 24px">{{ likeCount }}</span><i class="material-icons md-16">comment</i><span>{{ commentCount }}</span>
+          <i class="material-icons md-16"  @click="likeIt">favorite_border</i><span style="margin-right: 24px">{{ likeCount }}</span>
+          <i class="material-icons md-16" @click="commentIt">comment</i><span>{{ commentCount }}</span>
         </div>
       </div>
       <div class="item-lable">
@@ -21,6 +22,7 @@
         <span>尿频</span>
         <span>痘痘</span>
       </div>
+      <popue-comment :showPopue="isComment" @changeval="changeShowPopue"></popue-comment>
     </div>
   </li>
 </template>
@@ -44,7 +46,8 @@
     data(){
       return {
         fulltext: false,
-        showfull: false
+        showfull: false,
+        isComment: false
       }
     },
     computed:{
@@ -53,7 +56,21 @@
     methods:{
       isshowfull(){
         this.fulltext = !this.fulltext
+      },
+      likeIt(){
+        console.log("点赞")
+      },
+      commentIt(){
+        this.isComment = !this.isComment
+        console.log(this.isComment)
+      },
+      changeShowPopue(){
+        this.commentIt()
+        console.log(this.isComment)
       }
+    },
+    components:{
+      "popue-comment": require("ui/popue-comment.vue")
     }
   }
 </script>
