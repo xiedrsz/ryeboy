@@ -1,14 +1,22 @@
 <template>
   <div class="page" title="添加" actions='[{"text":"换一批","clickHandler":"concern-refresh"}]'>
-    <list>
-      <list-item text="苹果" note="关注" lIcon="/img/default-avatar.png" />
-    </list>
+    <swipe ref="swipe">
+      <swipe-slide>
+        <div class="slide-content">
+          <list>
+            <list-item v-for="item in newconcern" :text="item.username" note="关注" lIcon="/img/default-avatar.png" />
+          </list>
+          <unusual-loading @dateReloader="getNewConcern"></unusual-loading>
+          <!--<infinite-scroll v-if="true" :onInfinite="infinite">
+            <div slot="no-more">没有更多内容了</div>
+          </infinite-scroll>-->
+        </div>
+      </swipe-slide>
+    </swipe>
   </div>
 </template>
 
 <script>
-  import _ from "lodash";
-
   export default {
     data() {
         return {
@@ -16,18 +24,31 @@
         };
       },
       computed: {
-
+        newconcern() {
+          return this.$store.state.concern.newconcern;
+        }
       },
       methods: {
-
+        getNewConcern() {
+            this.$store.dispatch("getNewConcern");
+          },
+          // 暂留
+          infinite() {}
       },
       components: {
         "list": require("ui/list.vue"),
-        "list-item": require("ui/list-item.vue")
+        "list-item": require("ui/list-item.vue"),
+        "swipe": require("ui/swipe.vue"),
+        "swipe-slide": require("ui/swipe-slide.vue"),
+        "unusual-loading": require("ui/unusual-loading.vue"),
+        "infinite-scroll": require("ui/infinite-scroll.vue"),
+      },
+      activated() {
+        this.getNewConcern();
       },
       mounted() {
         this.$on("concern-refresh", () => {
-          console.log("换一批")
+          this.getNewConcern();
         })
       }
   };

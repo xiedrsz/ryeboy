@@ -91,6 +91,11 @@ class api {
     return axios.post("/getFans")
   }
 
+  // 获取新关注人/换一批
+  static getNewConcern() {
+    return axios.post("/getNewConcern")
+  }
+
   //添加接口
   //获取符合条件的用户头像，用户名，ID号，是否关注，已关注的数量，推举关注总数量
   static addConcern() {

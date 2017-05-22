@@ -20,10 +20,66 @@ Mock
     });
 
     return result
-
   })
   //获取已关注的用户总数，关注用户上限，用户头像，用户名，是否取消关注
   .mock(/getConcerns/, function() {
+    var result = Mock.mock({
+      "list|1-15": [{
+        _id: '56e4d40d731956005ce0156a',
+        username: function() {
+          return Random.cname()
+        },
+        portrait: '2',
+        nickname: '学长土豆',
+        grade: {
+          lv: 41,
+          exp: 51576
+        }
+      }]
+    });
+
+    return result.list;
+  })
+  //获取粉丝总数，粉丝头像，用户名，粉丝ID号，点击头像进入个人页面
+  .mock(/getFans/, function() {
+    var result = Mock.mock({
+      "list|1-15": [{
+        _id: '56e4d40d731956005ce0156a',
+        username: function() {
+          return Random.cname()
+        },
+        portrait: '2',
+        nickname: '学长土豆',
+        grade: {
+          lv: 41,
+          exp: 51576
+        }
+    }]
+    });
+
+    return result.list;
+  })
+  // 获取新关注人/换一批
+  .mock(/getNewConcern/, function() {
+    var result = Mock.mock({
+      "list|1-15": [{
+        _id: '56e4d40d731956005ce0156a',
+        username: function() {
+          return Random.cname()
+        },
+        portrait: '2',
+        nickname: '学长土豆',
+        grade: {
+          lv: 41,
+          exp: 51576
+        }
+      }]
+    });
+
+    return result.list;
+  })
+  //获取符合条件的用户头像，用户名，ID号，是否关注，已关注的数量，推举关注总数量
+  .mock(/addConcern/, function() {
     return {
       "data": null,
       "datas": {},
@@ -31,23 +87,3 @@ Mock
       "statusText": null
     }
   })
-
-//获取粉丝总数，粉丝头像，用户名，粉丝ID号，点击头像进入个人页面
-.mock(/getFans/, function() {
-  return {
-    "data": null,
-    "datas": {},
-    "status": 200,
-    "statusText": null
-  }
-})
-
-//获取符合条件的用户头像，用户名，ID号，是否关注，已关注的数量，推举关注总数量
-.mock(/addConcern/, function() {
-  return {
-    "data": null,
-    "datas": {},
-    "status": 200,
-    "statusText": null
-  }
-})
