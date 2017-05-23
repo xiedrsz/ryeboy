@@ -106,11 +106,32 @@ const mutations = {
     },
     /**
      * @function 点赞
-     * @Param index Aray 关注人列表
+     * @Param obj Object {index: 索引, val: 1/-1}
      */
     concern_like(state, obj) {
       state.dynamic[obj.index].likeCount = state.dynamic[obj.index].likeCount + obj.val
       state.dynamic[obj.index].likeIt = obj.val == 1 ? true : false
+    },
+    /**
+     * @function 取消关注
+     * @Param opt Object 修改选项 {index: 索引, type: concern/newconcern}
+     */
+    concern_cancel(state, opt) {
+      let index = opt.index,
+        type = opt.type || "concern";
+
+      state[type][index].note = "关注";
+    },
+    /**
+     * @function 添加关注
+     * @Param opt Object 修改选项 {index: 索引, type: concern/newconcern}
+     */
+    concern_add(state, opt) {
+      let index = opt.index,
+        type = opt.type || "concern",
+        note = type == "concern" ? "取消" : "已关注";
+
+      state[type][index].note = note;
     }
 };
 
@@ -139,7 +160,6 @@ const actions = {
       rootState
     }, item) {
       commit('concern_like', item);
-      console.log(state.dynamic);
     },
 
     // 获取关注人
@@ -169,8 +189,23 @@ const actions = {
     }) {
       let res = await api.getNewConcern(),
         list = res.data;
-      console.log(list);
       commit("concern_initNewConcern", list);
+    },
+
+    // 取消关注
+    async cancelConcern({
+      commit,
+      rootState
+    }, option) {
+      commit('concern_cancel', option);
+    },
+
+    // 添加关注
+    async addConcern({
+      commit,
+      rootState
+    }, option) {
+      commit('concern_add', option);
     }
 };
 

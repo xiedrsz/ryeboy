@@ -4,8 +4,8 @@
       <swipe-slide>
         <div class="slide-content">
           <list>
-            <list-item v-for="item in concern" :text="item.username" lIcon="/img/default-avatar.png">
-              <span slot="note" class="mdl-list__item-note">取消</span>
+            <list-item v-for="(item, index) in concern" :text="item.username" lIcon="/img/default-avatar.png">
+              <span slot="note" @click="cancelAdd(index, item.note)" class="mdl-list__item-note">{{item.note}}</span>
             </list-item>
           </list>
           <unusual-loading @dateReloader="getConcern"></unusual-loading>
@@ -19,8 +19,6 @@
 </template>
 
 <script>
-  import _ from "lodash";
-
   export default {
     data() {
         return {
@@ -43,6 +41,16 @@
             console.log("Todo");
             // Todo
             this.$store.dispatch("getMoreDiaries", infiniteScroll);
+          },
+          // 取消/关注
+          cancelAdd(index, note) {
+            let isCancel = note == "取消",
+              dispatch = isCancel ? "cancelConcern" : "addConcern";
+
+            this.$store.dispatch(dispatch, {
+              index: index,
+              type: "concern"
+            });
           }
       },
       components: {

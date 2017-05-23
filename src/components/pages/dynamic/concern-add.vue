@@ -4,8 +4,8 @@
       <swipe-slide>
         <div class="slide-content">
           <list>
-            <list-item v-for="(item,index) in newconcern" :text="item.username" lIcon="/img/default-avatar.png" >
-              <span slot="note" class="mdl-list__item-note" @click="concernItClick(index)" v-html="concernItVal?'关注':'已关注'"></span>
+            <list-item v-for="(item, index) in newconcern" :text="item.username" lIcon="/img/default-avatar.png">
+              <span slot="note" class="mdl-list__item-note" @click="cancelAdd(index, item.note)">{{item.note}}</span>
             </list-item>
           </list>
           <unusual-loading @dateReloader="getNewConcern"></unusual-loading>
@@ -20,43 +20,44 @@
 
 <script>
   export default {
-    data() {
-        return {
-          slideContentHeight: 0,
-          concernItVal: true
-        };
-      },
-      computed: {
-        newconcern() {
-          return this.$store.state.concern.newconcern;
-        }
-      },
-      methods: {
-        getNewConcern() {
-            this.$store.dispatch("getNewConcern");
-          },
-          // 暂留
-          infinite() {},
-          concernItClick(){
-            this.concernItVal = !this.concernItVal;
-          }
-      },
-      components: {
-        "list": require("ui/list.vue"),
-        "list-item": require("ui/list-item.vue"),
-        "swipe": require("ui/swipe.vue"),
-        "swipe-slide": require("ui/swipe-slide.vue"),
-        "unusual-loading": require("ui/unusual-loading.vue"),
-        "infinite-scroll": require("ui/infinite-scroll.vue"),
-      },
-      created() {
-        this.getNewConcern();
-      },
-      mounted() {
-        this.$on("concern-refresh", () => {
-          this.getNewConcern();
-        })
+    computed: {
+      newconcern() {
+        return this.$store.state.concern.newconcern;
       }
+    },
+    methods: {
+      getNewConcern() {
+          this.$store.dispatch("getNewConcern");
+        },
+        // 暂留
+        infinite() {},
+        // 取消/关注
+        cancelAdd(index, note) {
+          let isCancel = note == "已关注",
+            dispatch = isCancel ? "cancelConcern" : "addConcern";
+
+          this.$store.dispatch(dispatch, {
+            index: index,
+            type: "newconcern"
+          });
+        }
+    },
+    components: {
+      "list": require("ui/list.vue"),
+      "list-item": require("ui/list-item.vue"),
+      "swipe": require("ui/swipe.vue"),
+      "swipe-slide": require("ui/swipe-slide.vue"),
+      "unusual-loading": require("ui/unusual-loading.vue"),
+      "infinite-scroll": require("ui/infinite-scroll.vue"),
+    },
+    created() {
+      this.getNewConcern();
+    },
+    mounted() {
+      this.$on("concern-refresh", () => {
+        this.getNewConcern();
+      })
+    }
   };
 </script>
 
