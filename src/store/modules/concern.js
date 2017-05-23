@@ -113,6 +113,13 @@ const mutations = {
       state.dynamic[obj.index].likeIt = obj.val == 1 ? true : false
     },
     /**
+     * @function 评论
+     * @Param index Number 索引
+     */
+    concern_comment(state, index) {
+      state.dynamic[index].commentCount++;
+    },
+    /**
      * @function 取消关注
      * @Param opt Object 修改选项 {index: 索引, type: concern/newconcern}
      */
@@ -206,6 +213,14 @@ const actions = {
       rootState
     }, option) {
       commit('concern_add', option);
+    },
+
+    // 评论
+    async comment({
+      commit,
+      rootState
+    }, index) {
+      commit('concern_comment', index);
     }
 };
 

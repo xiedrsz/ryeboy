@@ -70,11 +70,12 @@
         },
         commentIt() {
           this.isComment = !this.isComment
-          console.log(this.isComment)
         },
-        changeShowPopue() {
-          this.commentIt()
-          console.log(this.isComment)
+        changeShowPopue(option) {
+          this.commentIt();
+          if (option.type) {
+            this.$store.dispatch("comment", this.index);
+          }
         }
     },
     components: {
