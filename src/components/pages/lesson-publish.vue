@@ -2,7 +2,7 @@
   <div class="page"
        title="发布功课">
     <div class="content-block">
-      <div>发布{{ dateText }}的功课，发布后，自己和小组分别增加升级经验，也让更多的人因你的分享而受益。</div>
+      <div>发布{{ dateText }}的功课，发布后不能再修改，自己和小组分别增加升级经验，也让更多的人因你的分享而受益。</div>
       <div class="privacy-container">
         <div class="privacy-label">谁可以看</div>
         <div v-for="option in options">
@@ -26,6 +26,9 @@
 
 <script>
   const moment = require("moment");
+  const datetime = require("js/utils/datetime");
+  const dialog = require("js/utils/dialog");
+  import api from "api";
 
   export default {
     data() {
@@ -56,7 +59,17 @@
     },
     methods: {
       publish() {
-        this.privacy = "2";
+        this.$store.dispatch("lesson_getPublishData").then(data => {
+          data.privacy = Number(this.privacy);
+          data.time = datetime.utcDate(data.time);
+          return api.publishLesson(data);
+        }).then(() => {
+          return this.$store.dispatch("lesson_publish");
+        }).then(() => {
+          history.go(-1);
+        }).catch(() => {
+          dialog.text("发布失败，可能是网络不给力。");
+        });
       },
     },
     components: {

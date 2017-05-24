@@ -14,17 +14,20 @@
       <div class="action"
            @click="save">保存</div>
       <div class="action"
-           @click="publish">发布</div>
+           :class="{ published: published }"
+           @click="publish">{{ published ? "已发布": "发布" }}</div>
     </div>
     <div class="card-container">
       <div v-for="weight in cards"
+           v-show="weight.cards.length > 0"
            class="weight-container">
         <div class="weight-block">
           <div class="weight-text">{{ weight.name }}</div>
           <div class="mdl-layout-spacer"></div>
           <div>
             <checkbox :id="weight.value"
-                      v-model="weight.selected"
+                      v-model="record.selectedWeights[weight.value - 1]"
+                      :disabled="published"
                       text="全选"
                       :changed="selectAllCards"></checkbox>
           </div>
@@ -37,7 +40,9 @@
                  :src="'../../img/card-' + card.id + '.png'">
             <div class="card-name">{{ card.name }}</div>
             <checkbox :id="card.id"
-                      v-model="card.selected"></checkbox>
+                      :disabled="published"
+                      :changed="selectCard"
+                      v-model="record.selectedCards[card.id]"></checkbox>
           </div>
         </div>
       </div>
@@ -49,19 +54,33 @@
   const flatpickr = require("flatpickr");
   const datetime = require("js/utils/datetime");
   const moment = require("moment");
+  const dialog = require("js/utils/dialog");
 
   export default {
+    data() {
+      return {
+        record: {}
+      };
+    },
     methods: {
-      save() {
-        this.$store.dispatch("lesson_save");
-        let dateText = moment(this.selectedDate).format("M[月]D[日]");
-        this.$store.commit("page_showDialog", {
-          show: true,
-          type: "alert",
-          content: `${dateText}的日记已保存在本地`
+      assignRecord() {
+        this.$store.dispatch("lesson_assignRecord").then(res => {
+          this.record = res;
         });
       },
+      save() {
+        if (this.published) {
+          return;
+        }
+        this.$store.dispatch("lesson_save");
+        let dateText = moment(this.selectedDate).format("M[月]D[日]");
+
+        dialog.text(`${dateText}的功课已保存在本地`);
+      },
       publish() {
+        if (this.published) {
+          return;
+        }
         this.$router.push("/pages/lesson-publish");
       },
       selectDate() {
@@ -77,14 +96,11 @@
       cardVisibled(card) {
         return this.userlv >= card.unlock;
       },
+      selectCard(data) {
+        this.$store.dispatch("lesson_selectCard", data);
+      },
       selectAllCards(data) {
-        this.cards.forEach(weight => {
-          if (weight.value == data.id) {
-            weight.cards.forEach(card => {
-              card.selected = data.checked;
-            });
-          }
-        });
+        this.$store.dispatch("lesson_selectAllCards", data);
       }
     },
     computed: {
@@ -105,17 +121,16 @@
       selectedDate() {
         return this.$store.state.lesson.selectedDate;
       },
+      published() {
+        return this.record.published;
+      },
       cards() {
-        return this.$store.getters.lesson_getCards;
+        return this.record.weightedCards;
       }
     },
     mounted() {
       document.querySelector(".card-container").style.height = (document.querySelector("main").clientHeight - document.querySelector(".action-container").clientHeight - 1) + "px";
-      let store = this.$store;
-
-      // this.$store.dispatch("lesson_getDateRecord").then((cards) => {
-      //   this.cards = cards;
-      // });
+      let self = this;
 
       this.flatpickr = new flatpickr(document.querySelector(".date-selector"), {
         clickOpens: false,
@@ -128,7 +143,9 @@
           }
         ],
         onChange(selectedDates) {
-          store.state.lesson.selectedDate = selectedDates[0];
+          self.$store.dispatch("lesson_selectDate", selectedDates[0]).then(res => {
+            self.record = res;
+          });
         }
       });
     },
@@ -139,9 +156,7 @@
       }
     },
     activated() {
-      // let selected = getSelected(this.cards);
-      // this.cards = this.$store.getters.lesson_getAvailableCards;
-      // setSelected(this.cards, selected);
+      this.assignRecord();
     },
     components: {
       "checkbox": require("ui/checkbox.vue"),
@@ -207,6 +222,10 @@
     -webkit-flex-wrap: wrap;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
+  }
+
+  .published {
+    color: $color-blue;
   }
 
   .card {

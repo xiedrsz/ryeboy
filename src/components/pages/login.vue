@@ -24,6 +24,7 @@
 
 <script>
   import api from "api";
+  const dialog = require("js/utils/dialog");
 
   export default {
     data: function() {
@@ -47,7 +48,7 @@
       submit() {
         if (this.account && this.password) {
           this.errorText = "";
-          this.$store.commit("page_showLoading", true);
+          dialog.showLoading();
           api.login(this.account, this.password).then(res => {
             let data = res.data;
             if (data.error) {
@@ -60,11 +61,11 @@
                 this.$router.replace(redirect ? redirect : "/");
               });
             }
-            this.$store.commit("page_showLoading", false);
+            dialog.hideLoading();
           }).catch((err) => {
             console.log(err);
             this.errorText = "网络出错。";
-            this.$store.commit("page_showLoading", false);
+            dialog.hideLoading();
           });
         } else {
           this.errorText = "请填写帐号密码。";

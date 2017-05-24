@@ -1,7 +1,13 @@
 const moment = require("moment");
+moment.locale("zh-CN");
 
 class datetime {
-  date(date){
+  utcDate(time) {
+    let offset = moment(time).utcOffset();
+    return this.date(moment.utc(time).add(offset, "m")).toDate();
+  }
+
+  date(date) {
     return moment(date).hours(0).minutes(0).seconds(0).millisecond(0);
   }
 

@@ -7,6 +7,7 @@
       <div class="input-container">
         <textarea class="input-box"
                   type="text"
+                  :disabled="published"
                   rows="8"></textarea>
       </div>
     </div>
@@ -18,11 +19,13 @@
 
   export default {
     data() {
-      return {};
+      return {
+        record: {}
+      };
     },
     methods: {
       init() {
-        this.$el.getElementsByClassName("input-box")[0].value = this.$store.getters.lesson_getDiary;
+
       },
       save() {
         let content = this.$el.getElementsByClassName("input-box")[0].value;
@@ -42,17 +45,27 @@
       dateText() {
         return moment(this.selectedDate).format("M[月]D[日]");
       },
+      published() {
+        return this.record.published;
+      },
       selectedDate() {
         return this.$store.state.lesson.selectedDate;
       },
     },
     beforeDestroy() {
+      if (this.published) {
+        return;
+      }
       this.save();
     },
     mounted() {
-      this.init();
       this.$on("finish", this.finish);
-      document.querySelector("textarea").focus();
+
+      this.$store.dispatch("lesson_assignRecord").then(res => {
+        this.record = res;
+        this.$el.getElementsByClassName("input-box")[0].value = this.record.diary.text;
+        document.querySelector("textarea").focus();
+      });
     }
   };
 </script>

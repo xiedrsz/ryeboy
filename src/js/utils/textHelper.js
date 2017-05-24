@@ -26,6 +26,17 @@ class textHelper {
     return text;
   }
 
+  getLessonWeightName(weight) {
+    switch (weight) {
+    case 1:
+      return "最重要功课";
+    case 2:
+      return "重要功课";
+    case 3:
+      return "次重要功课";
+    }
+  }
+
   getLessonGroupName(group) {
     switch (group) {
     case 304:
