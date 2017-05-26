@@ -2,14 +2,14 @@
 
 | **URL** | **HTTPS** | **功能** |
 | :--- | :--- | :--- |
-| /login | POST | [用户登录](#用户登录) |
-| /logout | POST | [用户退出登录](#用户退出登录) |
-| /getUsers | POST | [获取一组用户的基本信息](#获取一组用户的基本信息) |
-| /getUser | GET | [获取一个用户的基本信息](#获取一个用户的基本信息) |
-| /getDiaries | POST | [获取日记列表](#获取日记列表) |
-| /getSubscribedChannels | GET | [获取订阅的频道](#获取订阅的频道) |
-| /getRecommendedChannels | GET | [获取推荐的频道](#获取推荐的频道) |
-| /setSubscribedChannels | POST | [更新订阅的频道](#更新订阅的频道) |
+| /login | POST | [用户登录](#user-content-用户登录) |
+| /logout | POST | [用户退出登录](#user-content-用户退出登录) |
+| /getUsers | POST | [获取一组用户的基本信息](#user-content-获取一组用户的基本信息) |
+| /getUser | GET | [获取一个用户的基本信息](#user-content-获取一个用户的基本信息) |
+| /getDiaries | POST | [获取日记列表](#user-content-获取日记列表) |
+| /getSubscribedChannels | GET | [获取订阅的频道](#user-content-获取订阅的频道) |
+| /getRecommendedChannels | GET | [获取推荐的频道](#user-content-获取推荐的频道) |
+| /setSubscribedChannels | POST | [更新订阅的频道](#user-content-更新订阅的频道) |
 | /getLessonDetail | GET | 获取功课详情 |
 
 # 用户登录
