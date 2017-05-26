@@ -153,8 +153,10 @@
   .card-icon {
     width: 16px;
     height: 16px;
-    background-color: $color-disable;
     margin-right: 4px;
+    border: 1px solid $color-disable;
+    border-radius: 4px 2px 2px 2px;
+    background-color: $color-divider;
   }
 
   .unload {

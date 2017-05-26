@@ -145,7 +145,8 @@
   .card-icon {
     width: 48px;
     height: 48px;
-    border-radius: 8px 4px 4px 4px;
-    background-color: $color-disable;
+    border: 1px solid $color-disable;
+    border-radius: 4px 2px 2px 2px;
+    background-color: $color-divider;
   }
 </style>

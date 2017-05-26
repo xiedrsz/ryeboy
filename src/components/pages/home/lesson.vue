@@ -238,8 +238,9 @@
   .card-icon {
     width: 48px;
     height: 48px;
+    border: 1px solid $color-disable;
     border-radius: 8px 4px 4px 4px;
-    background-color: $color-disable;
+    background-color: $color-divider;
   }
 
   .card-name {
