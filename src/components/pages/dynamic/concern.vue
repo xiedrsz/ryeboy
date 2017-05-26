@@ -26,7 +26,7 @@
       // 监听 添加 事件
       this.$on("concern-add", () => {
         this.$router.push({
-          path: '/dynamic/concernadd'
+          path: '/dynamic/concern-add'
         })
       })
     },
