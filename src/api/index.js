@@ -110,10 +110,115 @@ class api {
   static like() {
     return axios.post("/like")
   }
-  
+
   // 评论
   static comment() {
     return axios.post("/comment")
+  }
+
+  // 获取订阅列表
+  static getSubscribles() {
+    return axios.post("/getSubscribles")
+  }
+
+  // 获取订阅频道内容
+  static getSubChannels() {
+    return axios.post("/getSubChannels")
+  }
+
+  // 退订
+  static unsubscribe() {
+    return axios.post("/unsubscribe")
+  }
+
+  // 添加订阅频道
+  static addSubscrible() {
+    return axios.post("/addSubscrible")
+  }
+
+  // 订阅
+  static subscrible() {
+    return axios.post("/subscrible")
+  }
+
+  // 获取小组列表
+  static getGroups() {
+    return axios.post("/getGroups")
+  }
+
+  // 加入小组
+  static addGroup() {
+    return axios.post("/addGroup")
+  }
+
+  // 查找小组
+  static searchGroup() {
+    return axios.post("/searchGroup")
+  }
+
+  // 创建小组
+  static createGroup() {
+    return axios.post("/createGroup")
+  }
+
+  // 获取小组成员
+  static getMembers() {
+    return axios.post("/getMembers")
+  }
+
+  // 获取申请列表
+  static getApplys() {
+    return axios.post("/getApplys")
+  }
+
+  // 同意申请
+  static agreeApply() {
+    return axios.post("/agreeApply")
+  }
+
+  // 拒绝申请
+  static rejectApply() {
+    return axios.post("/rejectApply")
+  }
+
+  // 获取小组消息
+  static getGroupNews() {
+    return axios.post("/getGroupNews")
+  }
+
+  // 获取小组资料
+  static getGroupInfo() {
+    return axios.post("/getGroupInfo")
+  }
+
+  // 修改小组资料
+  static saveGroupInfo() {
+    return axios.post("/saveGroupInfo")
+  }
+
+  // 邀请好友
+  static inviteFriends() {
+    return axios.post("/inviteFriends")
+  }
+
+  // 设置小组
+  static groupSetting() {
+    return axios.post("/groupSetting")
+  }
+
+  // 获取麦田计划
+  static getPlan() {
+    return axios.post("/getPlan")
+  }
+
+  // 获取问卷信息
+  static getQuestionnaire() {
+    return axios.post("/getQuestionnaire")
+  }
+
+  // 提交问卷
+  static answerQuestionnaire() {
+    return axios.post("/answerQuestionnaire")
   }
 }
 

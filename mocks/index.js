@@ -117,3 +117,129 @@ Mock
       "statusText": null
     }
   })
+  // 获取订阅列表
+  .mock(/getSubscribles/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 获取订阅频道内容
+  .mock(/getSubChannels/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 退订
+  .mock(/unsubscribe/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 添加订阅频道
+  .mock(/addSubscrible/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 订阅
+  .mock(/subscrible/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 获取小组列表
+  .mock(/getGroups/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 加入小组
+  .mock(/addGroup/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 查找小组
+  .mock(/searchGroup/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 创建小组
+  .mock(/createGroup/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 获取小组成员
+  .mock(/getMembers/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 获取申请列表
+  .mock(/getApplys/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 同意申请
+  .mock(/agreeApply/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 拒绝申请
+  .mock(/rejectApply/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 获取小组消息
+  .mock(/getGroupNews/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 获取小组资料
+  .mock(/getGroupInfo/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 修改小组资料
+  .mock(/saveGroupInfo/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 邀请好友
+  .mock(/inviteFriends/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 设置小组
+  .mock(/groupSetting/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 获取麦田计划
+  .mock(/getPlan/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 获取问卷信息
+  .mock(/getQuestionnaire/, function() {
+    return {
+      "data ": null,
+    }
+  })
+  // 提交问卷
+  .mock(/answerQuestionnaire/, function() {
+    return {
+      "data ": null,
+    }
+  })
