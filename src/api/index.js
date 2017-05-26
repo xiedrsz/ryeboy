@@ -4,6 +4,22 @@ import config from "js/config";
 axios.defaults.baseURL = config.apiAddress;
 
 class api {
+  static getDiaryComments(id) {
+    return axios.get("/getDiaryComments", {
+      params: {
+        id
+      }
+    });
+  }
+
+  static getDiary(id) {
+    return axios.get("/getDiary", {
+      params: {
+        id
+      }
+    });
+  }
+
   static getLesson(userid, date) {
     return axios.get("/getLesson", {
       params: {

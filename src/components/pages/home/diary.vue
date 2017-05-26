@@ -52,6 +52,7 @@
             <div v-else="channelDatas[channel.id].loadstate == 'ok'">
               <ul class="mdl-list">
                 <diary-item v-for="item in channelDatas[channel.id].diaries"
+                            :id="item._id"
                             :likeCount="item.likeCount"
                             :commentCount="item.commentCount"
                             :avatar="item.avatar"

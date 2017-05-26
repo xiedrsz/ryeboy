@@ -111,6 +111,20 @@ const mutations = {
 };
 
 const actions = {
+  lesson_getCards({
+    state
+  }, cardIdArray) {
+    let mapCardIdArray = _.keyBy(cardIdArray, id => {
+      return id;
+    });
+    let cards = [];
+    state.cards.forEach(card => {
+      if (mapCardIdArray[card.id]) {
+        cards.push(card);
+      }
+    });
+    return cards;
+  },
   lesson_selectDate({
     state,
     dispatch

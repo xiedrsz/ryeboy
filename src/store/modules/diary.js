@@ -86,6 +86,10 @@ function updateDiaries(diaries) {
 }
 
 const getters = {
+  getDiaryUsers(state) {
+    return state.users;
+  },
+
   getChannelLoadstate(state) {
     let result;
     try {
@@ -174,6 +178,18 @@ const mutations = {
 };
 
 const actions = {
+  updateDiaries(context, diaries) {
+    updateDiaries(diaries);
+  },
+
+  async obtainUsers(context, data) {
+    let users = getUnstoredUsers(data);
+    if (users.length > 0) {
+      let res = await api.getUsers(users);
+      addUsers(res.data);
+    }
+  },
+
   async setSubscribedChannels({
     commit,
     rootState
