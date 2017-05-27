@@ -118,9 +118,11 @@ const mutations = {
 const actions = {
   // 获取小组列表
   async getGroups({
-      commit
+      commit,
+      state
     }) {
       let res = await api.getGroups();
+      commit("group_pushGroup", res);
     },
 
     // 加入小组
@@ -135,13 +137,15 @@ const actions = {
       commit
     }) {
       let res = await api.searchGroup();
+      commit("group_initSearchList", res);
     },
 
     // 创建小组
     async createGroup({
-      commit
+      commit,
+      state
     }) {
-      let res = await api.createGroup();
+      let res = await api.createGroup(state.groupInfoTmp);
     },
 
     // 获取小组成员
@@ -149,6 +153,7 @@ const actions = {
       commit
     }) {
       let res = await api.getMembers();
+      commit("group_pushMember", res);
     },
 
     // 获取申请列表
@@ -156,6 +161,7 @@ const actions = {
       commit
     }) {
       let res = await api.getApplys();
+      commit("group_pushApplys", res);
     },
 
     // 同意申请
@@ -177,6 +183,7 @@ const actions = {
       commit
     }) {
       let res = await api.getGroupNews();
+      commit("group_pushGroupNews", res);
     },
 
     // 获取小组资料
@@ -184,13 +191,16 @@ const actions = {
       commit
     }) {
       let res = await api.getGroupInfo();
+      commit("group_saveInfo", res);
     },
 
     // 修改小组资料
     async saveGroupInfo({
-      commit
+      commit,
+      state
     }) {
-      let res = await api.saveGroupInfo();
+      commit("group_saveInfo", res);
+      let res = await api.saveGroupInfo(state.groupInfo);
     },
 
     // 邀请好友
@@ -202,7 +212,8 @@ const actions = {
 
     // 设置小组
     async groupSetting({
-      commit
+      commit,
+      state
     }) {
       let res = await api.groupSetting();
     }

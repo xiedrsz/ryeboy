@@ -61,13 +61,15 @@ const actions = {
       commit
     }) {
       let res = await api.getSubscribles();
+      commit("subs_pushSubscrible", res);
     },
 
     // 获取订阅频道内容
     async getSubChannels({
       commit
-    }) {
+    }, type) {
       let res = await api.getSubChannels();
+      commit("subs_addSubChannels", res, type);
     },
 
     // 退订

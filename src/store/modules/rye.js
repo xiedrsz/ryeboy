@@ -29,7 +29,7 @@ const mutations = {
      * @Description 初始化问卷信息
      * @Param list Array 问卷信息
      */
-    group_initQuestionnaire(state, list) {
+    rye_initQuestionnaire(state, list) {
       state.questionnaire = list;
     },
 
@@ -37,7 +37,7 @@ const mutations = {
      * @Description 初始化答案
      * @Param list Array 答案
      */
-    group_initAnswer(state, list) {
+    rye_initAnswer(state, list) {
       state.answer = list;
     }
 };
@@ -48,6 +48,7 @@ const actions = {
       commit
     }) {
       let res = await api.getPlan();
+      commit("rye_initryeInfo", res);
     },
 
     // 获取问卷信息
@@ -55,13 +56,15 @@ const actions = {
       commit
     }) {
       let res = await api.getQuestionnaire();
+      commit("rye_initQuestionnaire", res);
     },
 
     // 提交问卷
     async answerQuestionnaire({
-      commit
+      commit,
+      state
     }) {
-      let res = await api.answerQuestionnaire();
+      let res = await api.answerQuestionnaire(state.answer);
     }
 };
 
