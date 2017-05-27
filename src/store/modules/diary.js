@@ -74,6 +74,8 @@ function updateComments(comments) {
     let user = state.users[comment.userid];
     if (user) {
       comment.username = textHelper.getUserName(user);
+      comment.userlv = textHelper.getUserLevel(user);
+      comment.verified = user.level == "70";
       if (user.portrait) {
         comment.avatar = `${config.ossAddress}/portraits/${user._id}_${user.portrait}.jpg`;
       } else {
@@ -97,6 +99,8 @@ function updateDiaries(diaries) {
     let user = state.users[diary.userid];
     if (user) {
       diary.username = textHelper.getUserName(user);
+      diary.userlv = textHelper.getUserLevel(user);
+      diary.verified = user.level == "70";
       if (user.portrait) {
         diary.avatar = `${config.ossAddress}/portraits/${user._id}_${user.portrait}.jpg`;
       } else {

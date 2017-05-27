@@ -1,7 +1,7 @@
 <template>
   <div class="page"
        title="查看日记">
-    <div v-if="!error"
+    <div v-if="loadstate == 'loaded'"
          class="page-content">
       <div class="author-section">
         <div class="item-avatar">
@@ -9,7 +9,10 @@
                class="avatar lazyload" />
         </div>
         <div class="item-content">
-          <div class="username">{{ diary.username }}</div>
+          <div class="username">
+            <span>{{ diary.username }}</span>
+            <span class="userlv">{{ diary.userlv }}</span>
+          </div>
           <div class="text"
                v-html="diary.escapedText"></div>
           <div class="lesson-block">
@@ -50,7 +53,13 @@
                  class="avatar lazyload" />
           </div>
           <div class="item-content">
-            <div class="username">{{ comment.username }}</div>
+            <div class="username">
+              <img v-if="comment.verified"
+                   :src="'../img/v.png'"
+                   class="v" />
+              <span>{{ comment.username }}</span>
+              <span class="userlv">{{ comment.userlv }}</span>
+            </div>
             <div class="replied">{{ comment.replied }}</div>
             <div class="text"
                  v-html="comment.escapedText"></div>
@@ -63,9 +72,13 @@
         </infinite-scroll>
       </div>
     </div>
-    <div v-if="error"
+    <div v-if="loadstate == 'error'"
          class="unload">
       (加载错误)
+    </div>
+    <div v-if="loadstate == 'loading'"
+         class="loading">
+      <spinner />
     </div>
   </div>
 </template>
@@ -87,7 +100,7 @@
         showAllLessons: false,
         nomore: true,
         last: 0,
-        error: false
+        loadstate: "loading"
       };
     },
     methods: {
@@ -117,7 +130,6 @@
       async infinite(infiniteScroll) {
         try {
           let res = await api.getMoreDiaryComments(this.diary._id, this.last);
-          console.log(res.data);
           let comments = [];
           await this.handleComments(res.data, comments);
           comments.forEach(comment => {
@@ -125,10 +137,10 @@
           });
 
           this.$nextTick(() => {
-            this.nomore = comments.length < pageSize;
+            let nomore = comments.length < pageSize;
             this.last += comments.length;
 
-            if (this.nomore) {
+            if (nomore) {
               infiniteScroll.$emit("$InfiniteScroll:complete");
             } else {
               infiniteScroll.$emit("$InfiniteScroll:loaded");
@@ -141,6 +153,7 @@
     },
     components: {
       "infinite-scroll": require("ui/infinite-scroll.vue"),
+      "spinner": require("ui/spinner.vue"),
     },
     computed: {
       users() {
@@ -167,18 +180,22 @@
         this.$set(this.$data, "diary", diary);
         this.$set(this.$data, "comments", comments);
 
-        this.$nextTick(() => {
-          lazySizes.loader.unveil(document.querySelector(".avatar"));
-          let el = document.querySelector(".lesson-list");
-          this.showAllLessons = el.scrollHeight > el.clientHeight;
-          this.nomore = comments.length >= diary.commentCount;
-          this.last = pageSize;
-        });
+        this.loadstate = "loaded";
 
-        // console.log(this.diary);
+        this.$nextTick(() => {
+          try {
+            lazySizes.loader.unveil(document.querySelector(".avatar"));
+            let el = document.querySelector(".lesson-list");
+            this.showAllLessons = el.scrollHeight > el.clientHeight;
+            this.nomore = comments.length >= diary.commentCount;
+            this.last = pageSize;
+          } catch (error) {
+            console.log(error);
+          }
+        });
       } catch (error) {
         console.log(error);
-        this.error = true;
+        this.loadstate = "error";
       }
     }
   };
@@ -232,7 +249,8 @@
     background-color: $color-divider;
   }
 
-  .unload {
+  .unload,
+  .loading {
     @include flex-row;
     @include flex-center;
     height: 256px;
@@ -278,6 +296,18 @@
 
   .username {
     color: $color-blue;
+    @include flex-row;
+    @include flex-vertical-center;
+  }
+
+  .username span {
+    margin-right: 8px;
+  }
+
+  .v {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
   }
 
   .stat-block {
@@ -321,5 +351,10 @@
     color: $color-hint-text;
     font-size: 12px;
     margin-top: 8px;
+  }
+
+  .userlv {
+    font-size: 12px;
+    color: $color-hint-text;
   }
 </style>

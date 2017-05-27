@@ -15,6 +15,14 @@ class textHelper {
     return text;
   }
 
+  getUserLevel(user) {
+    let result = 1;
+    if (user && user.grade) {
+      result = user.grade.lv;
+    }
+    return `LV${result}`;
+  }
+
   getUserName(user) {
     let text = "";
     if (user) {

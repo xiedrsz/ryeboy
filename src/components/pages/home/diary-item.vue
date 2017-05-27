@@ -6,7 +6,12 @@
            class="lazyload" />
     </div>
     <div class="item-content">
-      <div>{{ username }}</div>
+      <div class="username">
+        <img v-if="verified"
+             :src="'../../img/v.png'"
+             class="v" />
+        <span>{{ username }}</span>
+      </div>
       <div class="text"
            v-html="text"></div>
       <div class="comment">
@@ -31,6 +36,7 @@
       avatar: String,
       text: String,
       time: String,
+      verified: Boolean,
       likeCount: {
         type: Number,
         default: 0
@@ -114,5 +120,16 @@
   .lazyloaded {
     opacity: 1;
     transition: opacity 300ms;
+  }
+
+  .username {
+    @include flex-row;
+    @include flex-vertical-center;
+  }
+
+  .v {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
   }
 </style>

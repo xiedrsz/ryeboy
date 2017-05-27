@@ -57,6 +57,7 @@
                             :commentCount="item.commentCount"
                             :avatar="item.avatar"
                             :username="item.username"
+                            :verified="item.verified"
                             :text="item.escapedText"
                             :time="item.time" />
               </ul>
