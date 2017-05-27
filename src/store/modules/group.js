@@ -1,13 +1,119 @@
 import Vue from "vue";
 import api from "api";
-// 暂不回用
-// import _ from "lodash";
+import _ from "lodash";
 
-const state = {};
+// window._ = _;
 
-const getters = {};
+const state = {
+  // 小组列表
+  groups: [],
 
-const mutations = {};
+  // 查找小组结果页
+  searchList: [],
+
+  // 小组临时信息，用于创建组时暂存
+  groupInfoTmp: {},
+
+  // 小组成员列表
+  members: [],
+
+  // 组群申请列表
+  applys: [],
+
+  // 小组消息（花生小组）列表
+  groupNews: [],
+
+  // 花生小组信息，用于修改或查看小组信息
+  groupInfo: {}
+};
+
+const getters = {
+  /**
+   * @Description 获取小组列表
+   * @Param label String 标签，比如: [全部、最新、...]
+   */
+  getGroups(state, label) {
+      return _.filter(state.groups, {
+        label: label
+      });
+    },
+
+    /**
+     * @Description 获取小组消息（花生小组）列表
+     * @Param label String 标签，比如: [精品、最新、...]
+     */
+    getGroupNews(state, label) {
+      return _.filter(state.groupNews, {
+        label: label
+      });
+    }
+};
+
+const mutations = {
+  /**
+   * @Description 新增小组列表
+   * @Param list Array 新小组列表
+   */
+  group_pushGroup(state, list) {
+      state.groups.push.apply(state.groups, list);
+    },
+
+    /**
+     * @Description 初始化查询结果列表
+     * @Param list Array 新小组列表
+     */
+    group_initSearchList(state, list) {
+      state.searchList = list;
+    },
+
+    /**
+     * @Description 暂存小组临时信息
+     * @Param obj Object 新小组信息
+     */
+    group_saveTmp(state, obj) {
+      _.assign(state.groupInfoTmp, obj);
+    },
+
+    /**
+     * @Description 新增小组成员列表
+     * @Param list Array 新小组成员列表
+     */
+    group_pushMember(state, list) {
+      state.members.push.apply(state.members, list);
+    },
+
+    /**
+     * @Description 新增组群申请列表
+     * @Param list Array 新小组成员列表
+     */
+    group_pushApplys(state, list) {
+      state.applys.push.apply(state.applys, list);
+    },
+
+    /**
+     * @Description 新增小组消息（花生小组）列表
+     * @Param list Array 新小组成员列表
+     */
+    group_pushGroupNews(state, list) {
+      state.groupNews.push.apply(state.groupNews, list);
+    },
+
+    /**
+     * @Description 新增小组消息（花生小组）列表
+     * @Param list Array 新小组成员列表
+     */
+    group_pushGroupNews(state, list) {
+      state.groupNews.push.apply(state.groupNews, list);
+    },
+
+    /**
+     * @Description 暂存小组资料
+     * @Param obj Object 新小组资料
+     */
+    group_saveInfo(state, obj) {
+      _.assign(state.groupInfo, obj);
+    }
+};
 
 const actions = {
   // 获取小组列表

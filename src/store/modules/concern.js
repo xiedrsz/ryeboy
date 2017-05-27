@@ -72,10 +72,10 @@ const mutations = {
     },
     /**
      * @Description 添加 动态
-     * @Param item Object 动态详情
+     * @Param list Array 动态列表
      */
-    concern_addDynamic(state, item) {
-      state.dynamic.unshift(item)
+    concern_addDynamic(state, list) {
+      state.dynamic.unshift.apply(state.dynamic, list);
     },
     /**
      * @Function 添加关注人
@@ -157,8 +157,8 @@ const actions = {
       rootState
     }) {
       let res = await api.getDynamicDiaries(),
-        obj = res.data;
-      commit("concern_addDynamic", obj);
+        list = res.data;
+      commit("concern_addDynamic", list);
     },
 
     // 点赞

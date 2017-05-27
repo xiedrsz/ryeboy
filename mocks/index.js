@@ -10,17 +10,25 @@ Mock
   //获取 日记发布者的头像、用户名，日记内容、发布时间、点赞的数量，评论的数量、标签，用户是否已点赞
   .mock(/getDynamicDiaries/, function() {
     var result = Mock.mock({
-      "likeCount|1-50": 50,
-      "commentCount|1-50": 50,
-      "avatar": "/img/default-avatar.png",
-      "username": Random.cname(),
-      "escapedText": Random.cparagraph(),
-      "time": "2月8日 22:56",
-      "overflow": true,
-      "likeIt": Random.boolean()
+      "list|1-15": [{
+        "likeCount|1-50": 50,
+        "commentCount|1-50": 50,
+        "avatar": "/img/default-avatar.png",
+        "username": function() {
+          return Random.cname()
+        },
+        "escapedText": function() {
+          return Random.cparagraph()
+        },
+        "time": "2月8日 22:56",
+        "overflow": true,
+        "likeIt": function() {
+          return Random.boolean()
+        },
+      }]
     });
 
-    return result
+    return result.list
   })
   //获取已关注的用户总数，关注用户上限，用户头像，用户名，是否取消关注
   .mock(/getConcerns/, function() {
