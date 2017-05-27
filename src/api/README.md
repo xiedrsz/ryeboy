@@ -11,6 +11,11 @@
 | /getRecommendedChannels | GET | [获取推荐的频道](#user-content-huo-qu-tui-jian-de-pin-dao) |
 | /setSubscribedChannels | POST | [更新订阅的频道](#user-content-geng-xin-ding-yue-de-pin-dao) |
 | /getLessonDetail | GET | 获取功课详情 |
+| /publishLesson | POST | 用户发布功课 |
+| /getLesson | GET | 获取用户某天的功课记录 |
+| /getDiary | GET | 获取日记详情 |
+| /getDiaryComments | GET | 获取日记评论 |
+| /getMoreDiaryComments | GET | 获取更多日记评论 |
 
 # 用户登录
 
@@ -137,8 +142,8 @@ status: 200 OK
 | portrait | 用户的头像，如果用户没有设置则不存在该字段 |
 | nickname | 用户昵称，如果用户没有设置则不存在该字段 |
 
-| 如果任意一个用户不存在 | status: 404 Not Found |
-| :--- | :--- |
+如果任意一个用户不存在  
+status: 404 Not Found
 
 
 # 获取一个用户的基本信息
@@ -390,3 +395,96 @@ status: 200 OK
 
 status: 200 OK
 
+# 获取功课详情
+
+**GET /getLessonDetail**
+
+| **参数** | **类型** | **说明** |
+| :--- | :--- | :--- |
+| id | string | 功课标识 |
+
+**请求示例**
+
+```
+{
+    id: "304" 
+}
+```
+
+**返回**
+
+获取成功  
+status: 200 OK
+
+```
+{
+    tutorial: "<p>教程内容</p><br>",
+    faq: "老男孩：做麦式的时候……"
+}
+```
+
+| **需要注意的字段** | **说明** |
+| :--- | :--- |
+| tutorial | 功课教程，由后台编辑，HTML编辑器 |
+| faq | 常见问答，纯文本，由后台编辑 |
+
+# 用户发布功课
+
+**GET /publishLesson**
+
+| **参数** | **类型** | **说明** |
+| :--- | :--- | :--- |
+| userid | string |  |
+| checkedCards | array | 勾选的功课列表 |
+| time | string | 功课日期 |
+| text | string | 日记内容 |
+| expectedExp | number | 做功课获得的成长值 |
+| privacy | number | 隐私 |
+
+**请求示例**
+
+```
+{
+    userid: "56ecdd7c816dfa0052e3d5d5",
+    checkedCards: ["100", "304", "401"],
+    time: "2017-05-25T00:00:00.000Z",
+    text: "test",
+    expectedExp: 0,
+    privacy: 0
+}
+```
+
+**返回**
+
+发布成功  
+status: 200 OK
+
+# 获取用户某天的功课记录
+
+**GET /getLesson**
+
+| **参数** | **类型** | **说明** |
+| :--- | :--- | :--- |
+| userid | string |  |
+| date | string | 功课日期 |
+
+**请求示例**
+
+```
+{
+    userid: "56ecdd7c816dfa0052e3d5d5",
+    date: "2017-05-25T00:00:00.000Z"
+}
+```
+
+**返回**
+
+获取成功  
+status: 200 OK
+
+```
+{
+    checkedCards: ["100", "304", "401"],
+    text: "test"
+}
+```
