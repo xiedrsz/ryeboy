@@ -69,6 +69,29 @@ function addUsers(users) {
   });
 }
 
+function updateComments(comments) {
+  comments.forEach(comment => {
+    let user = state.users[comment.userid];
+    if (user) {
+      comment.username = textHelper.getUserName(user);
+      if (user.portrait) {
+        comment.avatar = `${config.ossAddress}/portraits/${user._id}_${user.portrait}.jpg`;
+      } else {
+        comment.avatar = "../../img/default-avatar.png";
+      }
+    }
+
+    // 回复的用户
+    user = state.users[comment.reply];
+    if (user) {
+      comment.replied = "回复" + textHelper.getUserName(user) + ":";
+    }
+
+    comment.time = datetime.formatDiaryCreated(comment.createdAt);
+    comment.escapedText = textHelper.escape(comment.content);
+  });
+}
+
 function updateDiaries(diaries) {
   diaries.forEach(diary => {
     let user = state.users[diary.userid];
@@ -178,6 +201,10 @@ const mutations = {
 };
 
 const actions = {
+  updateComments(context, comments) {
+    updateComments(comments);
+  },
+
   updateDiaries(context, diaries) {
     updateDiaries(diaries);
   },

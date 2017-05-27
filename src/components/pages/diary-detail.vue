@@ -42,6 +42,22 @@
           </div>
         </div>
       </div>
+      <div class="comment-section">
+        <div class="comment-block"
+             v-for="comment in comments">
+          <div class="item-avatar">
+            <img :data-src="comment.avatar"
+                 class="avatar lazyload" />
+          </div>
+          <div class="item-content">
+            <div class="username">{{ comment.username }}</div>
+            <div class="replied">{{ comment.replied }}</div>
+            <div class="text"
+                 v-html="comment.escapedText"></div>
+            <div class="comment-time">{{ comment.time }}</div>
+          </div>
+        </div>
+      </div>
     </div>
     <div v-if="error"
          class="unload">
@@ -52,6 +68,7 @@
 
 <script>
   import api from "api";
+  import _ from "lodash";
   // const dialog = require("js/utils/dialog");
 
   export default {
@@ -82,19 +99,34 @@
       let diaryId = this.$route.query.id;
 
       try {
+        let users = [];
+        let comments = [];
         let res = await api.getDiary(diaryId);
         let diary = res.data;
         this.cards = await this.$store.dispatch("lesson_getCards", diary.checkedCards);
-        await this.$store.dispatch("obtainUsers", [diary]);
-        await this.$store.dispatch("updateDiaries", [diary]);
 
-        this.$set(this.$data, "diary", diary);
+        users.push({
+          userid: diary.userid
+        });
 
         res = await api.getDiaryComments(diaryId);
         res.data.forEach(item => {
-          this.comments.push(item);
+          comments.push(item);
+          users.push({
+            userid: item.userid
+          });
+          if (item.reply) {
+            users.push({
+              userid: item.reply
+            });
+          }
         });
-        await this.$store.dispatch("obtainUsers", res.data);
+        users = _.uniqBy(users, "userid");
+        await this.$store.dispatch("obtainUsers", users);
+        await this.$store.dispatch("updateDiaries", [diary]);
+        await this.$store.dispatch("updateComments", comments);
+        this.$set(this.$data, "diary", diary);
+        this.$set(this.$data, "comments", comments);
 
         this.$nextTick(() => {
           lazySizes.loader.unveil(document.querySelector(".avatar"));
@@ -170,6 +202,13 @@
     @include flex-row;
   }
 
+  .comment-block {
+    @include flex-row;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid $color-divider;
+  }
+
   .item-avatar {
     background: white;
     width: 40px;
@@ -233,6 +272,12 @@
   .lesson-show-all {
     font-size: 14px;
     color: $color-blue;
+    margin-top: 8px;
+  }
+
+  .comment-time, .replied {
+    color: $color-hint-text;
+    font-size: 12px;
     margin-top: 8px;
   }
 </style>
