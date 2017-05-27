@@ -57,6 +57,10 @@
             <div class="comment-time">{{ comment.time }}</div>
           </div>
         </div>
+        <infinite-scroll v-if="!nomore"
+                         :onInfinite="infinite">
+          <div slot="no-more">没有更多内容了</div>
+        </infinite-scroll>
       </div>
     </div>
     <div v-if="error"
@@ -71,6 +75,8 @@
   import _ from "lodash";
   // const dialog = require("js/utils/dialog");
 
+  const pageSize = 10;
+
   export default {
     data() {
       return {
@@ -79,16 +85,62 @@
         cards: [],
         lessonAccordion: true,
         showAllLessons: false,
+        nomore: true,
+        last: 0,
         error: false
       };
     },
     methods: {
       handleShowAllLessons() {
         this.lessonAccordion = !this.lessonAccordion;
+      },
+      async handleComments(data, comments, users) {
+        if (!users) {
+          users = [];
+        }
+
+        data.forEach(item => {
+          comments.push(item);
+          users.push({
+            userid: item.userid
+          });
+          if (item.reply) {
+            users.push({
+              userid: item.reply
+            });
+          }
+        });
+        users = _.uniqBy(users, "userid");
+        await this.$store.dispatch("obtainUsers", users);
+        await this.$store.dispatch("updateComments", comments);
+      },
+      async infinite(infiniteScroll) {
+        try {
+          let res = await api.getMoreDiaryComments(this.diary._id, this.last);
+          console.log(res.data);
+          let comments = [];
+          await this.handleComments(res.data, comments);
+          comments.forEach(comment => {
+            this.comments.push(comment);
+          });
+
+          this.$nextTick(() => {
+            this.nomore = comments.length < pageSize;
+            this.last += comments.length;
+
+            if (this.nomore) {
+              infiniteScroll.$emit("$InfiniteScroll:complete");
+            } else {
+              infiniteScroll.$emit("$InfiniteScroll:loaded");
+            }
+          });
+        } catch (error) {
+          infiniteScroll.$emit("$InfiniteScroll:complete");
+        }
       }
     },
     components: {
-
+      "infinite-scroll": require("ui/infinite-scroll.vue"),
     },
     computed: {
       users() {
@@ -110,21 +162,8 @@
         });
 
         res = await api.getDiaryComments(diaryId);
-        res.data.forEach(item => {
-          comments.push(item);
-          users.push({
-            userid: item.userid
-          });
-          if (item.reply) {
-            users.push({
-              userid: item.reply
-            });
-          }
-        });
-        users = _.uniqBy(users, "userid");
-        await this.$store.dispatch("obtainUsers", users);
+        await this.handleComments(res.data, comments, users);
         await this.$store.dispatch("updateDiaries", [diary]);
-        await this.$store.dispatch("updateComments", comments);
         this.$set(this.$data, "diary", diary);
         this.$set(this.$data, "comments", comments);
 
@@ -132,6 +171,8 @@
           lazySizes.loader.unveil(document.querySelector(".avatar"));
           let el = document.querySelector(".lesson-list");
           this.showAllLessons = el.scrollHeight > el.clientHeight;
+          this.nomore = comments.length >= diary.commentCount;
+          this.last = pageSize;
         });
 
         // console.log(this.diary);
@@ -275,7 +316,8 @@
     margin-top: 8px;
   }
 
-  .comment-time, .replied {
+  .comment-time,
+  .replied {
     color: $color-hint-text;
     font-size: 12px;
     margin-top: 8px;
