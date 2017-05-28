@@ -2,6 +2,9 @@ import axios from "axios";
 import config from "js/config";
 
 axios.defaults.baseURL = config.apiAddress;
+axios.defaults.validateStatus = function (status) {
+  return status >= 200 && status < 500;
+}
 
 class api {
   static getMoreDiaryComments(id, last) {
@@ -78,7 +81,7 @@ class api {
   }
 
   static login(account, password) {
-    return axios.post("/login", {
+    return axios.post("/authenticate", {
       account,
       password
     });
