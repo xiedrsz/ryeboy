@@ -142,10 +142,6 @@ status: 200 OK
 | portrait | 用户的头像，如果用户没有设置则不存在该字段 |
 | nickname | 用户昵称，如果用户没有设置则不存在该字段 |
 
-如果任意一个用户不存在  
-status: 404 Not Found
-
-
 # 获取一个用户的基本信息
 
 **GET /getUser**
@@ -182,7 +178,7 @@ status: 200 OK
 ```
 
 如果用户不存在  
-status: 404 Not Found
+status: 204 No Content
 
 
 # 获取日记列表
@@ -488,3 +484,6 @@ status: 200 OK
     text: "test"
 }
 ```
+
+如果没有找到功课记录
+status: 204 No Content

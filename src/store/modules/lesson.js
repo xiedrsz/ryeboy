@@ -165,11 +165,13 @@ const actions = {
         let date = datetime.utcDate(state.selectedDate);
         try {
           let res = await api.getLesson(userid, date);
-          record.published = true;
-          record.diary.text = res.data.text;
-          res.data.checkedCards.forEach(cardId => {
-            record.selectedCards[cardId] = true;
-          });
+          if (res.status == 200) {
+            record.published = true;
+            record.diary.text = res.data.text;
+            res.data.checkedCards.forEach(cardId => {
+              record.selectedCards[cardId] = true;
+            });
+          }
         } catch (error) {
           console.log(error);
         }
