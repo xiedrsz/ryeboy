@@ -2,7 +2,7 @@ import axios from "axios";
 import config from "js/config";
 
 axios.defaults.baseURL = config.apiAddress;
-axios.defaults.validateStatus = function (status) {
+axios.defaults.validateStatus = function(status) {
   return status >= 200 && status < 500;
 }
 
@@ -73,7 +73,7 @@ class api {
   }
 
   static getSubscribedChannels(userid) {
-    return axios.get("/getSubscribedChannels", {
+    return axios.get("/labels", {
       params: {
         userid
       }
@@ -92,15 +92,17 @@ class api {
   }
 
   static getDiaries(label, filter, last) {
-    return axios.post("/getDiaries", {
-      label,
-      filter,
-      last
+    return axios.get("/diaries", {
+      params: {
+        label,
+        filter,
+        last
+      }
     });
   }
 
   static getUsers(users) {
-    return axios.post("/getUsers", {
+    return axios.get("/users", {
       users
     });
   }

@@ -49,12 +49,15 @@
         if (this.account && this.password) {
           this.errorText = "";
           dialog.showLoading();
+
           api.login(this.account, this.password).then(res => {
             let data = res.data;
+
             if (data.error) {
               this.errorText = "无效的帐号或密码。";
             } else {
               localStorage.authenticated = true;
+              localStorage.jwt = data.token;
               this.$store.commit("user_setAuth", data.user);
               let redirect = this.$route.query.redirect;
               this.$store.dispatch("getSubscribedChannels").then(() => {
