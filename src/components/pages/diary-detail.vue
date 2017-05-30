@@ -1,75 +1,83 @@
 <template>
   <div class="page"
        title="查看日记">
-    <div v-if="loadstate == 'loaded'"
-         class="page-content">
-      <div class="author-section">
-        <div class="item-avatar">
-          <img :data-src="diary.avatar"
-               class="avatar lazyload" />
-        </div>
-        <div class="item-content">
-          <div class="username">
-            <span>{{ diary.username }}</span>
-            <span class="userlv">{{ diary.userlv }}</span>
-          </div>
-          <div class="text"
-               v-html="diary.escapedText"></div>
-          <div class="lesson-block">
-            <div class="lesson-overview">
-              <span>做到下列{{ cards.length }}项功课，获得了</span>
-              <span class="exp">{{ diary.expectedExp }}成长值</span>
+    <div v-if="loadstate == 'loaded'">
+      <div class="loaded">
+        <div class="content-block">
+          <div class="author-section">
+            <div class="item-avatar">
+              <img :data-src="diary.avatar"
+                   class="avatar lazyload" />
             </div>
-            <div class="lesson-list"
-                 :class="{ 'lesson-list-accordion': lessonAccordion }">
-              <div class="lesson"
-                   v-for="card in cards">
-                <img class="card-icon"
-                     :src="'../img/card-' + card.id + '.png'">
-                <div class="card-name">{{ card.name }}</div>
+            <div class="item-content">
+              <div class="username">
+                <span>{{ diary.username }}</span>
+                <span class="userlv">{{ diary.userlv }}</span>
+              </div>
+              <div class="text"
+                   v-html="diary.escapedText"></div>
+              <div class="lesson-block">
+                <div class="lesson-overview">
+                  <span>做到下列{{ cards.length }}项功课，获得了</span>
+                  <span class="exp">{{ diary.expectedExp }}成长值</span>
+                </div>
+                <div class="lesson-list"
+                     :class="{ 'lesson-list-accordion': lessonAccordion }">
+                  <div class="lesson"
+                       v-for="card in cards">
+                    <img class="card-icon"
+                         :src="'../img/card-' + card.id + '.png'">
+                    <div class="card-name">{{ card.name }}</div>
+                  </div>
+                </div>
+                <div class="lesson-show-all"
+                     @click="handleShowAllLessons"
+                     v-show="showAllLessons">{{ lessonAccordion ? "全部" : "收起" }}</div>
+              </div>
+              <div class="stat-block">
+                <div>{{ diary.time }}</div>
+                <div class="mdl-layout-spacer" />
+                <div class="counts">
+                  <i class="material-icons md-16">favorite_border</i>
+                  <span style="margin-right: 24px">{{ diary.likeCount }}</span>
+                  <i class="material-icons md-16">comment</i>
+                  <span>{{ diary.commentCount }}</span>
+                </div>
               </div>
             </div>
-            <div class="lesson-show-all"
-                 @click="handleShowAllLessons"
-                 v-show="showAllLessons">{{ lessonAccordion ? "全部" : "收起" }}</div>
           </div>
-          <div class="stat-block">
-            <div>{{ diary.time }}</div>
-            <div class="mdl-layout-spacer" />
-            <div class="counts">
-              <i class="material-icons md-16">favorite_border</i>
-              <span style="margin-right: 24px">{{ diary.likeCount }}</span>
-              <i class="material-icons md-16">comment</i>
-              <span>{{ diary.commentCount }}</span>
+          <div class="comment-section">
+            <div class="comment-block"
+                 v-for="comment in comments">
+              <div class="item-avatar">
+                <img :data-src="comment.avatar"
+                     class="avatar lazyload" />
+              </div>
+              <div class="item-content">
+                <div class="username">
+                  <img v-if="comment.verified"
+                       :src="'../img/v.png'"
+                       class="v" />
+                  <span>{{ comment.username }}</span>
+                  <span class="userlv">{{ comment.userlv }}</span>
+                </div>
+                <div class="replied">{{ comment.replied }}</div>
+                <div class="text"
+                     v-html="comment.escapedText"></div>
+                <div class="comment-time">{{ comment.time }}</div>
+              </div>
             </div>
+            <infinite-scroll v-if="!nomore"
+                             :onInfinite="infinite">
+              <div slot="no-more">没有更多内容了</div>
+            </infinite-scroll>
           </div>
         </div>
       </div>
-      <div class="comment-section">
-        <div class="comment-block"
-             v-for="comment in comments">
-          <div class="item-avatar">
-            <img :data-src="comment.avatar"
-                 class="avatar lazyload" />
-          </div>
-          <div class="item-content">
-            <div class="username">
-              <img v-if="comment.verified"
-                   :src="'../img/v.png'"
-                   class="v" />
-              <span>{{ comment.username }}</span>
-              <span class="userlv">{{ comment.userlv }}</span>
-            </div>
-            <div class="replied">{{ comment.replied }}</div>
-            <div class="text"
-                 v-html="comment.escapedText"></div>
-            <div class="comment-time">{{ comment.time }}</div>
-          </div>
-        </div>
-        <infinite-scroll v-if="!nomore"
-                         :onInfinite="infinite">
-          <div slot="no-more">没有更多内容了</div>
-        </infinite-scroll>
+      <div class="input-section">
+        <textfield label="评论"
+                   type="text"
+                   v-model="comment" />
       </div>
     </div>
     <div v-if="loadstate == 'error'"
@@ -96,6 +104,7 @@
         diary: {},
         comments: [],
         cards: [],
+        comment: "",
         lessonAccordion: true,
         showAllLessons: false,
         nomore: true,
@@ -154,6 +163,7 @@
     components: {
       "infinite-scroll": require("ui/infinite-scroll.vue"),
       "spinner": require("ui/spinner.vue"),
+      "textfield": require("ui/textfield.vue"),
     },
     computed: {
       users() {
@@ -189,6 +199,11 @@
             this.showAllLessons = el.scrollHeight > el.clientHeight;
             this.nomore = comments.length >= diary.commentCount;
             this.last = pageSize;
+
+            document.querySelector(".loaded").style.height =
+              document.querySelector("main").clientHeight -
+              (document.querySelector(".input-section").clientHeight - 1) +
+              "px";
           } catch (error) {
             console.log(error);
           }
@@ -356,5 +371,19 @@
   .userlv {
     font-size: 12px;
     color: $color-hint-text;
+  }
+
+  .input-section {
+    border-top: 1px solid $color-divider;
+    padding: 12px 8px;
+    background-color: $color-hint-block;
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+  }
+
+  .loaded {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
   }
 </style>
