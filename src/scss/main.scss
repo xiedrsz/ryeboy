@@ -9,6 +9,9 @@ $color-text: rgba(0, 0, 0, .87);
 $color-secondary-text: rgba(0, 0, 0, .54);
 $color-hint-text: rgba(0, 0, 0, .38);
 $color-hint-block: #f4f4f4;
+$color-light-yellow:#ff9800;
+$color-gray:#777;
+$bg-light-blue:rgba(58, 115, 138, 0.2);
 @mixin flex-center {
   -webkit-align-items: center;
   -ms-flex-align: center;
@@ -36,14 +39,33 @@ $color-hint-block: #f4f4f4;
   flex-direction: column;
 }
 
-@mixin flex-vertical-center {
-  -webkit-align-items: center;
-  -ms-flex-align: center;
-  align-items: center;
+@mixin flex-vertical-center($shuxin:center) {
+  -webkit-align-items: $shuxin;
+  -ms-flex-align: $shuxin;
+  align-items: $shuxin;
 }
 
-@mixin flex-horizontal-center {
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-  justify-content: center;
+@mixin flex-horizontal-center($shuxin:center) {
+  -webkit-justify-content: $shuxin;
+  -ms-flex-pack: $shuxin;
+  justify-content: $shuxin;
+}
+.flex-wrap{
+  flex-wrap: wrap;
+}
+
+@mixin btn-self{
+  font-size: 14px;
+  color: $color-gray;
+  border: 1px solid $color-gray;
+  padding: 5px 10px;
+  border-radius: 6px;
+  line-height: 1;
+}
+
+.full-page{
+  position: absolute;
+    width: 100%;
+    height: 100%;
+    background: $bg-light-blue;
 }

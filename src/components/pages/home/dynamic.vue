@@ -11,7 +11,9 @@
       </router-link>
     </list>
     <list>
-      <list-item text="小组" />
+      <router-link to="/dynamic/group" class="mdl-navigation__link">
+        <list-item text="小组" />
+      </router-link>
     </list>
     <list>
       <list-item text="晨练" />
@@ -21,12 +23,18 @@
 </template>
 
 <script>
+
   export default {
     components: {
       "list": require("ui/list.vue"),
       "list-item": require("ui/list-item.vue")
     },
     computed: {}
+/*    methods:{
+      aa(){
+        store.commit("group_setDefaultChannels");
+      }
+    }*/
   };
 </script>
 

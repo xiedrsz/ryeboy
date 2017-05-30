@@ -24,13 +24,7 @@
 <style lang="scss" scoped>
   @import "~scss/main.scss";
   .mdl-list__item-note {
-    font-size: 12px;
-    color: #a5a5a5;
-    border: 1px solid #a5a5a5;
-    padding: 3px 5px;
-    border-radius: 6px;
-    line-height: 1;
-    display: inline-block;
+      @include btn-self;
   }
   
   .mdl-list__item-icon {

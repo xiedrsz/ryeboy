@@ -24,9 +24,40 @@ const state = {
   groupNews: [],
 
   // 花生小组信息，用于修改或查看小组信息
-  groupInfo: {}
-};
+  groupInfo: {},
 
+  // 小组频道列表
+  
+  channels: []
+};
+// 默认小组列表分类
+let defaultGroupChannels = [
+  {
+    id: "essence",
+    name: "精品"
+  },
+  {
+    id: "changed",
+    name: "蜕变史"
+  },
+  {
+    id: "latest",
+    name: "最新"
+  },
+  {
+    id: "welcome",
+    name: "最热"
+  },
+  {
+    id: "unwelcome",
+    name: "最冷"
+  },
+  {
+    id: "problems",
+    name: "提问"
+  }
+
+]
 const getters = {
   /**
    * @Description 获取小组列表
@@ -112,6 +143,20 @@ const mutations = {
      */
     group_saveInfo(state, obj) {
       _.assign(state.groupInfo, obj);
+    },
+
+    /**
+     * 
+     */
+    group_setDefaultChannels(state) {
+        state.channels = _.clone(defaultGroupChannels);
+    },
+
+    group_switchChannel(state, label) {
+      state.activedChannel = label;
+      state.channels.forEach(item => {
+        item.active = item.id == label;
+      });
     }
 };
 
