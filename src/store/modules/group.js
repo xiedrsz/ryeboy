@@ -44,11 +44,11 @@ let defaultGroupListChannels = [
     name: "最热"
   },
   {
-    id: "unwelcome",
+    id: "level",
     name: "等级"
   },
   {
-    id: "problems",
+    id: "honor",
     name: "荣誉"
   },{
     id: "littleBoy",
@@ -83,22 +83,13 @@ const state = {
   },
 
   // 已加入小组频道
-  channels: defaultGroupChannels
+  channels: defaultGroupChannels,
 
     // 小组频道列表
   listchannels: defaultGroupListChannels
 };
 
 const getters = {
-  /**
-   * @Description 获取小组列表
-   * @Param label String 标签，比如: [全部、最新、...]
-   */
-  getGroups(state, label) {
-      return _.filter(state.groups, {
-        label: label
-      });
-    },
 
     /**
      * @Description 获取小组消息（花生小组）列表
@@ -118,6 +109,26 @@ const getters = {
       });
 
       return result
+    },
+
+    /**
+     * @Description 获取小组消息（花生小组）列表
+     * @Param label String 标签，比如: [精品、最新、...], 暂时废弃
+     */
+    getGroupList(state){
+      let result = {},
+        label = "",
+        listchannels = state.listchannels,
+        groups = state.groups; 
+
+        _.forEach(listchannels, (item) => {
+          label = item.id;
+          result[label] = _.filter(state.groups, {
+            listchannels: label
+          });
+        });
+
+      return result    
     }
 };
 
@@ -184,23 +195,17 @@ const mutations = {
     group_setDefaultChannels(state) {
       state.channels = _.clone(defaultGroupChannels);
     }
-
-    /**
-     * 小组列表
-     */
-    group_setGroupListChannels(state) {
-      state.listchannels = _.clone(defaultGroupListChannels);
-    }
+    
 };
 
 const actions = {
+
   // 获取小组列表
   async getGroups({
-      commit,
-      state
-    }) {
-      let res = await api.getGroups();
-      commit("group_pushGroup", res);
+      commit
+    }, id) {
+      let res = await api.getGroups(id);
+      commit("group_pushGroup", res.data);
     },
 
     // 加入小组

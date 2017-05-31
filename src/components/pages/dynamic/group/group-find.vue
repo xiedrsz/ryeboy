@@ -13,9 +13,18 @@
       <swipe ref="swipe" @slidechanged="slideChanged">
         <swipe-slide v-for="channel in groupList" :id="channel.id">
           <div class="slide-content">
-            <ul class="mdl-list">
-              <dynamic-item v-for="(item, index) in diaries[channel.id]" :likeCount="item.likeCount" :commentCount="item.commentCount" :avatar="item.avatar" :username="item.username" :text="item.escapedText" :time="item.time" :overflow="item.overflow" :likeIt="item.likeIt"
-              :index="index" />
+            <ul class="find-list">
+              <li class="mdl-list__item mdl-list__item--bottom-divider" v-for="(item, index) in diaries[channel.id]">
+                  <img src="/img/default-avatar.png" width="36" height="36"/>
+                  <div class="find-list-content">
+                    <span class="group-name">花生小组</span>
+                    <span class="group-level"> 1/30 <i class="material-icons md-12 star-gray">star</i></span>
+                    <span class="group-info">小组描述:都是中学生,一起加油</span>
+                  </div>
+                  <span class="mdl-list__item-note">加入</span>
+              </li>
+<!--               <dynamic-item v-for="(item, index) in diaries[channel.id]" :likeCount="item.likeCount" :commentCount="item.commentCount" :avatar="item.avatar" :username="item.username" :text="item.escapedText" :time="item.time" :overflow="item.overflow" :likeIt="item.likeIt"
+:index="index" /> -->
             </ul>
           </div>
         </swipe-slide>
@@ -42,17 +51,18 @@
         "infinite-scroll": require("ui/infinite-scroll.vue"),
       },
       created() {
-        this.getDiary();
+        this.getGroupList()
       },
       computed: {
         groupList() {
-            return this.$store.state.group.groupList;
+            return this.$store.state.group.listchannels;
           },
           groupNews() {
             return this.$store.state.group.groupNews;
           },
           diaries() {
-            return this.$store.getters.getGroupNews;
+            console.log(this.$store.getters.getGroupList)
+            return this.$store.getters.getGroupList;
           }
       },
       mounted() {
@@ -65,23 +75,23 @@
         this.$on("group-create", () => {
 	        this.$router.push({
 	        	path: '/dynamic/group-create'
-	        })
+	       })
 	    })
       }, 
       methods: {
         // 侧滑
         slideChanged(index) {
-            this.channelSelected = this.channels[index].id;
+            this.channelSelected = this.listchannels[index].id;
           },
           // 切换频道
           switchChannel(id) {
             this.channelSelected = id;
-            let index = _.findIndex(this.channels, ["id", id]);
+            let index = _.findIndex(this.listchannels, ["id", id]);
             this.$refs.swipe.slideTo(index);
           },
           // 获取日记
-          getDiary() {
-            this.$store.dispatch("getGroupNews", "123");
+          getGroupList() {
+            this.$store.dispatch("getGroups", "123");
           }
       }
   };
@@ -89,6 +99,20 @@
 
 <style lang="scss" scoped>
   @import "~scss/main.scss";
+  .mdl-list__item{
+    padding: 8px 16px;
+  }
+  .mdl-list__item-note {
+      @include btn-self;
+  }
+  .find-list-content{
+    flex:1;
+    @include flex-column;
+    @include flex-vertical-center(flex-start);
+    font-size: 12px;
+    margin-left: 10px;
+    line-height: 16px;
+  }
   .page-layout {
     @include flex-column;
     width: 100%;

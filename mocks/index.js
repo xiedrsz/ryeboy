@@ -157,10 +157,37 @@ Mock
   })
   // 获取小组列表
   .mock(/groups$/, function() {
-    return {
-      "data ": null,
-    }
+    var result = Mock.mock({
+      "list|1-10": [{
+        "avatar": "/img/default-avatar.png",
+        "name": Random.cword(3, 5),
+        "id": /\d{8}/,        
+        "descrption": Random.cparagraph(10,20),
+        "level|+1": [{
+            "num":"1-30",
+            "star": 1
+          },{
+            "num":"30-50",
+            "star": 2
+          },{
+            "num":"50-100",
+            "star": 3
+          }],
+        "channel|+1": [
+          "all",
+          "welcome",
+          "latest",
+          "level",
+          "honor",
+          "littleBoy",
+          "BigBoy"
+        ]
+      }]
+    });
+
+    return result.list
   })
+        
   // 加入小组
   .mock(/apply/, function() {
     return {

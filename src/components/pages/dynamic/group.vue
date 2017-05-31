@@ -51,7 +51,7 @@
           groupNews() {
             return this.$store.state.group.groupNews;
           },
-          diaries() {
+          diaries() {            
             return this.$store.getters.getGroupNews;
           }
       },
