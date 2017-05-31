@@ -236,9 +236,34 @@ Mock
   })
   // 获取小组资料
   .mock(/getGroupInfo/, function() {
-    return {
-      "data ": null,
-    }
+    var result = Mock.mock({
+      "avatar": "/img/default-avatar.png",
+      "name": Random.cword(3, 5),
+      "id": /\d{8}/,
+      "memMax": 100,
+      "memNum|1-50": 50,
+      "members|1-15": [{
+        avatar: "/img/default-avatar.png",
+        name: function() {
+          return Random.cname();
+        },
+        "grade|1-50": 50,
+        "score|1-100": 100,
+        "no": /\d{2}/,
+        "date": "2017-09-18"
+      }],
+      "grade|1-10": 10,
+      "gradeNum|1-50": 50,
+      "gradeMax": 100,
+      "medalNum|1-50": 50,
+      "medalMax": 100,
+      "minAge|1-18": 18,
+      "maxAge|19-50": 50,
+      "descrption": Random.cparagraph(),
+      "leader": "lll"
+    })
+
+    return result
   })
   // 修改小组资料, 更新小组
   .mock(/group/, function() {

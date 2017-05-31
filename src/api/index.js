@@ -161,8 +161,9 @@ class api {
   }
 
   // 修改小组资料, 更新小组
-  static saveGroupInfo(id) {
-    return axios.post("/group/" + id)
+  static saveGroupInfo(groupInfo) {
+    let id = groupInfo.id;
+    return axios.post("/group/" + id, groupInfo)
   }
 
   // 获取小组消息, 根据id获取对应小组的成员日记
