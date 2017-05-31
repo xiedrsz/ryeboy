@@ -78,7 +78,9 @@ const state = {
   groupNews: [],
 
   // 花生小组信息，用于修改或查看小组信息
-  groupInfo: {},
+  groupInfo: {
+    avatar: "",
+  },
 
   // 已加入小组频道
   channels: defaultGroupChannels
@@ -265,18 +267,19 @@ const actions = {
     // 获取小组资料
     async getGroupInfo({
       commit
-    }) {
-      let res = await api.getGroupInfo();
-      commit("group_saveInfo", res);
+    }, id) {
+      let res = await api.getGroupInfo(id);
+      commit("group_saveInfo", res.data);
     },
 
     // 修改小组资料
     async saveGroupInfo({
       commit,
       state
-    }) {
-      commit("group_saveInfo", res);
+    }, groupInfo, callback) {
+      commit("group_saveInfo", groupInfo);
       let res = await api.saveGroupInfo(state.groupInfo);
+      //      callback();
     },
 
     // 邀请好友
