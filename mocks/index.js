@@ -156,13 +156,13 @@ Mock
     }
   })
   // 获取小组列表
-  .mock(/getGroups/, function() {
+  .mock(/groups$/, function() {
     return {
       "data ": null,
     }
   })
   // 加入小组
-  .mock(/addGroup/, function() {
+  .mock(/apply/, function() {
     return {
       "data ": null,
     }
@@ -174,7 +174,7 @@ Mock
     }
   })
   // 创建小组
-  .mock(/createGroup/, function() {
+  .mock(/groups$/, function() {
     return {
       "data ": null,
     }
@@ -192,7 +192,7 @@ Mock
     }
   })
   // 同意申请
-  .mock(/agreeApply/, function() {
+  .mock(/approve/, function() {
     return {
       "data ": null,
     }
@@ -203,11 +203,36 @@ Mock
       "data ": null,
     }
   })
-  // 获取小组消息
-  .mock(/getGroupNews/, function() {
-    return {
-      "data ": null,
-    }
+  // 获取小组消息，根据id获取对应小组的成员日记
+  .mock(/diaries/, function() {
+    var result = Mock.mock({
+      "list|1-15": [{
+        "likeCount|1-50": 50,
+        "commentCount|1-50": 50,
+        avatar: '/img/default-avatar.png',
+        username: function() {
+          return Random.cname()
+        },
+        escapedText: function() {
+          return Random.cparagraph()
+        },
+        time: "2月8日 22:56",
+        overflow: true,
+        likeIt: function() {
+          return Random.boolean()
+        },
+        "channel|+1": [
+          "essence",
+          "changed",
+          "latest",
+          "welcome",
+          "unwelcome",
+          "problems"
+        ]
+      }]
+    });
+
+    return result.list
   })
   // 获取小组资料
   .mock(/getGroupInfo/, function() {
@@ -215,8 +240,8 @@ Mock
       "data ": null,
     }
   })
-  // 修改小组资料
-  .mock(/saveGroupInfo/, function() {
+  // 修改小组资料, 更新小组
+  .mock(/group/, function() {
     return {
       "data ": null,
     }

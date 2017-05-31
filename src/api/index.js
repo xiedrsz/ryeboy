@@ -141,24 +141,54 @@ class api {
     return axios.post("/subscrible")
   }
 
+  // 已有接口 =================================================
   // 获取小组列表
-  static getGroups() {
-    return axios.post("/getGroups")
+  static getGroups(name) {
+    return axios.get("/groups", {
+      params: {
+        name
+      }
+    })
+  }
+
+  // 创建小组
+  static createGroup(name, agejange, descrption) {
+    return axios.post("/groups", {
+      name,
+      agejange,
+      descrption
+    })
+  }
+
+  // 修改小组资料, 更新小组
+  static saveGroupInfo(id) {
+    return axios.post("/group/" + id)
+  }
+
+  // 获取小组消息, 根据id获取对应小组的成员日记
+  static getGroupNews(id) {
+    return axios.get("/group/" + id + "/diaries")
   }
 
   // 加入小组
-  static addGroup() {
-    return axios.post("/addGroup")
+  static addGroup(id, userid) {
+    return axios.post("/group/" + id + "/apply", {
+      userid
+    })
   }
+
+  // 同意申请, 小组管理员通过用户申请
+  static agreeApply(id, userid) {
+    return axios.post("/group/" + id + "/approve", {
+      userid
+    })
+  }
+
+  // 已有接口 =================================================
 
   // 查找小组
   static searchGroup() {
     return axios.post("/searchGroup")
-  }
-
-  // 创建小组
-  static createGroup() {
-    return axios.post("/createGroup")
   }
 
   // 获取小组成员
@@ -171,29 +201,14 @@ class api {
     return axios.post("/getApplys")
   }
 
-  // 同意申请
-  static agreeApply() {
-    return axios.post("/agreeApply")
-  }
-
   // 拒绝申请
   static rejectApply() {
     return axios.post("/rejectApply")
   }
 
-  // 获取小组消息
-  static getGroupNews() {
-    return axios.post("/getGroupNews")
-  }
-
   // 获取小组资料
   static getGroupInfo() {
     return axios.post("/getGroupInfo")
-  }
-
-  // 修改小组资料
-  static saveGroupInfo() {
-    return axios.post("/saveGroupInfo")
   }
 
   // 邀请好友

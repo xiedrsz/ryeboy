@@ -2,34 +2,6 @@ import Vue from "vue";
 import api from "api";
 import _ from "lodash";
 
-// window._ = _;
-
-const state = {
-  // 小组列表
-  groups: [],
-
-  // 查找小组结果页
-  searchList: [],
-
-  // 小组临时信息，用于创建组时暂存
-  groupInfoTmp: {},
-
-  // 小组成员列表
-  members: [],
-
-  // 组群申请列表
-  applys: [],
-
-  // 小组消息（花生小组）列表
-  groupNews: [],
-
-  // 花生小组信息，用于修改或查看小组信息
-  groupInfo: {},
-
-  // 小组频道列表
-  
-  channels: []
-};
 // 默认小组列表分类
 let defaultGroupChannels = [
   {
@@ -56,8 +28,34 @@ let defaultGroupChannels = [
     id: "problems",
     name: "提问"
   }
-
 ]
+
+const state = {
+  // 小组列表
+  groups: [],
+
+  // 查找小组结果页
+  searchList: [],
+
+  // 小组临时信息，用于创建组时暂存
+  groupInfoTmp: {},
+
+  // 小组成员列表
+  members: [],
+
+  // 组群申请列表
+  applys: [],
+
+  // 小组消息（花生小组）列表
+  groupNews: [],
+
+  // 花生小组信息，用于修改或查看小组信息
+  groupInfo: {},
+
+  // 小组频道列表
+  channels: defaultGroupChannels
+};
+
 const getters = {
   /**
    * @Description 获取小组列表
@@ -71,12 +69,22 @@ const getters = {
 
     /**
      * @Description 获取小组消息（花生小组）列表
-     * @Param label String 标签，比如: [精品、最新、...]
+     * @Param label String 标签，比如: [精品、最新、...], 暂时废弃
      */
-    getGroupNews(state, label) {
-      return _.filter(state.groupNews, {
-        label: label
+    getGroupNews(state) {
+      let result = {},
+        label = "",
+        channels = state.channels,
+        groupNews = state.groupNews;
+
+      _.forEach(channels, (item) => {
+        label = item.id;
+        result[label] = _.filter(state.groupNews, {
+          channel: label
+        });
       });
+
+      return result
     }
 };
 
@@ -130,14 +138,6 @@ const mutations = {
     },
 
     /**
-     * @Description 新增小组消息（花生小组）列表
-     * @Param list Array 新小组成员列表
-     */
-    group_pushGroupNews(state, list) {
-      state.groupNews.push.apply(state.groupNews, list);
-    },
-
-    /**
      * @Description 暂存小组资料
      * @Param obj Object 新小组资料
      */
@@ -149,14 +149,7 @@ const mutations = {
      * 
      */
     group_setDefaultChannels(state) {
-        state.channels = _.clone(defaultGroupChannels);
-    },
-
-    group_switchChannel(state, label) {
-      state.activedChannel = label;
-      state.channels.forEach(item => {
-        item.active = item.id == label;
-      });
+      state.channels = _.clone(defaultGroupChannels);
     }
 };
 
@@ -226,9 +219,9 @@ const actions = {
     // 获取小组消息
     async getGroupNews({
       commit
-    }) {
-      let res = await api.getGroupNews();
-      commit("group_pushGroupNews", res);
+    }, id) {
+      let res = await api.getGroupNews(id);
+      commit("group_pushGroupNews", res.data);
     },
 
     // 获取小组资料
