@@ -8,11 +8,11 @@
       <div class="mdl-layout__header-row">
         <span class="mdl-layout-title">{{ title }}</span>
         <div class="mdl-layout-spacer"></div>
-        <nav class="mdl-navigation"
-             v-if="actions && actions.length > 0">
-          <div class="mdl-navigation__link"
+        <nav class="mdl-navigation" v-if="actions || icons">
+          <i class="material-icons" v-show ="icons && icons.length > 0" v-for="icon in icons" @click="emit(icon.clickHandler)">{{icon.text}}</i>
+          <div class="mdl-navigation__link" v-show ="actions && actions.length > 0"
                v-for="action in actions"
-               @click="emit(action.clickHandler)">{{ action.text }}</div>
+               @click="emit(action.clickHandler)">{{ action.text }}</div>          
         </nav>
       </div>
     </header>
@@ -33,6 +33,7 @@
     },
     methods: {
       emit(clickHandler) {
+        console.log(clickHandler)
         this.$children[0].$emit(clickHandler);
       },
       updateHeader() {
@@ -40,6 +41,7 @@
         if (page) {
           this.$store.commit("page_setTitle", page.getAttribute("title"));
           this.$store.commit("page_setActions", page.getAttribute("actions"));
+          this.$store.commit("page_setIcons", page.getAttribute("icons"));
         }
       }
     },
@@ -49,6 +51,9 @@
       },
       actions() {
         return this.$store.state.page.actions;
+      },
+      icons() {
+        return this.$store.state.page.icons;
       }
     },
 

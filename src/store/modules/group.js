@@ -30,6 +30,34 @@ let defaultGroupChannels = [
   }
 ]
 
+let defaultGroupListChannels = [
+  {
+    id: "all",
+    name: "全部"
+  },
+  {
+    id: "latest",
+    name: "最新"
+  },
+  {
+    id: "welcome",
+    name: "最热"
+  },
+  {
+    id: "unwelcome",
+    name: "等级"
+  },
+  {
+    id: "problems",
+    name: "荣誉"
+  },{
+    id: "littleBoy",
+    name: "16-23"
+  },{
+    id: "BigBoy",
+    name: "24-30"
+  }
+]
 const state = {
   // 小组列表
   groups: [],
@@ -52,8 +80,11 @@ const state = {
   // 花生小组信息，用于修改或查看小组信息
   groupInfo: {},
 
-  // 小组频道列表
+  // 已加入小组频道
   channels: defaultGroupChannels
+
+    // 小组频道列表
+  listchannels: defaultGroupListChannels
 };
 
 const getters = {
@@ -146,10 +177,17 @@ const mutations = {
     },
 
     /**
-     * 
+     * 已加入小组
      */
     group_setDefaultChannels(state) {
       state.channels = _.clone(defaultGroupChannels);
+    }
+
+    /**
+     * 小组列表
+     */
+    group_setGroupListChannels(state) {
+      state.listchannels = _.clone(defaultGroupListChannels);
     }
 };
 

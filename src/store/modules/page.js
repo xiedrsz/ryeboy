@@ -1,6 +1,7 @@
 const state = {
   title: "",
   actions: [],
+  icons: [],
   loading: false,
   dialog: {
     show: false,
@@ -16,6 +17,9 @@ const mutations = {
   },
   page_setActions(state, actions) {
     state.actions = JSON.parse(actions);
+  },
+  page_setIcons(state, icons) {
+    state.icons = JSON.parse(icons);
   },
   page_showLoading(state, show) {
     state.loading = show;
