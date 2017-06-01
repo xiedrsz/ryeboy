@@ -48,7 +48,8 @@
           </div>
           <div class="comment-section">
             <div class="comment-block"
-                 v-for="comment in comments">
+                 v-for="comment in comments"
+                 :key="comment.createdAt">
               <div class="item-avatar">
                 <img :data-src="comment.avatar"
                      class="avatar lazyload" />
@@ -75,9 +76,13 @@
         </div>
       </div>
       <div class="input-section">
-        <textfield label="评论"
-                   type="text"
-                   v-model="comment" />
+        <textarea placeholder="评论:"
+                  rows="1"
+                  class="input-box"
+                  v-model="comment"></textarea>
+        <button-icon icon="send"
+                     class="send"
+                     @click.native="sendComment" />
       </div>
     </div>
     <div v-if="loadstate == 'error'"
@@ -94,7 +99,8 @@
 <script>
   import api from "api";
   import _ from "lodash";
-  // const dialog = require("js/utils/dialog");
+  import autosize from "autosize";
+  const dialog = require("js/utils/dialog");
 
   const pageSize = 10;
 
@@ -105,6 +111,7 @@
         comments: [],
         cards: [],
         comment: "",
+        reply: null,
         lessonAccordion: true,
         showAllLessons: false,
         nomore: true,
@@ -113,6 +120,37 @@
       };
     },
     methods: {
+      async sendComment() {
+        if (this.comment) {
+          let userid = this.$store.state.user._id;
+          let comment = {
+            userid,
+            content: this.comment,
+          };
+          if (this.reply) {
+            comment.reply = this.reply;
+          }
+          let comments = [comment];
+
+          try {
+            // let res = await api.addDiaryComment(this.diary._id, comment);
+            // comment.createdAt = res.data.createdAt;
+            await this.$store.dispatch("obtainUsers", comments);
+            await this.$store.dispatch("updateComments", comments);
+            this.comments.unshift(comments[0]);
+
+            this.comment = "";
+
+            // 滚动到新的评论
+            this.$nextTick(() => {
+              document.querySelector(".loaded").scrollTop = document.querySelector(".comment-block").offsetTop;
+            });
+
+          } catch (error) {
+            dialog.text("提交评论未成功。");
+          }
+        }
+      },
       handleShowAllLessons() {
         this.lessonAccordion = !this.lessonAccordion;
       },
@@ -158,12 +196,19 @@
         } catch (error) {
           infiniteScroll.$emit("$InfiniteScroll:complete");
         }
+      },
+      adjustHeight() {
+        document.querySelector(".loaded").style.height =
+          document.querySelector("main").clientHeight -
+          (document.querySelector(".input-section").clientHeight - 1) +
+          "px";
       }
     },
     components: {
       "infinite-scroll": require("ui/infinite-scroll.vue"),
       "spinner": require("ui/spinner.vue"),
       "textfield": require("ui/textfield.vue"),
+      "button-icon": require("ui/button-icon.vue"),
     },
     computed: {
       users() {
@@ -194,16 +239,19 @@
 
         this.$nextTick(() => {
           try {
-            lazySizes.loader.unveil(document.querySelector(".avatar"));
+            // lazySizes.loader.unveil(document.querySelector(".avatar"));
             let el = document.querySelector(".lesson-list");
             this.showAllLessons = el.scrollHeight > el.clientHeight;
             this.nomore = comments.length >= diary.commentCount;
             this.last = pageSize;
 
-            document.querySelector(".loaded").style.height =
-              document.querySelector("main").clientHeight -
-              (document.querySelector(".input-section").clientHeight - 1) +
-              "px";
+            this.adjustHeight();
+
+            let ta = document.querySelector(".input-box");
+            autosize(ta);
+            ta.addEventListener("autosize:resized", () => {
+              this.adjustHeight();
+            });
           } catch (error) {
             console.log(error);
           }
@@ -374,8 +422,9 @@
   }
 
   .input-section {
+    @include flex-row;
     border-top: 1px solid $color-divider;
-    padding: 12px 8px;
+    padding: 8px 0;
     background-color: $color-hint-block;
     position: fixed;
     bottom: 0px;
@@ -385,5 +434,23 @@
   .loaded {
     overflow: auto;
     -webkit-overflow-scrolling: touch;
+  }
+
+  .input-box {
+    margin-left: 16px;
+    margin-right: 8px;
+    flex-grow: 1;
+    outline: none;
+    resize: none;
+    border: 0;
+    border-bottom: 1px solid $color-disable;
+    background-color: transparent;
+    max-height: 72px;
+    color: $color-text;
+  }
+
+  .send {
+    margin-right: 16px;
+    color: $color-secondary-text;
   }
 </style>

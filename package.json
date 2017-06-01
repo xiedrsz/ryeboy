@@ -9,6 +9,7 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
+    "autosize": "^3.0.21",
     "axios": "^0.15.3",
     "flatpickr": "^2.6.1",
     "lazysizes": "^3.0.0",
