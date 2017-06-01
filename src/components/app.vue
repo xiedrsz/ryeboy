@@ -10,23 +10,39 @@
                   :type="dialog.type"
                   :content="dialog.content"
                   :title="dialog.title" />
+    <action-sheet v-show="actionSheet.show"
+                  @actionClick="actionClick"
+                  :actions="actionSheet.actions" />
   </div>
 </template>
 
 <script>
-export default {
-  computed: {
-    loading() {
-      return this.$store.state.page.loading;
+  export default {
+    methods: {
+      actionClick(clickHandler) {
+        this.$children[0].$children[0].$emit(clickHandler);
+      }
     },
-    dialog() {
-      return this.$store.state.page.dialog;
+    computed: {
+      loading() {
+        return this.$store.state.page.loading;
+      },
+      dialog() {
+        return this.$store.state.page.dialog;
+      },
+      actionSheet() {
+        return this.$store.state.page.actionSheet;
+      }
+    },
+    components: {
+      "modal-loading": require("components/ui/modal-loading.vue"),
+      "modal-dialog": require("components/ui/modal-dialog.vue"),
+      "action-sheet": require("components/ui/action-sheet.vue"),
+    },
+    mounted() {
+      this.$on("copyComment", () => {
+        console.log("abc");
+      });
     }
-  },
-  components: {
-    "modal-loading": require("components/ui/modal-loading.vue"),
-    "modal-dialog": require("components/ui/modal-dialog.vue"),
-  }
-};
-
+  };
 </script>

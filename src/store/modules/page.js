@@ -7,6 +7,10 @@ const state = {
     type: "alert",
     title: "",
     content: ""
+  },
+  actionSheet: {
+    show: false,
+    actions: []
   }
 };
 
@@ -22,6 +26,9 @@ const mutations = {
   },
   page_showDialog(state, data) {
     Object.assign(state.dialog, data);
+  },
+  page_showActionSheet(state, data) {
+    Object.assign(state.actionSheet, data);
   }
 };
 

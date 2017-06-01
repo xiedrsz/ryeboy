@@ -53,6 +53,7 @@
       },
     },
     beforeDestroy() {
+      this.$off("finish");
       if (this.published) {
         return;
       }

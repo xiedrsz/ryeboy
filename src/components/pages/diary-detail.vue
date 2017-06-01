@@ -49,6 +49,7 @@
           <div class="comment-section">
             <div class="comment-block"
                  v-for="comment in comments"
+                 @click="openCommentActions(comment)"
                  :key="comment.createdAt">
               <div class="item-avatar">
                 <img :data-src="comment.avatar"
@@ -76,7 +77,7 @@
         </div>
       </div>
       <div class="input-section">
-        <textarea placeholder="评论:"
+        <textarea :placeholder="reply? '回复' + selectedComment.username + ':' : '添加评论:'"
                   rows="1"
                   class="input-box"
                   v-model="comment"></textarea>
@@ -101,6 +102,7 @@
   import _ from "lodash";
   import autosize from "autosize";
   const dialog = require("js/utils/dialog");
+  const actionSheet = require("js/utils/actionSheet");
 
   const pageSize = 10;
 
@@ -111,6 +113,7 @@
         comments: [],
         cards: [],
         comment: "",
+        selectedComment: null,
         reply: null,
         lessonAccordion: true,
         showAllLessons: false,
@@ -120,6 +123,24 @@
       };
     },
     methods: {
+      copyComment() {},
+      replyComment() {
+        this.reply = this.selectedComment.userid;
+        this.comment = "";
+        this.$el.querySelector(".input-box").focus();
+      },
+      openCommentActions(comment) {
+        this.selectedComment = comment;
+        actionSheet.show([
+          {
+            text: "复制",
+            clickHandler: "copyComment",
+          }, {
+            text: "回复评论",
+            clickHandler: "replyComment"
+          }
+        ]);
+      },
       async sendComment() {
         if (this.comment) {
           let userid = this.$store.state.user._id;
@@ -133,8 +154,8 @@
           let comments = [comment];
 
           try {
-            // let res = await api.addDiaryComment(this.diary._id, comment);
-            // comment.createdAt = res.data.createdAt;
+            let res = await api.addDiaryComment(this.diary._id, comment);
+            comment.createdAt = res.data.createdAt;
             await this.$store.dispatch("obtainUsers", comments);
             await this.$store.dispatch("updateComments", comments);
             this.comments.unshift(comments[0]);
@@ -215,7 +236,14 @@
         return this.$store.getters.getDiaryUsers;
       }
     },
+    beforeDestroy() {
+      this.$off("copyComment");
+      this.$off("replyComment");
+    },
     async mounted() {
+      this.$on("copyComment", this.copyComment);
+      this.$on("replyComment", this.replyComment);
+
       let diaryId = this.$route.query.id;
 
       try {

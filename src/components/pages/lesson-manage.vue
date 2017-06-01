@@ -108,6 +108,7 @@
       }
     },
     beforeDestroy() {
+      this.$off("finish");
       this.save();
     },
     mounted() {
