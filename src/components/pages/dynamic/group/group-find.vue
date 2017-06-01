@@ -15,15 +15,17 @@
           <div class="slide-content">
             <ul class="find-list">
               <li class="mdl-list__item mdl-list__item--bottom-divider" v-for="(item, index) in diaries[channel.id]">
-                  <img src="/img/default-avatar.png" width="36" height="36"/>
-                  <div class="find-list-content">
-                    <span class="group-name">花生小组</span>
-                    <span class="group-level"> 1/30 <i class="material-icons md-12 star-gray">star</i></span>
-                    <span class="group-info">小组描述:都是中学生,一起加油</span>
-                  </div>
-                  <span class="mdl-list__item-note">加入</span>
+                <img src="/img/default-avatar.png" width="36" height="36" />
+                <div class="find-list-content">
+                  <span class="group-name">花生小组</span>
+                  <span class="group-level"> 1/30
+                    <i class="material-icons md-12 star-gray">star</i>
+                  </span>
+                  <span class="group-info">小组描述:都是中学生,一起加油</span>
+                </div>
+                <span class="mdl-list__item-note">加入</span>
               </li>
-<!--               <dynamic-item v-for="(item, index) in diaries[channel.id]" :likeCount="item.likeCount" :commentCount="item.commentCount" :avatar="item.avatar" :username="item.username" :text="item.escapedText" :time="item.time" :overflow="item.overflow" :likeIt="item.likeIt"
+              <!--               <dynamic-item v-for="(item, index) in diaries[channel.id]" :likeCount="item.likeCount" :commentCount="item.commentCount" :avatar="item.avatar" :username="item.username" :text="item.escapedText" :time="item.time" :overflow="item.overflow" :likeIt="item.likeIt"
 :index="index" /> -->
             </ul>
           </div>
@@ -73,11 +75,11 @@
           })
         })
         this.$on("group-create", () => {
-	        this.$router.push({
-	        	path: '/dynamic/group-create'
-	       })
-	    })
-      }, 
+          this.$router.push({
+            path: '/dynamic/group-create'
+          })
+        })
+      },
       methods: {
         // 侧滑
         slideChanged(index) {
@@ -99,20 +101,23 @@
 
 <style lang="scss" scoped>
   @import "~scss/main.scss";
-  .mdl-list__item{
+  .mdl-list__item {
     padding: 8px 16px;
   }
+  
   .mdl-list__item-note {
-      @include btn-self;
+    @include btn-self;
   }
-  .find-list-content{
-    flex:1;
+  
+  .find-list-content {
+    flex: 1;
     @include flex-column;
     @include flex-vertical-center(flex-start);
     font-size: 12px;
     margin-left: 10px;
     line-height: 16px;
   }
+  
   .page-layout {
     @include flex-column;
     width: 100%;

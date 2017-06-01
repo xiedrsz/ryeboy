@@ -50,10 +50,10 @@ let defaultGroupListChannels = [
   {
     id: "honor",
     name: "荣誉"
-  },{
+  }, {
     id: "littleBoy",
     name: "16-23"
-  },{
+  }, {
     id: "BigBoy",
     name: "24-30"
   }
@@ -85,17 +85,17 @@ const state = {
   // 已加入小组频道
   channels: defaultGroupChannels,
 
-    // 小组频道列表
+  // 小组频道列表
   listchannels: defaultGroupListChannels
 };
 
 const getters = {
 
-    /**
-     * @Description 获取小组消息（花生小组）列表
-     * @Param label String 标签，比如: [精品、最新、...], 暂时废弃
-     */
-    getGroupNews(state) {
+  /**
+   * @Description 获取小组消息（花生小组）列表
+   * @Param label String 标签，比如: [精品、最新、...], 暂时废弃
+   */
+  getGroupNews(state) {
       let result = {},
         label = "",
         channels = state.channels,
@@ -115,20 +115,20 @@ const getters = {
      * @Description 获取小组消息（花生小组）列表
      * @Param label String 标签，比如: [精品、最新、...], 暂时废弃
      */
-    getGroupList(state){
+    getGroupList(state) {
       let result = {},
         label = "",
         listchannels = state.listchannels,
-        groups = state.groups; 
+        groups = state.groups;
 
-        _.forEach(listchannels, (item) => {
-          label = item.id;
-          result[label] = _.filter(state.groups, {
-            listchannels: label
-          });
+      _.forEach(listchannels, (item) => {
+        label = item.id;
+        result[label] = _.filter(state.groups, {
+          listchannels: label
         });
+      });
 
-      return result    
+      return result
     }
 };
 
@@ -195,7 +195,7 @@ const mutations = {
     group_setDefaultChannels(state) {
       state.channels = _.clone(defaultGroupChannels);
     }
-    
+
 };
 
 const actions = {
@@ -281,10 +281,13 @@ const actions = {
     async saveGroupInfo({
       commit,
       state
-    }, groupInfo, callback) {
+    }, option) {
+      let groupInfo = option.groupInfo,
+        callback = option.callback,
+        res;
       commit("group_saveInfo", groupInfo);
-      let res = await api.saveGroupInfo(state.groupInfo);
-      //      callback();
+      res = await api.saveGroupInfo(state.groupInfo);
+      !!callback && callback();
     },
 
     // 邀请好友

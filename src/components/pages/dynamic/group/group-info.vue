@@ -32,13 +32,17 @@
         <li class="info-item">
           <span class="info-left"></span>
           <span class="info-right right-arrow">
-            <span class="group-name">分享小组二维码</span>
+            <router-link to='/dynamic/group-card'>
+              <span class="group-name">分享小组二维码</span>
+            </router-link>
           </span>
         </li>
         <li class="info-item">
           <span class="info-left"></span>
           <span class="info-right right-arrow">
-            <span class="group-name">邀请我关注的人</span>
+            <router-link to='/dynamic/group-invite'>
+              <span class="group-name">邀请我关注的人</span>
+            </router-link>
           </span>
         </li>
       </ul>
@@ -73,14 +77,11 @@
         <li class="info-item" @click="saveDescrption">
           <span class="info-left">简介</span>
           <span class="info-right">
-            <!-- {path:'/dynamic/groupInfo-msg',query:{msg:msg}}'/dynamic/groupInfo-msg?msg=' + msg  -->
             <span class="group-name">{{groupInfo.descrption}}</span>
-            <router-link :to="{path:'/dynamic/group-intro',query:{msg:msg}}">
-              <i class="icon icon-right"></i>
-            </router-link>
+            <i class="icon icon-right"></i>
           </span>
         </li>
-        <li class="info-item">
+        <li class="info-item" @click="goToDiary">
           <span class="info-left">组长</span>
           <span class="info-right right-arrow">
             <img src="/img/default-avatar.png" class="lazyload" width="36" height="36" />
@@ -92,7 +93,9 @@
         <li class="info-item">
           <span class="info-left">发现</span>
           <span class="info-right right-arrow">
-            <span class="find-more">发现更多小组</span>
+            <router-link to='/dynamic/group-find'>
+              <span class="find-more">发现更多小组</span>
+            </router-link>
           </span>
         </li>
       </ul>
@@ -123,7 +126,7 @@
       methods: {
         // 获取小组信息
         getGroupInfo() {
-            this.$store.dispatch("getGroupInfo", "123");
+            !this.groupInfo.id && this.$store.dispatch("getGroupInfo", "123");
           },
           // 更换头像，未实现
           changeAvater() {
@@ -138,6 +141,16 @@
                 path: "/dynamic/group-intro",
               });
             }
+          },
+          // 
+          goToDiary() {
+            // Todo
+            console.log("如果是组长，跳到日记页面，为实现");
+            if (true) {
+              this.$router.push({
+                path: "/home/diary",
+              });
+            }
           }
       }
   };
@@ -145,6 +158,11 @@
 
 <style lang="scss" scoped>
   @import "~scss/main.scss";
+  a {
+    color: initial;
+    text-decoration: none;
+  }
+  
   .info-list {
     background: #fff;
     margin-bottom: 5px;

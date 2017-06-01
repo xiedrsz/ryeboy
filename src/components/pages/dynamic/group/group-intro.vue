@@ -18,16 +18,17 @@
       methods: {
         save() {
           if (!!this.descrption) {
-            console.log(this.descrption);
             this.$store.dispatch("saveGroupInfo", {
-              id: "123",
-              descrption: this.descrption
-            }, () => {
-              console.log("LLL")
-              window.history.go(-1);
+              groupInfo: {
+                id: "123",
+                descrption: this.descrption
+              },
+              callback: () => {
+                window.history.go(-1);
+              }
             });
           } else {
-            // Todo
+            // Todo, 弹出提示
           }
         }
       },
@@ -35,6 +36,9 @@
         this.$on("save-group-msg", () => {
           this.save()
         })
+
+        // 初始化 descrption
+        this.descrption = this.groupInfo.descrption
       },
       computed: {
         groupInfo() {
