@@ -30,7 +30,7 @@ let defaultGroupChannels = [
   }
 ]
 
-let defaultGroupListChannels = [
+let defaultGroupClass = [
   {
     id: "all",
     name: "全部"
@@ -58,9 +58,12 @@ let defaultGroupListChannels = [
     name: "24-30"
   }
 ]
+
 const state = {
   // 小组列表
-  groups: [],
+  groups: [{
+    classify: "all"
+  }],
 
   // 查找小组结果页
   searchList: [],
@@ -86,7 +89,7 @@ const state = {
   channels: defaultGroupChannels,
 
   // 小组频道列表
-  listchannels: defaultGroupListChannels
+  groupClass: defaultGroupClass
 };
 
 const getters = {
@@ -118,13 +121,13 @@ const getters = {
     getGroupList(state) {
       let result = {},
         label = "",
-        listchannels = state.listchannels,
+        groupClass = state.groupClass,
         groups = state.groups;
 
-      _.forEach(listchannels, (item) => {
+      _.forEach(groupClass, (item) => {
         label = item.id;
         result[label] = _.filter(state.groups, {
-          listchannels: label
+          classify: label
         });
       });
 

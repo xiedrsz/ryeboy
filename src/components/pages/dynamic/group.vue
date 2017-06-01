@@ -48,9 +48,6 @@
         channels() {
             return this.$store.state.group.channels;
           },
-          groupNews() {
-            return this.$store.state.group.groupNews;
-          },
           diaries() {            
             return this.$store.getters.getGroupNews;
           }

@@ -1,5 +1,5 @@
 <template>
-  <div class="page" title="小组资料">
+  <div class="page" title="小组资料" actions='[{"text":"设置","clickHandler":"group-setting"}]'>
     <div class="page-main">
       <ul class="info-list">
         <li class="info-item">
@@ -121,7 +121,19 @@
         this.getGroupInfo();
       },
       mounted() {
-        console.log(this.groupInfo)
+        console.log(this.groupInfo);
+        // 监听 设置 事件
+        this.$on("group-setting", () => {
+          // Todo, 判断是否为组长
+          let page = "/dynamic/group-setting";
+          if (false) {
+            // Todo
+            let page = "/dynamic/group-setting-??";
+          }
+          this.$router.push({
+            path: page
+          });
+        });
       },
       methods: {
         // 获取小组信息

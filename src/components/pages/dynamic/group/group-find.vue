@@ -3,7 +3,7 @@
 
     <div class="channel-container-wrap">
       <div class="channel-container">
-        <div v-for="item in groupList" @click="switchChannel(item.id)" :id="item.id" :class="{ active: item.id == channelSelected }" class="channel">
+        <div v-for="item in groupClass" @click="switchChannel(item.id)" :id="item.id" :class="{ active: item.id == classSelected }" class="channel">
           {{ item.name }}
         </div>
       </div>
@@ -11,10 +11,11 @@
 
     <div class="page-main">
       <swipe ref="swipe" @slidechanged="slideChanged">
-        <swipe-slide v-for="channel in groupList" :id="channel.id">
+        <swipe-slide v-for="channel in groupClass" :id="channel.id">
           <div class="slide-content">
             <ul class="find-list">
-              <li class="mdl-list__item mdl-list__item--bottom-divider" v-for="(item, index) in diaries[channel.id]">
+              
+              <li class="mdl-list__item mdl-list__item--bottom-divider" v-for="(item, index) in groups[channel.id]">
                 <img src="/img/default-avatar.png" width="36" height="36" />
                 <div class="find-list-content">
                   <span class="group-name">花生小组</span>
@@ -25,8 +26,7 @@
                 </div>
                 <span class="mdl-list__item-note">加入</span>
               </li>
-              <!--               <dynamic-item v-for="(item, index) in diaries[channel.id]" :likeCount="item.likeCount" :commentCount="item.commentCount" :avatar="item.avatar" :username="item.username" :text="item.escapedText" :time="item.time" :overflow="item.overflow" :likeIt="item.likeIt"
-:index="index" /> -->
+              
             </ul>
           </div>
         </swipe-slide>
@@ -41,7 +41,7 @@
   export default {
     data() {
         return {
-          channelSelected: "essence"
+          classSelected: "all"
         };
       },
       components: {
@@ -56,14 +56,10 @@
         this.getGroupList()
       },
       computed: {
-        groupList() {
-            return this.$store.state.group.listchannels;
+        groupClass() {
+            return this.$store.state.group.groupClass;
           },
-          groupNews() {
-            return this.$store.state.group.groupNews;
-          },
-          diaries() {
-            console.log(this.$store.getters.getGroupList)
+          groups() {
             return this.$store.getters.getGroupList;
           }
       },
@@ -83,11 +79,11 @@
       methods: {
         // 侧滑
         slideChanged(index) {
-            this.channelSelected = this.listchannels[index].id;
+            this.classSelected = this.listchannels[index].id;
           },
           // 切换频道
           switchChannel(id) {
-            this.channelSelected = id;
+            this.classSelected = id;
             let index = _.findIndex(this.listchannels, ["id", id]);
             this.$refs.swipe.slideTo(index);
           },
