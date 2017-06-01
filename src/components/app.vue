@@ -20,7 +20,11 @@
   export default {
     methods: {
       actionClick(clickHandler) {
-        this.$children[0].$children[0].$emit(clickHandler);
+        this.$children.forEach(el => {
+          if (el.emit) {
+            el.emit(clickHandler);
+          }
+        });
       }
     },
     computed: {
