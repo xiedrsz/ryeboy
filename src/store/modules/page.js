@@ -3,6 +3,7 @@ const state = {
   actions: [],
   icons: [],
   loading: false,
+  seleted: false,
   dialog: {
     show: false,
     type: "alert",
@@ -20,6 +21,9 @@ const mutations = {
   },
   page_setIcons(state, icons) {
     state.icons = JSON.parse(icons);
+  },
+  page_seleted(state, show){
+    state.seleted = show;
   },
   page_showLoading(state, show) {
     state.loading = show;

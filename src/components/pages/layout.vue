@@ -14,6 +14,8 @@
                v-for="action in actions"
                @click="emit(action.clickHandler)">{{ action.text }}</div>          
         </nav>
+        <nav class="mdl-navigation" v-if="seleted">
+        </nav>
       </div>
     </header>
     <main class="mdl-layout__content">
@@ -42,6 +44,7 @@
           this.$store.commit("page_setTitle", page.getAttribute("title"));
           this.$store.commit("page_setActions", page.getAttribute("actions"));
           this.$store.commit("page_setIcons", page.getAttribute("icons"));
+          this.$store.commit("page_seleted", page.getAttribute("seleted"));
         }
       }
     },
@@ -54,6 +57,9 @@
       },
       icons() {
         return this.$store.state.page.icons;
+      },
+      seleted() {
+        return this.$store.state.page.seleted;
       }
     },
 

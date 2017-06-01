@@ -1,5 +1,5 @@
 <template>
-  <div class="page" title="群介绍" actions='[{"text":"保存","clickHandler":"save-group-msg"}]'>
+  <div class="page full-page" title="群介绍" actions='[{"text":"保存","clickHandler":"save-group-msg"}]'>
     <div class="page-main">
       <textarea v-model="descrption" rows="8"></textarea>
     </div>
@@ -50,7 +50,6 @@
 
 <style lang="scss" scoped>
   @import "~scss/main.scss";
-  .mdl-layout__content {}
   
   .page-main {
     padding: 10px 15px;
@@ -60,7 +59,7 @@
   textarea {
     width: 100%;
     padding: 5px;
+    box-sizing: border-box;
     border: 1px solid $color-divider;
-    background: $color-light-blue;
   }
 </style>
