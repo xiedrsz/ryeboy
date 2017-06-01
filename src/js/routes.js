@@ -24,7 +24,8 @@ const dynamic = [
   "group/group-invite",
   "group/group-medal",
   "group/group-member",
-  "group/group-setting"
+  "group/group-setting",
+  "group/group-createTwo"
 ];
 
 const routes = [{
