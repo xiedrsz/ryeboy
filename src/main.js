@@ -4,6 +4,9 @@ import routes from "js/routes.js";
 import store from "store";
 import api from "api";
 
+// 引入过滤器
+import "./js/utils/filter"
+
 require("lazysizes");
 
 Vue.use(VueRouter);
