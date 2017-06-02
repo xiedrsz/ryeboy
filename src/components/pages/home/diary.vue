@@ -204,8 +204,6 @@
       }
     },
     mounted() {
-      console.log(this.$route);
-
       // 调整日记列表高度
       let mainContentHeight = document.querySelector("main").clientHeight;
       this.$el.style.height = mainContentHeight + "px";

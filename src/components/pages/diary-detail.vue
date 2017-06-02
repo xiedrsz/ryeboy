@@ -38,7 +38,8 @@
                 <div>{{ diary.time }}</div>
                 <div class="mdl-layout-spacer" />
                 <div class="counts">
-                  <i class="material-icons md-16">favorite_border</i>
+                  <i class="material-icons md-16"
+                     @click="setLike">favorite_border</i>
                   <span style="margin-right: 24px">{{ diary.likeCount }}</span>
                   <i class="material-icons md-16">comment</i>
                   <span>{{ diary.commentCount }}</span>
@@ -123,6 +124,7 @@
       };
     },
     methods: {
+      setLike() {},
       copyComment() {},
       replyComment() {
         this.reply = this.selectedComment.userid;
