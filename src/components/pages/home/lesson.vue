@@ -1,52 +1,58 @@
 <template>
-  <div class="page-layout">
-    <div class="action-container">
-      <div class="action date-selector"
-           @click="selectDate">
-        <span>{{ selectedDateText}}</span>
-        <i class="material-icons md-20"
-           style="margin-left: 8px"
-           @click="selectDate">expand_more</i>
+  <div>
+    <div class="page-layout"
+         v-if="authenticated">
+      <div class="action-container">
+        <div class="action date-selector"
+             @click="selectDate">
+          <span>{{ selectedDateText}}</span>
+          <i class="material-icons md-20"
+             style="margin-left: 8px"
+             @click="selectDate">expand_more</i>
+        </div>
+        <div class="mdl-layout-spacer"></div>
+        <div class="action"
+             @click="$router.push('/pages/lesson-manage')">管理</div>
+        <div class="action"
+             @click="save">保存</div>
+        <div class="action"
+             :class="{ published: published }"
+             @click="publish">{{ published ? "已发布": "发布" }}</div>
       </div>
-      <div class="mdl-layout-spacer"></div>
-      <div class="action"
-           @click="$router.push('/pages/lesson-manage')">管理</div>
-      <div class="action"
-           @click="save">保存</div>
-      <div class="action"
-           :class="{ published: published }"
-           @click="publish">{{ published ? "已发布": "发布" }}</div>
-    </div>
-    <div class="card-container">
-      <div v-for="weight in cards"
-           v-show="weight.cards.length > 0"
-           class="weight-container">
-        <div class="weight-block">
-          <div class="weight-text">{{ weight.name }}</div>
-          <div class="mdl-layout-spacer"></div>
-          <div>
-            <checkbox :id="weight.value"
-                      v-model="record.selectedWeights[weight.value - 1]"
-                      :disabled="published"
-                      text="全选"
-                      :changed="selectAllCards"></checkbox>
+      <div class="card-container">
+        <div v-for="weight in cards"
+             v-show="weight.cards.length > 0"
+             class="weight-container">
+          <div class="weight-block">
+            <div class="weight-text">{{ weight.name }}</div>
+            <div class="mdl-layout-spacer"></div>
+            <div>
+              <checkbox :id="weight.value"
+                        v-model="record.selectedWeights[weight.value - 1]"
+                        :disabled="published"
+                        text="全选"
+                        :changed="selectAllCards"></checkbox>
+            </div>
+          </div>
+          <div class="card-list">
+            <div v-for="card in weight.cards"
+                 class="card">
+              <img class="card-icon"
+                   @click="cardDetail(card.id)"
+                   :src="'../../img/card-' + card.id + '.png'">
+              <div class="card-name">{{ card.name }}</div>
+              <checkbox :id="card.id"
+                        :disabled="published"
+                        :changed="selectCard"
+                        v-model="record.selectedCards[card.id]"></checkbox>
+            </div>
           </div>
         </div>
-        <div class="card-list">
-          <div v-for="card in weight.cards"
-               class="card">
-            <img class="card-icon"
-                 @click="cardDetail(card.id)"
-                 :src="'../../img/card-' + card.id + '.png'">
-            <div class="card-name">{{ card.name }}</div>
-            <checkbox :id="card.id"
-                      :disabled="published"
-                      :changed="selectCard"
-                      v-model="record.selectedCards[card.id]"></checkbox>
-          </div>
-        </div>
       </div>
     </div>
+    <div class="page-layout unauthenticated"
+         v-if="!authenticated">
+      (你还没有登录)</div>
   </div>
 </template>
 
@@ -124,11 +130,18 @@
       published() {
         return this.record.published;
       },
+      authenticated() {
+        return this.$store.state.user.authenticated;
+      },
       cards() {
         return this.record.weightedCards;
       }
     },
     mounted() {
+      if (!this.authenticated) {
+        return;
+      }
+
       document.querySelector(".card-container").style.height = (document.querySelector("main").clientHeight - document.querySelector(".action-container").clientHeight - 1) + "px";
       let self = this;
 
@@ -156,6 +169,10 @@
       }
     },
     activated() {
+      if (!this.authenticated) {
+        return;
+      }
+
       this.assignRecord();
     },
     components: {
@@ -250,5 +267,11 @@
   .date-selector {
     @include flex-row;
     @include flex-vertical-center;
+  }
+
+  .unauthenticated {
+    @include flex-row;
+    @include flex-center;
+    height: 128px;
   }
 </style>

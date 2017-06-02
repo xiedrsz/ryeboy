@@ -7,7 +7,7 @@ const state = {
 const mutations = {
   user_assignAuth(state, user) {
     if (config.debug) {
-      user.grade.lv = 20;
+      // user.grade.lv = 20;
     }
 
     state.authenticated = true;
