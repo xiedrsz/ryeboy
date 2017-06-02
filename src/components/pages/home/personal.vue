@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="basic">
+    <div class="basic" v-if="authenticated">
       <img :data-src="avatar"
            class="avatar lazyload">
       <div class="info">
@@ -65,9 +65,6 @@
           return "../../img/default-avatar.png";
         }
       }
-    },
-    mounted() {
-      console.log(this.user);
     }
   };
 </script>
