@@ -209,4 +209,9 @@
   .mdl-list li {
     margin-bottom: 32px;
   }
+  
+  // 调整侧滑组件背景颜色，以防文字重叠
+  .swipe-slide {
+    background-color: #fff;
+  }
 </style>
