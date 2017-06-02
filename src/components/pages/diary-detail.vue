@@ -142,6 +142,10 @@
         ]);
       },
       async sendComment() {
+        if (this.authenticated) {
+          dialog.text("你还没有登录。");
+          return;
+        }
         if (this.comment) {
           let userid = this.$store.state.user._id;
           let comment = {
@@ -232,6 +236,9 @@
       "button-icon": require("ui/button-icon.vue"),
     },
     computed: {
+      authenticated() {
+        return this.$store.state.user.authenticated;
+      },
       users() {
         return this.$store.getters.getDiaryUsers;
       }
