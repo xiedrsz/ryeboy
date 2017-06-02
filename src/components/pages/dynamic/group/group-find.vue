@@ -14,19 +14,19 @@
         <swipe-slide v-for="channel in groupClass" :id="channel.id">
           <div class="slide-content">
             <ul class="find-list">
-              
+
               <li class="mdl-list__item mdl-list__item--bottom-divider" v-for="(item, index) in groups[channel.id]">
-                <img src="/img/default-avatar.png" width="36" height="36" />
+                <img :src="item.avatar" width="36" height="36" />
                 <div class="find-list-content">
-                  <span class="group-name">花生小组</span>
-                  <span class="group-level"> 1/30
-                    <i class="material-icons md-12 star-gray">star</i>
+                  <span class="group-name">{{item.name}}</span>
+                  <span class="group-level"> {{item.gradeNum+"/"+item.gradeMax}}
+                    <i v-for="i in new Array(item.level)" class="material-icons md-12 star-gray">star</i>
                   </span>
-                  <span class="group-info">小组描述:都是中学生,一起加油</span>
+                  <span class="group-info">小组描述:{{item.descrption}}</span>
                 </div>
-                <span class="mdl-list__item-note">加入</span>
+                <span @click="join(item.id, item.note)" class="mdl-list__item-note">{{item.note}}</span>
               </li>
-              
+
             </ul>
           </div>
         </swipe-slide>
@@ -37,7 +37,7 @@
 </template>
 <script>
   import _ from "lodash";
-  import store from "store";
+
   export default {
     data() {
         return {
@@ -53,7 +53,7 @@
         "infinite-scroll": require("ui/infinite-scroll.vue"),
       },
       created() {
-        this.getGroupList()
+        this.getGroups()
       },
       computed: {
         groupClass() {
@@ -79,17 +79,26 @@
       methods: {
         // 侧滑
         slideChanged(index) {
-            this.classSelected = this.listchannels[index].id;
+            this.classSelected = this.groupClass[index].id;
           },
           // 切换频道
           switchChannel(id) {
             this.classSelected = id;
-            let index = _.findIndex(this.listchannels, ["id", id]);
+            let index = _.findIndex(this.groupClass, ["id", id]);
             this.$refs.swipe.slideTo(index);
           },
-          // 获取日记
-          getGroupList() {
-            this.$store.dispatch("getGroups", "123");
+          // 获取小组
+          getGroups() {
+            this.$store.dispatch("getGroups", "name");
+          },
+          // 加入小组
+          join(id, note) {
+            if (note == "加入") {
+              this.$store.dispatch("addGroup", {
+                id,
+                userid: "???"
+              });
+            }
           }
       }
   };

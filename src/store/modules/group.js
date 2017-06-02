@@ -61,9 +61,7 @@ let defaultGroupClass = [
 
 const state = {
   // 小组列表
-  groups: [{
-    classify: "all"
-  }],
+  groups: [],
 
   // 查找小组结果页
   searchList: [],
@@ -126,8 +124,8 @@ const getters = {
 
       _.forEach(groupClass, (item) => {
         label = item.id;
-        result[label] = _.filter(state.groups, {
-          classify: label
+        result[label] = _.filter(state.groups, (tmp) => {
+          return tmp.classify.indexOf(label) > -1
         });
       });
 
@@ -193,10 +191,16 @@ const mutations = {
     },
 
     /**
-     * 已加入小组
+     * @Description 修改小组列表
+     * @Param obj Object 新小组资料 eg:{ id: xx, ... }
      */
-    group_setDefaultChannels(state) {
-      state.channels = _.clone(defaultGroupChannels);
+    group_saveGroups(state, obj) {
+      let id = obj.id,
+        tmp = _.filter(state.groups, {
+          id: id
+        });
+      console.log(tmp);
+      !!tmp[0] && _.assign(tmp[0], obj);
     }
 
 };
@@ -206,16 +210,24 @@ const actions = {
   // 获取小组列表
   async getGroups({
       commit
-    }, id) {
-      let res = await api.getGroups(id);
+    }, name) {
+      let res = await api.getGroups(name);
+      console.log(res);
       commit("group_pushGroup", res.data);
     },
 
     // 加入小组
     async addGroup({
       commit
-    }) {
-      let res = await api.addGroup();
+    }, option) {
+      let id = option.id,
+        userid = option.userid,
+        res = await api.addGroup(id, userid);
+
+      commit("group_saveGroups", {
+        id: id,
+        note: "已申请"
+      });
     },
 
     // 查找小组
