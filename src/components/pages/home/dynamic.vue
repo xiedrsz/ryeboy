@@ -32,11 +32,6 @@
       "list-item": require("ui/list-item.vue")
     },
     computed: {}
-/*    methods:{
-      aa(){
-        store.commit("group_setDefaultChannels");
-      }
-    }*/
   };
 </script>
 

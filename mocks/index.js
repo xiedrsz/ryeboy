@@ -156,40 +156,37 @@ Mock
     }
   })
   // 获取小组列表
-  .mock(/groups$/, function() {
+  .mock(/groups/, function() {
     var result = Mock.mock({
       "list|1-10": [{
         "avatar": "/img/default-avatar.png",
-        "name": Random.cword(3, 5),
-        "id": /\d{8}/,        
-        "descrption": Random.cparagraph(10,20),
-        "level|+1": [{
-            "num":"1-30",
-            "star": 1
-          },{
-            "num":"30-50",
-            "star": 2
-          },{
-            "num":"50-100",
-            "star": 3
-          }],
-        "channel|+1": [
-          "all",
-          "welcome",
-          "latest",
-          "level",
-          "honor",
-          "littleBoy",
-          "BigBoy"
-        ]
+        "name": function() {
+          return Random.cword(3, 5);
+        },
+        "id": /\d{8}/,
+        "descrption": function() {
+          return Random.csentence(8);
+        },
+        "gradeNum|1-50": 50,
+        "gradeMax": 50,
+        "level|1-5": 5,
+        "classify": function() {
+          var temp = Mock.mock({
+              'regexp': /all(,welcome)?(,latest)?(,level)?(,honor)?(,littleBoy|,BigBoy)?/
+            }),
+            args = temp.regexp.split(",");
+
+          return args;
+        },
+        "note": "加入"
       }]
     });
 
     return result.list
   })
-        
-  // 加入小组
-  .mock(/apply/, function() {
+
+// 加入小组
+.mock(/apply/, function() {
     return {
       "data ": null,
     }
@@ -201,7 +198,7 @@ Mock
     }
   })
   // 创建小组
-  .mock(/groups$/, function() {
+  .mock(/__groups$/, function() {
     return {
       "data ": null,
     }
