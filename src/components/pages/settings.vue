@@ -5,8 +5,7 @@
       <list-item text="修改密码"
                  @click.native="$router.push('/pages/change-password')"
                  v-if="authenticated" />
-      <list-item text="设置隐私密码"
-                 v-if="authenticated" />
+      <list-item text="应用锁" />
       <list-item text="清除本地缓存"
                  @click.native="clearLocalStorage" />
       <list-item text="检查版本"

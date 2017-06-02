@@ -42,11 +42,6 @@
       "modal-loading": require("components/ui/modal-loading.vue"),
       "modal-dialog": require("components/ui/modal-dialog.vue"),
       "action-sheet": require("components/ui/action-sheet.vue"),
-    },
-    mounted() {
-      this.$on("copyComment", () => {
-        console.log("abc");
-      });
     }
   };
 </script>
