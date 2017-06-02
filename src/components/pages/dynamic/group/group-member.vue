@@ -1,5 +1,5 @@
 <template>
-  <div class="page" :title="title" seleted>
+  <div class="page" :title="title" actions='[{"text":"排序","clickHandler":"member-rank"}]'>    
     <div class="page-main">
       <ul class="member-list">
         <li v-for="item in groupInfo.members" class="member-item">

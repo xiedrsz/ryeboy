@@ -17,7 +17,9 @@
     </list>
     <list>
       <list-item text="晨练" />
-      <list-item text="麦田" />
+      <router-link to="/dynamic/plan" class="mdl-navigation__link">
+        <list-item text="麦田" />
+      </router-link>
     </list>
   </div>
 </template>
