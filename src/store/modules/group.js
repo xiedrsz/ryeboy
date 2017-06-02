@@ -199,7 +199,6 @@ const mutations = {
         tmp = _.filter(state.groups, {
           id: id
         });
-      console.log(tmp);
       !!tmp[0] && _.assign(tmp[0], obj);
     }
 
@@ -212,7 +211,6 @@ const actions = {
       commit
     }, name) {
       let res = await api.getGroups(name);
-      console.log(res);
       commit("group_pushGroup", res.data);
     },
 

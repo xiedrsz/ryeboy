@@ -64,15 +64,10 @@
           }
       },
       mounted() {
-        // 监听 添加 事件
-        this.$on("/dynamic/group-info", () => {
-          this.$router.push({
-            path: '/dynamic/group-info'
-          })
-        })
+        // 监听 创建组 事件
         this.$on("group-create", () => {
           this.$router.push({
-            path: '/dynamic/group-create'
+            path: '/dynamic/group-create-one'
           })
         })
       },

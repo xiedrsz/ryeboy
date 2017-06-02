@@ -16,7 +16,9 @@ const dynamic = [
   "subscrible/subscrible-manage",
   "group/group-apply",
   "group/group-card",
-  "group/group-create",
+  "group/group-create-one",
+  "group/group-create-two",
+  "group/group-create-three",
   "group/group-find",
   "group/group-grade",
   "group/group-info",
@@ -24,8 +26,7 @@ const dynamic = [
   "group/group-invite",
   "group/group-medal",
   "group/group-member",
-  "group/group-setting",
-  "group/group-createTwo"
+  "group/group-setting"
 ];
 
 const routes = [{
@@ -106,7 +107,7 @@ routes.forEach(item => {
   if (item.path == "/dynamic") {
     let nameTmp;
     dynamic.forEach(childrenPath => {
-      nameTmp = childrenPath.match(/\/?(\w+\-?\w+)$/g)[0].replace("/", "");
+      nameTmp = childrenPath.match(/\/?(\w+(\-\w+)*)$/g)[0].replace("/", "");
       item.children.push({
         path: nameTmp,
         name: nameTmp,
