@@ -267,7 +267,6 @@
 
         this.$nextTick(() => {
           try {
-            // lazySizes.loader.unveil(document.querySelector(".avatar"));
             let el = document.querySelector(".lesson-list");
             this.showAllLessons = el.scrollHeight > el.clientHeight;
             this.nomore = comments.length >= diary.commentCount;

@@ -79,8 +79,9 @@
   export default {
     data() {
       return {
+        slideContentPosition: 0,
         slideContentHeight: 0,
-        enableInfiniteScroll: false
+        enableInfiniteScroll: false,
       };
     },
     computed: {
@@ -162,6 +163,30 @@
       "pull-to-refresh": require("ui/pull-to-refresh.vue"),
       "infinite-scroll": require("ui/infinite-scroll.vue"),
     },
+    beforeRouteLeave(to, from, next) {
+      // 保存滚动位置
+      let positions = [];
+      this.$el.querySelectorAll(".slide-content").forEach(item => {
+        positions.push(item.scrollTop);
+      });
+      from.meta.scrollPosition = {
+        "channel-container": this.$el.querySelector(".channel-container").scrollLeft,
+        "slide-content": _.reverse(positions)
+      };
+      next();
+    },
+    beforeRouteEnter(to, from, next) {
+      // 恢复滚动位置
+      next(vm => {
+        let scrollPosition = to.meta.scrollPosition;
+        if (scrollPosition) {
+          vm.$el.querySelector(".channel-container").scrollLeft = scrollPosition["channel-container"];
+          vm.$el.querySelectorAll(".slide-content").forEach(item => {
+            item.scrollTop = scrollPosition["slide-content"].pop();
+          });
+        }
+      });
+    },
     deactivated() {
       this.enableInfiniteScroll = false;
     },
@@ -179,6 +204,8 @@
       }
     },
     mounted() {
+      console.log(this.$route);
+
       // 调整日记列表高度
       let mainContentHeight = document.querySelector("main").clientHeight;
       this.$el.style.height = mainContentHeight + "px";
