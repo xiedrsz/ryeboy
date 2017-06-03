@@ -13,3 +13,13 @@ Vue.filter('time', (value) => {
     return result;
 })
 
+Vue.filter('msgNum',(value) =>{
+    if (value == 'undefined' || value === "") {
+      return ""
+    }
+    
+    if (value > 99)
+      return '...'
+
+    return value
+})
