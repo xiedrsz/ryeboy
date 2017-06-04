@@ -31,15 +31,34 @@ let spallationChannels = [
     name: "提问"
   }
 ]
+
+let manageChannels = [
+    {
+      id: "support",
+      name: "推举"      
+    },
+    {
+      id: "bodyState",
+      name: "身体状态"      
+    },
+    {
+      id: "mentalState",
+      name: "心理状态"      
+    },
+    {
+      id: "commonState",
+      name: "常见状态"      
+    }
+]
 const state = {
   // 订阅列表
-  subscribles: [],
+  subscribles: spallationChannels,
 
   // 频道内容，结构可能还要复杂（比如分级）
   subChannels: [],
 
-  // 频道管理, 暂时是固定的，尚未配置
-  channels: spallationChannels
+  // 频道管理
+  channels: manageChannels
 };
 
 const getters = {};
