@@ -10,6 +10,7 @@
                   :type="dialog.type"
                   :content="dialog.content"
                   :title="dialog.title" />
+    <modal-popue v-show="popue.show"/>
   </div>
 </template>
 
@@ -21,11 +22,15 @@ export default {
     },
     dialog() {
       return this.$store.state.page.dialog;
+    },
+    popue() {
+      return this.$store.state.page.popue;
     }
   },
   components: {
     "modal-loading": require("components/ui/modal-loading.vue"),
     "modal-dialog": require("components/ui/modal-dialog.vue"),
+    "modal-popue": require("components/ui/modal-popue.vue"),
   }
 };
 

@@ -8,6 +8,12 @@ const state = {
     type: "alert",
     title: "",
     content: ""
+  },
+  popue: {
+    show: false,
+    msg: "",
+    callback: null,
+    cancel: false
   }
 };
 
@@ -26,6 +32,14 @@ const mutations = {
   },
   page_showDialog(state, data) {
     Object.assign(state.dialog, data);
+  },
+  page_popue(state, prompt) {
+    state.popue = {
+      show: prompt.show == undefined ? true : prompt.show,
+      msg: prompt.msg,
+      callback: prompt.callback == undefined ? null : prompt.callback,
+      cancel: !!prompt.cancel
+    }
   }
 };
 

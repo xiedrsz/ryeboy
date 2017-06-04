@@ -33,7 +33,6 @@
     },
     methods: {
       emit(clickHandler) {
-        console.log(clickHandler)
         this.$children[0].$emit(clickHandler);
       },
       updateHeader() {

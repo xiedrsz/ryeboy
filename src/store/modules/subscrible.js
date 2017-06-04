@@ -8,7 +8,29 @@ const channels = [{
   name: "",
   list: []
 }];
-
+// 默认小组列表分类
+let spallationChannels = [
+  {
+    id: "essence",
+    name: "精品"
+  },
+  {
+    id: "latest",
+    name: "最新"
+  },
+  {
+    id: "welcome",
+    name: "最热"
+  },
+  {
+    id: "unwelcome",
+    name: "最冷"
+  },
+  {
+    id: "problems",
+    name: "提问"
+  }
+]
 const state = {
   // 订阅列表
   subscribles: [],
@@ -17,7 +39,7 @@ const state = {
   subChannels: [],
 
   // 频道管理, 暂时是固定的，尚未配置
-  channels: []
+  channels: spallationChannels
 };
 
 const getters = {};
@@ -61,7 +83,7 @@ const actions = {
       commit
     }) {
       let res = await api.getSubscribles();
-      commit("subs_pushSubscrible", res);
+      commit("subs_pushSubscrible", res.data);
     },
 
     // 获取订阅频道内容
