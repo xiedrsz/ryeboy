@@ -3,12 +3,17 @@
        title="写日记"
        :actions="actions">
     <div class="page-content">
-      <div class="input-hint">{{ dateText }}，记录当天的进步并肯定自己</div>
+      <div class="input-date">{{ dateText }}</div>
+      <div class="input-hint">{{ isSunday ? "周日的内容为上一周总结，上传的真人照将做为每周封面。" : "记录当天的进步并肯定自己。" }}</div>
       <div class="input-container">
         <textarea class="input-box"
                   type="text"
                   :disabled="published"
                   rows="8"></textarea>
+      </div>
+      <div class="actions-container">
+        <div class="action">插入图片</div>
+        <div class="action">添加标签</div>
       </div>
     </div>
   </div>
@@ -44,6 +49,9 @@
       },
       dateText() {
         return moment(this.selectedDate).format("M[月]D[日]");
+      },
+      isSunday() {
+        return moment(this.selectedDate).day() == 0;
       },
       published() {
         return this.record.published;
@@ -88,7 +96,23 @@
     margin-top: 16px;
   }
 
+  .input-date,
   .input-hint {
     color: $color-secondary-text;
+  }
+
+  .actions-container {
+    @include flex-row;
+    color: $color-blue;
+    font-size: 12px;
+    margin-top: 16px;
+    -webkit-justify-content: flex-end;
+    -ms-flex-pack: flex-end;
+    justify-content: flex-end;
+    margin-right: 16px;
+  }
+
+  .action {
+    margin-left: 16px;
   }
 </style>

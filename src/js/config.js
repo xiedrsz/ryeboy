@@ -2,7 +2,7 @@ const debug = true;
 
 const config = {
   debug,
-  apiAddress: debug ? "https://127.0.0.1" : "https://api.ryeboy.org",
+  apiAddress: debug ? "http://192.168.0.104:8082" : "https://api.ryeboy.org",
   ossAddress: "http://ryeboy-app-apk-1.oss-cn-qingdao.aliyuncs.com"
 };
 

@@ -15,6 +15,7 @@ gulp.task("build-index", function() {
 gulp.task("build-cordova-www", ["build-index", "build-js"], function() {
   gulp.src([
     "src/js/**",
+    "src/img/**",
     "src/css/**",
     "src/vendor/**",
     "!src/vendor/material-design-lite/material.css",
