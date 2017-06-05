@@ -90,7 +90,7 @@ Mock
     return result.list;
   })
   // 关注
-  .mock(/\/concern/, function() {
+  .mock(/follow\/\d+/, function() {
     return {
       "data": null,
       "datas": {},
@@ -99,7 +99,7 @@ Mock
     }
   })
   // 取消关注
-  .mock(/cancelConcern/, function() {
+  .mock(/unfollow\/\d+/, function() {
     return {
       "data": null,
       "datas": {},
@@ -108,7 +108,7 @@ Mock
     }
   })
   // 点赞
-  .mock(/like/, function() {
+  .mock(/diary\/\d+\/like/, function() {
     return {
       "data": null,
       "datas": {},
@@ -117,7 +117,7 @@ Mock
     }
   })
   // 评论
-  .mock(/comment/, function() {
+  .mock(/diary\/\d+\/comment/, function() {
     return {
       "data": null,
       "datas": {},
@@ -131,8 +131,8 @@ Mock
       "data ": null,
     }
   })
-  // 获取订阅频道内容
-  .mock(/getSubChannels/, function() {
+  // 获取订阅频道内容, Todo
+  .mock(/diaries/, function() {
     return {
       "data ": null,
     }
@@ -144,18 +144,12 @@ Mock
     }
   })
   // 添加订阅频道
-  .mock(/addSubscrible/, function() {
+  .mock(/subscribe/, function() {
     return {
       "data ": null,
     }
   })
-  // 订阅
-  .mock(/subscrible/, function() {
-    return {
-      "data ": null,
-    }
-  })
-  // 获取小组列表
+  // 获取小组列表, Todo
   .mock(/groups/, function() {
     var result = Mock.mock({
       "list|1-10": [{
@@ -184,51 +178,50 @@ Mock
 
     return result.list
   })
-
-// 加入小组
-.mock(/apply/, function() {
+  // 加入小组
+  .mock(/group\/\d+\/apply/, function() {
     return {
       "data ": null,
     }
   })
-  // 查找小组
-  .mock(/searchGroup/, function() {
+  // 查找小组, Todo
+  .mock(/groups/, function() {
     return {
       "data ": null,
     }
   })
-  // 创建小组
-  .mock(/__groups$/, function() {
+  // 创建小组, Todo
+  .mock(/groups/, function() {
     return {
       "data ": null,
     }
   })
   // 获取小组成员
-  .mock(/getMembers/, function() {
+  .mock(/group\/\d+\/members/, function() {
     return {
       "data ": null,
     }
   })
   // 获取申请列表
-  .mock(/getApplys/, function() {
+  .mock(/group\/\d+\/pending_members/, function() {
     return {
       "data ": null,
     }
   })
   // 同意申请
-  .mock(/approve/, function() {
+  .mock(/group\/\d+\/approve/, function() {
     return {
       "data ": null,
     }
   })
   // 拒绝申请
-  .mock(/rejectApply/, function() {
+  .mock(/group\/\d+\/reject\/\d+/, function() {
     return {
       "data ": null,
     }
   })
   // 获取小组消息，根据id获取对应小组的成员日记
-  .mock(/diaries/, function() {
+  .mock(/group\/\d+\/diaries/, function() {
     var result = Mock.mock({
       "list|1-15": [{
         "likeCount|1-50": 50,
@@ -290,19 +283,19 @@ Mock
     return result
   })
   // 修改小组资料, 更新小组
-  .mock(/group/, function() {
+  .mock(/group\/\d+/, function() {
     return {
       "data ": null,
     }
   })
   // 邀请好友
-  .mock(/inviteFriends/, function() {
+  .mock(/group\/\d+\/invite\/\d+/, function() {
     return {
       "data ": null,
     }
   })
   // 设置小组
-  .mock(/groupSetting/, function() {
+  .mock(/group\/\d+/, function() {
     return {
       "data ": null,
     }
