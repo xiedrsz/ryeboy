@@ -8,16 +8,57 @@ const channels = [{
   name: "",
   list: []
 }];
+// 默认小组列表分类
+let spallationChannels = [
+  {
+    id: "essence",
+    name: "精品"
+  },
+  {
+    id: "latest",
+    name: "最新"
+  },
+  {
+    id: "welcome",
+    name: "最热"
+  },
+  {
+    id: "unwelcome",
+    name: "最冷"
+  },
+  {
+    id: "problems",
+    name: "提问"
+  }
+]
 
+let manageChannels = [
+    {
+      id: "support",
+      name: "推举"      
+    },
+    {
+      id: "bodyState",
+      name: "身体状态"      
+    },
+    {
+      id: "mentalState",
+      name: "心理状态"      
+    },
+    {
+      id: "commonState",
+      name: "常见状态"      
+    }
+]
 const state = {
   // 订阅列表
-  subscribles: [],
+  subscribles: spallationChannels,
 
   // 频道内容，结构可能还要复杂（比如分级）
   subChannels: [],
 
-  // 频道管理, 暂时是固定的，尚未配置
-  channels: []
+  // 频道管理
+  channels: manageChannels
 };
 
 const getters = {};
@@ -61,7 +102,7 @@ const actions = {
       commit
     }) {
       let res = await api.getSubscribles();
-      commit("subs_pushSubscrible", res);
+      commit("subs_pushSubscrible", res.data);
     },
 
     // 获取订阅频道内容

@@ -127,9 +127,24 @@ Mock
   })
   // 获取订阅列表
   .mock(/getSubscribles/, function() {
-    return {
-      "data ": null,
-    }
+    var result = Mock.mock({
+      "list|1-10":[{
+        "id": /\d{8}/,
+        "avatar": "/img/default-avatar.png",
+        "name":function() {
+          return Random.cword(3, 5);
+        }, 
+        "descrption": function() {
+          return Random.csentence(8);
+        },
+        "time": function(){
+          return Random.date('yyyy-MM-dd')
+        },
+        "leastReadTime": ""
+      }]
+    })
+
+    return result.list
   })
   // 获取订阅频道内容, Todo
   .mock(/diaries/, function() {

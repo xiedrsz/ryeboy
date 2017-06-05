@@ -4,6 +4,9 @@ import routes from "js/routes.js";
 import store from "store";
 import api from "api";
 
+// 引入过滤器
+import "./js/utils/filter"
+
 require("lazysizes");
 
 Vue.use(VueRouter);
@@ -13,6 +16,28 @@ const router = new VueRouter({
   base: __dirname,
   routes
 });
+
+const commit = store.commit || store.dispatch;
+function plugin(Vue){
+  // 弹出提示
+  let promp = (msg, callback, cancel) => {
+    commit('page_popue', {
+      msg: msg,
+      callback: callback,
+      cancel: cancel
+    })
+  }
+
+  Vue.promp = promp
+  Object.defineProperties(Vue.prototype, {    
+    $promp: {
+      get() {
+        return promp
+      }
+    }
+  })
+}
+Vue.use(plugin);
 
 if (localStorage.authenticated) {
   store.commit("user_assignAuth", JSON.parse(localStorage.user));
