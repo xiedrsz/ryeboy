@@ -6,20 +6,20 @@ const datetime = require("js/utils/datetime.js");
  * @Param formatStr String 格式 [YYYY,MM,DD,hh,mm,ss]
  */
 Vue.filter('time', (value) => {
-    if (value == 'undefined' || value === "") {
-      return ""
-    }
-    let result = datetime.formatDiaryCreated(value)
-    return result;
+  if (value == 'undefined' || value === "") {
+    return ""
+  }
+  let result = datetime.formatDiaryCreated(value)
+  return result;
 })
 
-Vue.filter('msgNum',(value) =>{
-    if (value == 'undefined' || value === "") {
-      return ""
-    }
-    
-    if (value > 99)
-      return '...'
+Vue.filter('msgNum', (value) => {
+  if (value == 'undefined' || value === "") {
+    return ""
+  }
 
-    return value
+  if (value > 99)
+    return '...'
+
+  return value
 })

@@ -50,7 +50,6 @@
 
 <style lang="scss" scoped>
   @import "~scss/main.scss";
-  
   .page-main {
     padding: 10px 15px;
     box-sizing: border-box;

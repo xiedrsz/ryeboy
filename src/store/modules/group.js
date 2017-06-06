@@ -75,8 +75,8 @@ const state = {
   // 组群申请列表
   applys: [],
 
-  // 小组消息（花生小组）列表
-  groupNews: [],
+  // 小组日记
+  groupDiaries: [],
 
   // 花生小组信息，用于修改或查看小组信息
   groupInfo: {
@@ -91,20 +91,19 @@ const state = {
 };
 
 const getters = {
-
   /**
    * @Description 获取小组消息（花生小组）列表
    * @Param label String 标签，比如: [精品、最新、...], 暂时废弃
    */
-  getGroupNews(state) {
+  getGroupDiaries(state) {
       let result = {},
         label = "",
         channels = state.channels,
-        groupNews = state.groupNews;
+        groupDiaries = state.groupDiaries;
 
       _.forEach(channels, (item) => {
         label = item.id;
-        result[label] = _.filter(state.groupNews, {
+        result[label] = _.filter(state.groupDiaries, {
           channel: label
         });
       });
@@ -178,8 +177,21 @@ const mutations = {
      * @Description 新增小组消息（花生小组）列表
      * @Param list Array 新小组成员列表
      */
-    group_pushGroupNews(state, list) {
-      state.groupNews.push.apply(state.groupNews, list);
+    group_pushDiaries(state, list) {
+      state.groupDiaries.push.apply(state.groupDiaries, list);
+    },
+
+    /**
+     * @Description 修改小组日记
+     * @Param obj Object 新日记信息 eg: { _id: xx, ... }
+     */
+    group_saveDiaries(state, obj) {
+      let _id = obj._id,
+        tmp = _.filter(state.groupDiaries, {
+          _id
+        });
+
+      _.assign(tmp[0], obj);
     },
 
     /**
@@ -192,7 +204,7 @@ const mutations = {
 
     /**
      * @Description 修改小组列表
-     * @Param obj Object 新小组资料 eg:{ id: xx, ... }
+     * @Param obj Object 新小组资料 eg:{ _id: xx, ... }
      */
     group_saveGroups(state, obj) {
       let id = obj.id,
@@ -201,12 +213,10 @@ const mutations = {
         });
       !!tmp[0] && _.assign(tmp[0], obj);
     }
-
 };
 
 const actions = {
-
-  // 获取小组列表
+  // 获取小组列表, 基本完成
   async getGroups({
       commit
     }, name) {
@@ -214,7 +224,7 @@ const actions = {
       commit("group_pushGroup", res.data);
     },
 
-    // 加入小组
+    // 加入小组, 基本完成
     async addGroup({
       commit
     }, option) {
@@ -274,15 +284,39 @@ const actions = {
       let res = await api.rejectApply();
     },
 
-    // 获取小组消息
-    async getGroupNews({
+    // 获取小组消息, 基本完成
+    async getGroupDiaries({
       commit
     }, id) {
-      let res = await api.getGroupNews(id);
-      commit("group_pushGroupNews", res.data);
+      let res = await api.getGroupDiaries(id);
+
+      commit("group_pushDiaries", res.data);
     },
 
-    // 获取小组资料
+    // 点赞, 基本完成
+    async groupLike({
+      commit,
+      state
+    }, option) {
+      let _id = option._id;
+      await api.like(_id);
+
+      option.likeCount++;
+      option.likeIt = true;
+      commit("group_saveDiaries", option);
+    },
+
+    // 评论, 基本完成
+    async groupComment({
+      commit
+    }, option) {
+      let _id = option._id;
+      await api.comment(_id);
+      option.commentCount++;
+      commit('group_saveDiaries', option);
+    },
+
+    // 获取小组资料, 基本完成
     async getGroupInfo({
       commit
     }, id) {
@@ -290,7 +324,7 @@ const actions = {
       commit("group_saveInfo", res.data);
     },
 
-    // 修改小组资料
+    // 修改小组资料, 基本完成
     async saveGroupInfo({
       commit,
       state
@@ -299,7 +333,7 @@ const actions = {
         callback = option.callback,
         res;
       commit("group_saveInfo", groupInfo);
-      res = await api.saveGroupInfo(state.groupInfo);
+      res = await api.saveGroupInfo(groupInfo);
       !!callback && callback();
     },
 

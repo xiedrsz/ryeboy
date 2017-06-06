@@ -53,7 +53,8 @@
         "infinite-scroll": require("ui/infinite-scroll.vue"),
       },
       created() {
-        this.getGroups()
+        let groups = this.$store.state.group.groups;
+        !groups[0] && this.getGroups();
       },
       computed: {
         groupClass() {
@@ -91,7 +92,7 @@
             if (note == "加入") {
               this.$store.dispatch("addGroup", {
                 id,
-                userid: "???"
+                userid: "123"
               });
             }
           }

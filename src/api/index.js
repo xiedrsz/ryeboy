@@ -138,7 +138,7 @@ class api {
     })
   }
 
-  // 获取小组列表
+  // 获取小组列表, T
   static getGroups(name) {
     return axios.get("/groups", {
       params: {
@@ -147,7 +147,7 @@ class api {
     })
   }
 
-  // 加入小组
+  // 加入小组, T
   static addGroup(id, userid) {
     return axios.post(`/group/${id}/apply`, {
       userid
@@ -195,17 +195,17 @@ class api {
     return axios.get(`/group/${group_id}/reject/${userid}`)
   }
 
-  // 获取小组消息, 根据id获取对应小组的成员日记
-  static getGroupNews(id) {
+  // 根据id获取对应小组的成员日记, T
+  static getGroupDiaries(id) {
     return axios.get(`/group/${id}/diaries`)
   }
 
-  // 获取小组资料
+  // 获取小组资料, T
   static getGroupInfo(group_id) {
     return axios.get(`/group/${group_id}`)
   }
 
-  // 修改小组资料, 更新小组
+  // 修改小组资料, 更新小组, T
   static saveGroupInfo(groupInfo) {
     let group_id = groupInfo.id;
     return axios.post(`/group/${group_id}`, groupInfo)

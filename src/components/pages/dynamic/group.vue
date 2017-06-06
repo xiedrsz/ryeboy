@@ -14,8 +14,7 @@
         <swipe-slide v-for="channel in channels" :id="channel.id">
           <div class="slide-content">
             <ul class="mdl-list">
-              <dynamic-item v-for="(item, index) in diaries[channel.id]" :likeCount="item.likeCount" :commentCount="item.commentCount" :avatar="item.avatar" :username="item.username" :text="item.escapedText" :time="item.time" :overflow="item.overflow" :likeIt="item.likeIt"
-              :index="index" />
+              <dynamic-item v-for="(item, index) in diaries[channel.id]" :detail="item" @like="like($event, item._id)" @comment="comment($event,item._id)" />
             </ul>
           </div>
         </swipe-slide>
@@ -33,23 +32,16 @@
           channelSelected: "essence"
         };
       },
-      components: {
-        "dynamic-item": require("components/pages/dynamic/concern/dynamic-item.vue"),
-        "spinner": require("ui/spinner.vue"),
-        "swipe": require("ui/swipe.vue"),
-        "swipe-slide": require("ui/swipe-slide.vue"),
-        "pull-to-refresh": require("ui/pull-to-refresh.vue"),
-        "infinite-scroll": require("ui/infinite-scroll.vue"),
-      },
       created() {
-        this.getDiary();
+        let diaries = this.$store.state.group.groupDiaries;
+        !diaries[0] && this.getDiary();
       },
       computed: {
         channels() {
             return this.$store.state.group.channels;
           },
-          diaries() {            
-            return this.$store.getters.getGroupNews;
+          diaries() {
+            return this.$store.getters.getGroupDiaries;
           }
       },
       mounted() {
@@ -73,8 +65,32 @@
           },
           // 获取日记
           getDiary() {
-            this.$store.dispatch("getGroupNews", "123");
+            this.$store.dispatch("getGroupDiaries", "123");
+          },
+          // 点赞
+          like(likeCount, _id) {
+            this.$store.dispatch("groupLike", {
+              _id,
+              likeCount
+            });
+          },
+          // 评论
+          comment(event, _id) {
+            let option = {
+              _id: _id,
+              mess: event.mess,
+              commentCount: event.commentCount
+            };
+            this.$store.dispatch("groupComment", option);
           }
+      },
+      components: {
+        "dynamic-item": require("components/pages/dynamic/concern/dynamic-item.vue"),
+        "spinner": require("ui/spinner.vue"),
+        "swipe": require("ui/swipe.vue"),
+        "swipe-slide": require("ui/swipe-slide.vue"),
+        "pull-to-refresh": require("ui/pull-to-refresh.vue"),
+        "infinite-scroll": require("ui/infinite-scroll.vue"),
       }
   };
 </script>

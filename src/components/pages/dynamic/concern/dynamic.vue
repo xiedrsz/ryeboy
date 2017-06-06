@@ -6,7 +6,7 @@
           <pull-to-refresh :disabled="disableRefresh" @pulltorefresh="pulltorefresh" />
 
           <ul class="mdl-list">
-            <dynamic-item v-for="(item, index) in dynamic" :detail="item" :index="index" @like="like(item.id)" @comment="comment($event,item.id)" />
+            <dynamic-item v-for="(item, index) in dynamic" :detail="item" @like="like(item.id)" @comment="comment($event,item.id)" />
           </ul>
 
           <unusual-loading :option.syn="loading" @reload="getDynamic"></unusual-loading>

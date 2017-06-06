@@ -11,9 +11,9 @@
       </router-link>
     </list>
     <list>
-      <router-link to="/dynamic/group" class="mdl-navigation__link">
+      <a class="mdl-navigation__link" @click="group">
         <list-item text="小组" />
-      </router-link>
+      </a>
     </list>
     <list>
       <list-item text="晨练" />
@@ -25,13 +25,24 @@
 </template>
 
 <script>
-
   export default {
     components: {
       "list": require("ui/list.vue"),
       "list-item": require("ui/list-item.vue")
     },
-    computed: {}
+    computed: {},
+    methods: {
+      group() {
+        // Todo, 判断用户是否加入小组
+        let path = '/dynamic/group';
+        if (false) {
+          path = '/dynamic/group-find'
+        }
+        this.$router.push({
+          path
+        });
+      }
+    }
   };
 </script>
 

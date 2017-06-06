@@ -11,7 +11,7 @@ Mock
   .mock(/getDynamicDiaries/, function() {
     var result = Mock.mock({
       "list|1-15": [{
-        "id": /\d{6}/,
+        "_id": /\d{6}/,
         "likeCount|1-50": 50,
         "commentCount|1-50": 50,
         "avatar": "/img/default-avatar.png",
@@ -21,7 +21,9 @@ Mock
         "escapedText": function() {
           return Random.cparagraph()
         },
-        "time": "2月8日 22:56",
+        "time": function() {
+          return Random.datetime('yyyy-MM-dd HH:mm:ss');
+        },
         "overflow": true,
         "likeIt": function() {
           return Random.boolean()
@@ -127,7 +129,7 @@ Mock
           return Random.csentence(8);
         },
         "time": function() {
-          return Random.date('yyyy-MM-dd')
+          return Random.datetime('yyyy-MM-dd HH:mm:ss');
         },
         "leastReadTime": ""
       }]
@@ -136,7 +138,7 @@ Mock
     return result.list
   })
   // 获取订阅频道内容, Todo
-  .mock(/diaries/, function() {
+  .mock(/__diaries/, function() {
     return {
       "data ": null,
     }
@@ -189,13 +191,13 @@ Mock
     }
   })
   // 查找小组, Todo
-  .mock(/groups/, function() {
+  .mock(/__groups/, function() {
     return {
       "data ": null,
     }
   })
   // 创建小组, Todo
-  .mock(/groups/, function() {
+  .mock(/__groups/, function() {
     return {
       "data ": null,
     }
@@ -228,6 +230,7 @@ Mock
   .mock(/group\/\d+\/diaries/, function() {
     var result = Mock.mock({
       "list|1-15": [{
+        "_id": /\d{8}/,
         "likeCount|1-50": 50,
         "commentCount|1-50": 50,
         avatar: '/img/default-avatar.png',
@@ -237,7 +240,9 @@ Mock
         escapedText: function() {
           return Random.cparagraph()
         },
-        time: "2月8日 22:56",
+        time: function() {
+          return Random.datetime('yyyy-MM-dd HH:mm:ss');
+        },
         overflow: true,
         likeIt: function() {
           return Random.boolean()
@@ -256,11 +261,11 @@ Mock
     return result.list
   })
   // 获取小组资料
-  .mock(/getGroupInfo/, function() {
+  .mock(/group\/\d+/, function() {
     var result = Mock.mock({
       "avatar": "/img/default-avatar.png",
       "name": Random.cword(3, 5),
-      "id": /\d{8}/,
+      "_id": /\d{8}/,
       "memMax": 100,
       "memNum|1-50": 50,
       "members|1-15": [{
@@ -286,8 +291,8 @@ Mock
 
     return result
   })
-  // 修改小组资料, 更新小组
-  .mock(/group\/\d+/, function() {
+  // 修改小组资料, 更新小组, Todo
+  .mock(/__group\/\d+/, function() {
     return {
       "data ": null,
     }
@@ -299,7 +304,7 @@ Mock
     }
   })
   // 设置小组
-  .mock(/group\/\d+/, function() {
+  .mock(/__group\/\d+/, function() {
     return {
       "data ": null,
     }

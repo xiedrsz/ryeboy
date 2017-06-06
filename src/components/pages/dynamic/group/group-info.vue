@@ -13,7 +13,7 @@
           <span class="info-left">组名ID</span>
           <span class="info-right">
             <span class="group-name">{{groupInfo.name}}</span>
-            <span class="group-id">{{"ID:"+groupInfo.id}}</span>
+            <span class="group-id">{{"ID:"+groupInfo._id}}</span>
           </span>
 
         </li>
@@ -109,9 +109,7 @@
           msg: '如果你无法简洁的表达你的想法，那只说明你还不够了解它..'
         }
       },
-      components: {
-
-      },
+      components: {},
       computed: {
         groupInfo() {
           return this.$store.state.group.groupInfo;
@@ -121,7 +119,6 @@
         this.getGroupInfo();
       },
       mounted() {
-        console.log(this.groupInfo);
         // 监听 设置 事件
         this.$on("group-setting", () => {
           // Todo, 判断是否为组长
@@ -154,7 +151,7 @@
               });
             }
           },
-          // 
+          // 跳转到组长日记，有权限
           goToDiary() {
             // Todo
             console.log("如果是组长，跳到日记页面，为实现");

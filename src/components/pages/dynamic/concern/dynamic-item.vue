@@ -8,7 +8,7 @@
       <div class="text" :class="{fulltext:!fulltext}" ref="text">{{ item.escapedText }}</div>
       <div class="showfull" v-show="item.overflow" @click="fulltext=!fulltext">{{fulltext ? '收起' : '全文'}}</div>
       <div class="comment">
-        <div>{{ item.time }}</div>
+        <div>{{ item.time | time }}</div>
         <div class="mdl-layout-spacer" />
         <div class="counts">
           <i class="material-icons md-16" @click="like" v-html="item.likeIt ? 'favorite' : 'favorite_border'" :class="{'like-it':item.likeIt}"></i>
@@ -43,8 +43,7 @@
             likeIt: false
           }
         }
-      },
-      index: Number
+      }
     },
     data() {
       return {
@@ -60,11 +59,11 @@
     },
     methods: {
       like() {
-          !this.likeIt && this.$emit('like');
+          !this.item.likeIt && this.$emit('like', this.item.likeCount);
         },
         comment(option) {
           this.isComment = !this.isComment;
-          option.type && !!option.mess && this.$emit('comment', option);
+          option.type && !!option.mess && (option.commentCount = this.item.commentCount, this.$emit('comment', option));
         }
     },
     components: {
