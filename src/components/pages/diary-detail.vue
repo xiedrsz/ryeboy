@@ -26,7 +26,7 @@
                   <div class="lesson"
                        v-for="card in cards">
                     <img class="card-icon"
-                         :src="'../img/card-' + card.id + '.png'">
+                         :src="require('img/card-' + card.id + '.png')">
                     <div class="card-name">{{ card.name }}</div>
                   </div>
                 </div>
@@ -59,7 +59,7 @@
               <div class="item-content">
                 <div class="username">
                   <img v-if="comment.verified"
-                       :src="'../img/v.png'"
+                       :src="require('img/v.png')"
                        class="v" />
                   <span>{{ comment.username }}</span>
                   <span class="userlv">{{ comment.userlv }}</span>
@@ -243,7 +243,8 @@
       },
       users() {
         return this.$store.getters.getDiaryUsers;
-      }
+      },
+      
     },
     beforeDestroy() {
       this.$off("copyComment");

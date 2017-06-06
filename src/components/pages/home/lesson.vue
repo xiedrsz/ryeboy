@@ -39,7 +39,7 @@
                  class="card">
               <img class="card-icon"
                    @click="cardDetail(card.id)"
-                   :src="'../../img/card-' + card.id + '.png'">
+                   :src="require('img/card-' + card.id + '.png')">
               <div class="card-name">{{ card.name }}</div>
               <checkbox :id="card.id"
                         :disabled="published"

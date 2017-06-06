@@ -79,7 +79,7 @@ function updateComments(comments) {
       if (user.portrait) {
         comment.avatar = `${config.ossAddress}/portraits/${user._id}_${user.portrait}.jpg`;
       } else {
-        comment.avatar = "../../img/default-avatar.png";
+        comment.avatar = require("img/default-avatar.png");
       }
     }
 
@@ -104,7 +104,7 @@ function updateDiaries(diaries) {
       if (user.portrait) {
         diary.avatar = `${config.ossAddress}/portraits/${user._id}_${user.portrait}.jpg`;
       } else {
-        diary.avatar = "../../img/default-avatar.png";
+        diary.avatar = require("img/default-avatar.png");
       }
     }
     diary.time = datetime.formatDiaryCreated(diary.createdAt);

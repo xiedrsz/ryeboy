@@ -14,12 +14,10 @@ gulp.task("build-index", function() {
 
 gulp.task("build-cordova-www", ["build-index", "build-js"], function() {
   gulp.src([
-    "src/js/**",
-    "src/img/**",
+    "src/dist/**",
     "src/css/**",
     "src/vendor/**",
-    "!src/vendor/material-design-lite/material.css",
-    "src/bundle.js",
+    "!src/vendor/material-design-lite/material.css"
   ], {
     base: "src"
   }).pipe(gulp.dest("www"));

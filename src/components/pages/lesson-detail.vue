@@ -3,7 +3,7 @@
        title="功课详情">
     <div class="content-top content-block">
       <img class="card-icon"
-           :src="'../img/card-' + card.id + '.png'">
+           :src="require('img/card-' + card.id + '.png')">
       <div class="card-description">
         <div class="card-name">{{ card.name }}</div>
         <!--<div class="card-value">{{ card.value }}</div>-->

@@ -2,6 +2,7 @@ node_modules/
 plugins/
 platforms/
 www/
+src/dist/
 *.log
 *.log.*
 memo
