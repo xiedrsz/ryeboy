@@ -1,20 +1,20 @@
 <template>
   <li class="item-container">
     <div class="item-avatar">
-      <img :data-src="avatar" class="lazyload" />
+      <img :data-src="item.avatar" class="lazyload" />
     </div>
     <div class="item-content">
-      <div class="item-name">{{ username }}</div>
-      <div class="text" :class="{fulltext:!fulltext}" v-html="text" ref="text">{{ text }}</div>
-      <div class="showfull" v-show="overflow" @click="isshowfull" v-html="fulltext ? '收起' : '全文'"></div>
+      <div class="item-name">{{ item.username }}</div>
+      <div class="text" :class="{fulltext:!fulltext}" ref="text">{{ item.escapedText }}</div>
+      <div class="showfull" v-show="item.overflow" @click="fulltext=!fulltext">{{fulltext ? '收起' : '全文'}}</div>
       <div class="comment">
-        <div>{{ time }}</div>
+        <div>{{ item.time }}</div>
         <div class="mdl-layout-spacer" />
         <div class="counts">
-          <i class="material-icons md-16" @click="likeItChange" v-html="likeIt ? 'favorite' : 'favorite_border'" :class="{'like-it':likeIt}"></i>
-          <span style="margin-right: 24px">{{ likeCount }}</span>
-          <i class="material-icons md-16" @click="commentIt">comment</i>
-          <span>{{ commentCount }}</span>
+          <i class="material-icons md-16" @click="like" v-html="item.likeIt ? 'favorite' : 'favorite_border'" :class="{'like-it':item.likeIt}"></i>
+          <span style="margin-right: 24px">{{ item.likeCount }}</span>
+          <i class="material-icons md-16" @click="isComment=!isComment">comment</i>
+          <span>{{ item.commentCount }}</span>
         </div>
       </div>
       <div class="item-lable">
@@ -22,60 +22,49 @@
         <span>尿频</span>
         <span>痘痘</span>
       </div>
-      <popue-comment :showPopue="isComment" @changeval="changeShowPopue"></popue-comment>
+      <popue-comment :showPopue="isComment" @changeval="comment"></popue-comment>
     </div>
   </li>
 </template>
 <script>
   export default {
     props: {
-      username: String,
-      avatar: String,
-      text: String,
-      time: String,
-      likeCount: {
-        type: Number,
-        default: 0
+      detail: {
+        type: Object,
+        default () {
+          return {
+            avatar: "/img/default-avatar.png",
+            username: "abc",
+            likeCount: 10,
+            commentCount: 10,
+            text: "abcdefg",
+            time: "2月8日 22:56",
+            overflow: false,
+            likeIt: false
+          }
+        }
       },
-      commentCount: {
-        type: Number,
-        default: 0
-      },
-      overflow: Boolean,
-      likeIt: Boolean,
       index: Number
     },
     data() {
       return {
-        fulltext: false,
-        showfull: false,
-        isComment: false
+        isComment: false,
+        overflow: false,
+        fulltext: false
       }
     },
     computed: {
-
+      item() {
+        return this.detail
+      }
     },
     methods: {
-      isshowfull() {
-          this.fulltext = !this.fulltext
+      like() {
+          !this.likeIt && this.$emit('like');
         },
-        likeItChange() {
-          var val = !this.likeIt ? 1 : -1,
-            index = this.index;
-
-          this.$store.dispatch('getLike', {
-            "index": index,
-            "val": val
-          })
-        },
-        commentIt() {
-          this.isComment = !this.isComment
-        },
-        changeShowPopue(option) {
-          this.commentIt();
-          if (option.type) {
-            this.$store.dispatch("comment", this.index);
-          }
+        comment(option) {
+          this.isComment = !this.isComment;
+          option.type && !!option.mess && this.$emit('comment', option);
         }
     },
     components: {
@@ -116,9 +105,6 @@
   
   .full-text {
     visibility: hidden;
-    /*     position: fixed;
-    top: 0;
-    left: 0; */
     z-index: -999;
   }
   
@@ -193,58 +179,4 @@
   .material-icons.like-it {
     color: $color-red;
   }
-  /*   .dynamic-list {
-    padding: 16px;
-    display: flex;
-    width: 100%;
-    overflow: hidden;
-    box-sizing: border-box;
-    border-bottom: 1px solid #e5e5e5;
-    .dynamic-avater {
-      width: 36px;
-      height: 36px;
-      font-size: 0;
-      margin-right: 12px;
-      img {
-        background-size: cover;
-      }
-    }
-    .dynamic_name {
-      color: #00aaee;
-    }
-    .dynamic_summary {
-      height: 3em;
-      overflow: hidden;
-      margin: 0 0 10px;
-    }
-    .dynamic_footer {
-      display: flex;
-      justify-content: space-between;
-      .icon {
-        display: inline-block;
-        content: "";
-        width: 12px;
-        height: 12px;
-        background-size: cover;
-      }
-      .ungood {
-        background-image: url('/img/photo_heart.png')
-      }
-      .good {
-        background-image: url('/img/photo_hearted.png')
-      }
-      .hasReaded {
-        background-image: url('/img/photo_note.png')
-      }
-    }
-    .dynamic_lable {
-      span {
-        border: 1px solid #e5e5e5;
-        padding: 2px 5px;
-        border-radius: 6px;
-        line-height: 1;
-        display: inline-block;
-      }
-    }
-  } */
 </style>

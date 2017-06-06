@@ -45,7 +45,14 @@ const state = {
   // 关注 粉丝
   fans: [],
   // 新 关注人列表
-  newconcern: []
+  newconcern: [],
+  // loading 组件
+  loading: {
+    no: false,
+    err: false,
+    none: false,
+    icon: true
+  }
 };
 
 const getters = {
@@ -106,18 +113,25 @@ const mutations = {
     },
     /**
      * @function 点赞
-     * @Param obj Object {index: 索引, val: 1/-1}
+     * @Param id String 日记id
      */
-    concern_like(state, obj) {
-      state.dynamic[obj.index].likeCount = state.dynamic[obj.index].likeCount + obj.val
-      state.dynamic[obj.index].likeIt = obj.val == 1 ? true : false
+    concern_like(state, id) {
+      let tmp = _.filter(state.dynamic, {
+        id
+      });
+
+      tmp[0].likeCount++;
+      tmp[0].likeIt = true;
     },
     /**
      * @function 评论
-     * @Param index Number 索引
+     * @Param id String 日记id
      */
-    concern_comment(state, index) {
-      state.dynamic[index].commentCount++;
+    concern_comment(state, id) {
+      let tmp = _.filter(state.dynamic, {
+        id
+      });
+      tmp[0].commentCount++;
     },
     /**
      * @function 取消关注
@@ -139,6 +153,13 @@ const mutations = {
         note = type == "concern" ? "取消" : "已关注";
 
       state[type][index].note = note;
+    },
+    /**
+     * @function 修改 loading 选项
+     * @Param opt Object 新变化
+     */
+    save_loading(state, opt) {
+      _.assign(state.loading, opt)
     }
 };
 
@@ -152,75 +173,105 @@ const actions = {
       commit("concern_setOverview", obj);
     },
 
+    // 关注， 获取日记， 基本完成，等待数据
     async getDynamic({
       commit,
-      rootState
+      state
     }) {
-      let res = await api.getDynamicDiaries(),
-        list = res.data;
+      commit("save_loading", {
+        no: false,
+        err: false,
+        none: false,
+        icon: true
+      });
+
+      let list = [];
+
+      await api.getDynamicDiaries().then((res) => {
+        !!res && (list = res.data);
+      }).catch(() => {
+        commit("save_loading", {
+          err: true
+        });
+      });
+
       commit("concern_addDynamic", list);
+
+      if (!state.dynamic[0]) {
+        commit("save_loading", {
+          none: true
+        });
+      }
+
+      commit("save_loading", {
+        icon: false
+      });
     },
 
-    // 点赞
-    async getLike({
-      commit,
-      rootState
-    }, item) {
-      commit('concern_like', item);
+    // 点赞, 基本完成
+    async like({
+      commit
+    }, diary_id) {
+      await api.like(diary_id);
+      commit('concern_like', diary_id);
     },
 
-    // 获取关注人
+    // 评论, 基本完成
+    async comment({
+      commit
+    }, option) {
+      let id = option.id;
+      await api.comment(id);
+      commit('concern_comment', id);
+    },
+
+    // 获取关注人, 基本完成
     async getConcern({
-      commit,
-      rootState
+      commit
     }) {
       let res = await api.getConcerns(),
         list = res.data;
+
       commit("concern_addConcern", list);
     },
 
-    // 获取粉丝
+    // 获取粉丝，基本完成
     async getFans({
-      commit,
-      rootState
+      commit
     }) {
       let res = await api.getFans(),
         list = res.data;
+
       commit("concern_addFans", list);
     },
 
-    // 获取新关注人列表
+    // 获取新关注人列表, 基本完成
     async getNewConcern({
-      commit,
-      rootState
+      commit
     }) {
       let res = await api.getNewConcern(),
         list = res.data;
       commit("concern_initNewConcern", list);
     },
 
-    // 取消关注
+    // 取消关注, 基本完成
     async cancelConcern({
-      commit,
-      rootState
+      commit
     }, option) {
+      // 关注人的ID
+      let userId = option.userId;
+      await api.cancelConcern(userId);
       commit('concern_cancel', option);
     },
 
-    // 添加关注
+    // 添加关注, 基本完成
     async addConcern({
-      commit,
-      rootState
+      commit
     }, option) {
+      // 关注人的ID
+      let userId = option.userId;
+      await api.concern(userId);
       commit('concern_add', option);
-    },
-
-    // 评论
-    async comment({
-      commit,
-      rootState
-    }, index) {
-      commit('concern_comment', index);
     }
 };
 

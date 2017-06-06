@@ -3,11 +3,13 @@
     <swipe ref="swipe">
       <swipe-slide>
         <div class="slide-content">
+
           <list>
             <list-item v-for="(item, index) in newconcern" :text="item.username" lIcon="/img/default-avatar.png">
-              <span slot="note" class="mdl-list__item-note" @click="cancelAdd(index, item.note)">{{item.note}}</span>
+              <span slot="note" class="mdl-list__item-note" @click="cancelAdd(index, item.note, item._id)">{{item.note}}</span>
             </list-item>
           </list>
+
           <unusual-loading @dateReloader="getNewConcern"></unusual-loading>
           <!--<infinite-scroll v-if="true" :onInfinite="infinite">
             <div slot="no-more">没有更多内容了</div>
@@ -32,12 +34,13 @@
         // 暂留
         infinite() {},
         // 取消/关注
-        cancelAdd(index, note) {
+        cancelAdd(index, note, userId) {
           let isCancel = note == "已关注",
             dispatch = isCancel ? "cancelConcern" : "addConcern";
 
           this.$store.dispatch(dispatch, {
-            index: index,
+            index,
+            userId,
             type: "newconcern"
           });
         }

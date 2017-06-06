@@ -1,13 +1,16 @@
 <template>
   <div class="page-main">
-    <swipe @slidechanged="slideChanged" ref="swipe">
+    <swipe ref="swipe">
       <swipe-slide>
         <div class="slide-content">
           <pull-to-refresh :disabled="disableRefresh" @pulltorefresh="pulltorefresh" />
+
           <ul class="mdl-list">
-            <dynamic-item v-for="(item, index) in dynamic" :likeCount="item.likeCount" :commentCount="item.commentCount" :avatar="item.avatar" :username="item.username" :text="item.escapedText" :time="item.time" :overflow="item.overflow" :likeIt="item.likeIt" :index="index"/>
+            <dynamic-item v-for="(item, index) in dynamic" :detail="item" :index="index" @like="like(item.id)" @comment="comment($event,item.id)" />
           </ul>
-          <unusual-loading @dateReloader="getDynamic"></unusual-loading>
+
+          <unusual-loading :option.syn="loading" @reload="getDynamic"></unusual-loading>
+
           <infinite-scroll v-if="false" :onInfinite="infinite">
             <div slot="no-more">没有更多内容了</div>
           </infinite-scroll>
@@ -30,8 +33,12 @@
       computed: {
         // 关注动态
         dynamic() {
-          return this.$store.state.concern.dynamic;
-        }
+            return this.$store.state.concern.dynamic;
+          },
+          // loading 组件
+          loading() {
+            return this.$store.state.concern.loading;
+          }
       },
       methods: {
         setSlideContentHeight() {
@@ -40,14 +47,24 @@
           pulltorefresh() {
             this.getDynamic();
           },
-          slideChanged() {
-            this.getDynamic();
-          },
           getDynamic() {
             this.$store.dispatch("getDynamic");
           },
           infinite(infiniteScroll) {
             this.$store.dispatch("getMoreDiaries", infiniteScroll);
+            // this.getDynamic();
+          },
+          // 点赞
+          like(id) {
+            this.$store.dispatch("like", id);
+          },
+          // 评论
+          comment(event, id) {
+            let option = {
+              id,
+              mess: event.mess
+            };
+            this.$store.dispatch("comment", option);
           }
       },
       components: {
@@ -60,21 +77,8 @@
         "diary-item": require("components/pages/home/diary-item.vue"),
         "infinite-scroll": require("ui/infinite-scroll.vue")
       },
-      deactivated() {},
       activated() {
-        if (true) {
-          this.setSlideContentHeight();
-          setTimeout(() => {
-            this.$refs.swipe.reset();
-            this.slideChanged(0);
-          }, 0);
-        }
-
-        /*let fulltext = document.getElementsByClassName('text')
-        for(let t=0;t<fulltext.length;t++){
-          fulltext[t].clientHeight == 60 ? this.dynamic[t].overflow = true : this.dynamic[t].overflow = false
-        } 
-        console.log(this.dynamic[0].overflow)  */
+        !this.dynamic[0] && this.getDynamic();
       },
       mounted() {
         // 调整动态列表高度

@@ -3,11 +3,13 @@
     <swipe ref="swipe">
       <swipe-slide>
         <div class="slide-content">
+
           <list>
             <list-item v-for="(item, index) in concern" :text="item.username" lIcon="/img/default-avatar.png">
-              <span slot="note" @click="cancelAdd(index, item.note)" class="mdl-list__item-note">{{item.note}}</span>
+              <span slot="note" @click="cancelAdd(index, item.note, item._id)" class="mdl-list__item-note">{{item.note}}</span>
             </list-item>
           </list>
+
           <unusual-loading @dateReloader="getConcern"></unusual-loading>
           <!--<infinite-scroll v-if="true" :onInfinite="infinite">
             <div slot="no-more">没有更多内容了</div>
@@ -34,24 +36,33 @@
         setSlideContentHeight() {
             document.querySelector(".slide-content").style.height = this.slideContentHeight;
           },
+          // 获取关注人
           getConcern() {
             this.$store.dispatch("getConcern");
           },
           infinite(infiniteScroll) {
-            console.log("Todo");
             // Todo
-            this.$store.dispatch("getMoreDiaries", infiniteScroll);
           },
           // 取消/关注
-          cancelAdd(index, note) {
+          cancelAdd(index, note, userId) {
             let isCancel = note == "取消",
               dispatch = isCancel ? "cancelConcern" : "addConcern";
 
             this.$store.dispatch(dispatch, {
-              index: index,
+              index,
+              userId,
               type: "concern"
             });
           }
+      },
+      activated() {
+        !this.concern[0] && this.getConcern();
+      },
+      mounted() {
+        // 调整动态列表高度
+        let mainContentHeight = document.querySelector("main").clientHeight;
+        this.slideContentHeight = (mainContentHeight - document.querySelector(".mdl-grid").clientHeight - 1) + "px";
+        this.setSlideContentHeight();
       },
       components: {
         "unusual-loading": require("ui/unusual-loading.vue"),
@@ -61,22 +72,6 @@
         "infinite-scroll": require("ui/infinite-scroll.vue"),
         "list": require("ui/list.vue"),
         "list-item": require("ui/list-item.vue")
-      },
-      deactivated() {},
-      activated() {
-        if (true) {
-          this.setSlideContentHeight();
-          setTimeout(() => {
-            // this.$refs.swipe.reset();
-            this.getConcern();
-          }, 0);
-        }
-      },
-      mounted() {
-        // 调整动态列表高度
-        let mainContentHeight = document.querySelector("main").clientHeight;
-        this.slideContentHeight = (mainContentHeight - document.querySelector(".mdl-grid").clientHeight - 1) + "px";
-        this.setSlideContentHeight();
       }
   };
 </script>

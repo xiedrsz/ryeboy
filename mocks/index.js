@@ -11,6 +11,7 @@ Mock
   .mock(/getDynamicDiaries/, function() {
     var result = Mock.mock({
       "list|1-15": [{
+        "id": /\d{6}/,
         "likeCount|1-50": 50,
         "commentCount|1-50": 50,
         "avatar": "/img/default-avatar.png",
@@ -34,7 +35,7 @@ Mock
   .mock(/getConcerns/, function() {
     var result = Mock.mock({
       "list|1-15": [{
-        _id: '56e4d40d731956005ce0156a',
+        _id: /\d{8}/,
         username: function() {
           return Random.cname()
         },
@@ -73,7 +74,7 @@ Mock
   .mock(/getNewConcern/, function() {
     var result = Mock.mock({
       "list|1-15": [{
-        _id: '56e4d40d731956005ce0156a',
+        _id: /\d{8}/,
         username: function() {
           return Random.cname()
         },
@@ -92,52 +93,40 @@ Mock
   // 关注
   .mock(/follow\/\d+/, function() {
     return {
-      "data": null,
-      "datas": {},
-      "status": 200,
-      "statusText": null
+      "data": "OK"
     }
   })
   // 取消关注
   .mock(/unfollow\/\d+/, function() {
     return {
-      "data": null,
-      "datas": {},
-      "status": 200,
-      "statusText": null
+      "data": "OK"
     }
   })
   // 点赞
   .mock(/diary\/\d+\/like/, function() {
     return {
-      "data": null,
-      "datas": {},
-      "status": 200,
-      "statusText": null
+      "data": "OK"
     }
   })
   // 评论
   .mock(/diary\/\d+\/comment/, function() {
     return {
-      "data": null,
-      "datas": {},
-      "status": 200,
-      "statusText": null
+      "data": "OK"
     }
   })
   // 获取订阅列表
   .mock(/getSubscribles/, function() {
     var result = Mock.mock({
-      "list|1-10":[{
+      "list|1-10": [{
         "id": /\d{8}/,
         "avatar": "/img/default-avatar.png",
-        "name":function() {
+        "name": function() {
           return Random.cword(3, 5);
-        }, 
+        },
         "descrption": function() {
           return Random.csentence(8);
         },
-        "time": function(){
+        "time": function() {
           return Random.date('yyyy-MM-dd')
         },
         "leastReadTime": ""

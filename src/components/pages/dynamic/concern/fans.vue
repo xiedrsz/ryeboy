@@ -7,6 +7,7 @@
             <list-item v-for="item in fans" :text="item.username" lIcon="/img/default-avatar.png" />
           </list>
           <unusual-loading @dateReloader="getFans"></unusual-loading>
+
           <infinite-scroll v-if="true" :onInfinite="infinite">
             <div slot="no-more">没有更多内容了</div>
           </infinite-scroll>
@@ -17,8 +18,6 @@
 </template>
 
 <script>
-  import _ from "lodash";
-
   export default {
     data() {
         return {
@@ -38,9 +37,17 @@
             this.$store.dispatch("getFans");
           },
           infinite(infiniteScroll) {
-            console.log("KKK")
-            this.$store.dispatch("getMoreDiaries", infiniteScroll);
+            // Todo
           }
+      },
+      activated() {
+        !this.fans[0] && this.getFans();
+      },
+      mounted() {
+        // 调整动态列表高度
+        let mainContentHeight = document.querySelector("main").clientHeight;
+        this.slideContentHeight = (mainContentHeight - document.querySelector(".mdl-grid").clientHeight - 1) + "px";
+        this.setSlideContentHeight();
       },
       components: {
         "unusual-loading": require("ui/unusual-loading.vue"),
@@ -51,22 +58,6 @@
         "infinite-scroll": require("ui/infinite-scroll.vue"),
         "list": require("ui/list.vue"),
         "list-item": require("ui/list-item.vue")
-      },
-      deactivated() {},
-      activated() {
-        if (true) {
-          this.setSlideContentHeight();
-          setTimeout(() => {
-            this.$refs.swipe.reset();
-            this.getFans();
-          }, 0);
-        }
-      },
-      mounted() {
-        // 调整动态列表高度
-        let mainContentHeight = document.querySelector("main").clientHeight;
-        this.slideContentHeight = (mainContentHeight - document.querySelector(".mdl-grid").clientHeight - 1) + "px";
-        this.setSlideContentHeight();
       }
   };
 </script>

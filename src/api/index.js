@@ -66,52 +66,47 @@ class api {
     });
   }
 
-  // 动态部分接口
-  // 获取 关注、粉丝 数目
+  // 获取 关注、粉丝 数目, T
   static getFansNum() {
     return axios.get("/getFansNum");
   }
 
-  //动态日记接口
-  //获取 日记发布者的头像、用户名，日记内容、发布时间、日记标签，点赞的数量，评论的数量、内容，用户是否已点赞
-  //authorAvater,authorName,content,time,goodNum,commentNum,lable,isGood
+  //动态日记接口, T
   static getDynamicDiaries() {
     return axios.get("/getDynamicDiaries");
   }
 
-  //已关注接口
-  //获取已关注的用户总数，关注用户上限，用户头像，用户名，是否取消关注
+  // 获取关注人, T
   static getConcerns() {
     return axios.get("/getConcerns")
   }
 
-  //粉丝接口
-  //获取粉丝总数，粉丝头像，用户名，粉丝ID号，点击头像进入个人页面
+  // 获取粉丝, T
   static getFans() {
     return axios.get("/getFans")
   }
 
-  // 获取新关注人/换一批
+  // 获取新关注人/换一批, T
   static getNewConcern() {
     return axios.get("/getNewConcern")
   }
 
-  // 关注
+  // 关注, T
   static concern(userid) {
     return axios.post(`/follow/${userid}`)
   }
 
-  // 取消关注
+  // 取消关注, T
   static cancelConcern(userid) {
     return axios.post(`/unfollow/${userid}`)
   }
 
-  // 点赞
+  // 点赞, T
   static like(diary_id) {
     return axios.post(`/diary/${diary_id}/like`)
   }
 
-  // 评论
+  // 评论, T
   static comment(diary_id) {
     return axios.post(`/diary/${diary_id}/comment`)
   }
