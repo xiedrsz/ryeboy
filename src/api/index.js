@@ -172,25 +172,33 @@ class api {
     })
   }
 
-  // 获取小组成员
+  // 获取小组成员, T
   static getMembers(group_id) {
     return axios.get(`/group/${group_id}/members`)
   }
 
-  // 获取申请列表
+  // 清退成员， 未有接口, T
+  static expellMember(group_id, user_id) {
+    return axios.get(`/group/${group_id}/expell_member`, {
+      params: {
+        user_id
+      }
+    })
+  }
+
+  // 获取申请列表, T
   static getApplys(group_id) {
     return axios.get(`/group/${group_id}/pending_members`)
   }
 
-  // 同意申请, 小组管理员通过用户申请
+  // 同意申请, 小组管理员通过用户申请, T
   static agreeApply(id, userid) {
     return axios.post(`/group/${id}/approve`, {
       userid
     })
   }
 
-  // 拒绝申请
-  // userid 表示被拒绝的申请人
+  // 拒绝申请, T
   static rejectApply(group_id, userid) {
     return axios.get(`/group/${group_id}/reject/${userid}`)
   }
@@ -211,7 +219,7 @@ class api {
     return axios.post(`/group/${group_id}`, groupInfo)
   }
 
-  // 邀请好友
+  // 邀请好友, T
   static inviteFriends(group_id, userid) {
     return axios.get(`/group/${group_id}/invite/${userid}`)
   }

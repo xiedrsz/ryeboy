@@ -135,7 +135,7 @@
       methods: {
         // 获取小组信息
         getGroupInfo() {
-            !this.groupInfo.id && this.$store.dispatch("getGroupInfo", "123");
+            !this.groupInfo._id && this.$store.dispatch("getGroupInfo", "123");
           },
           // 更换头像，未实现
           changeAvater() {

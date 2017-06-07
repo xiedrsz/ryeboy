@@ -1,8 +1,9 @@
 <template>
-  <div class="page" :title="title" actions='[{"text":"排序","clickHandler":"member-rank"}]'>    
+  <div class="page" :title="title" actions='[{"text":"排序","clickHandler":"member-rank"}]'>
     <div class="page-main">
       <ul class="member-list">
-        <li v-for="item in groupInfo.members" class="member-item">
+
+        <li v-for="item in members" class="member-item">
           <img :src="item.avatar" class="lazyload" width="48" height="48" />
           <div class="member-info">
             <div class="member-info-top">
@@ -14,16 +15,28 @@
               <span class="member-addgroup-time">入组：{{item.date}}</span>
             </div>
           </div>
-          <span class="member-delete" @click="expell">清退</span>
+          <span class="member-delete" @click="expell(item._id, item.statusMsg)">{{item.statusMsg}}</span>
         </li>
+
       </ul>
+
+      <list>
+        <router-link to="/dynamic/group-apply" class="mdl-navigation__link">
+          <list-item text="群组申请" />
+        </router-link>
+      </list>
     </div>
   </div>
 </template>
 <script>
+  /**
+   * 缺少的接口
+   * [1] 清退
+   */
   export default {
     components: {
-
+      "list": require("ui/list.vue"),
+      "list-item": require("ui/list-item.vue")
     },
     computed: {
       groupInfo() {
@@ -34,13 +47,30 @@
             memNum = this.groupInfo.memNum;
 
           return "小组成员" + memNum + "/" + memMax
+        },
+        // 小组成员
+        members() {
+          return this.$store.state.group.members;
         }
     },
+    created() {
+      !this.members[0] && this.getMembers();
+    },
     methods: {
-      // 清退
-      expell() {
-        console.log("清退，尚未实现");
-      }
+      // 获取小组成员
+      getMembers() {
+          this.$store.dispatch("getMembers", {
+            groupId: "123"
+          });
+        },
+        // 清退
+        expell(userId, statusMsg) {
+          if (statusMsg === "清退") {
+            this.$store.dispatch("expellMember", {
+              userId
+            });
+          }
+        }
     }
   };
 </script>

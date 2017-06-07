@@ -161,8 +161,21 @@ const mutations = {
      * @Description 新增小组成员列表
      * @Param list Array 新小组成员列表
      */
-    group_pushMember(state, list) {
-      state.members.push.apply(state.members, list);
+    group_initMember(state, list) {
+      state.members = list;
+    },
+
+    /**
+     * @Description 修改小组成员
+     * @Param obj Object 新成员 eg: { _id: xx, ... }
+     */
+    group_saveMember(state, obj) {
+      let _id = obj._id,
+        tmp = _.filter(state.members, {
+          _id
+        });
+
+      _.assign(tmp[0], obj);
     },
 
     /**
@@ -171,6 +184,19 @@ const mutations = {
      */
     group_pushApplys(state, list) {
       state.applys.push.apply(state.applys, list);
+    },
+
+    /**
+     * @Description 修改申请列表
+     * @Param obj Object 新申请对象 eg: { _id: xx, ... }
+     */
+    group_saveApplys(state, obj) {
+      let _id = obj._id,
+        tmp = _.filter(state.applys, {
+          _id
+        });
+
+      _.assign(tmp[0], obj);
     },
 
     /**
@@ -254,34 +280,68 @@ const actions = {
       let res = await api.createGroup(state.groupInfoTmp);
     },
 
-    // 获取小组成员
+    // 获取小组成员, 基本完成
     async getMembers({
       commit
-    }) {
-      let res = await api.getMembers();
-      commit("group_pushMember", res);
+    }, option) {
+      let groupId = option.groupId,
+        res = await api.getMembers(groupId);
+
+      commit("group_initMember", res.data);
     },
 
-    // 获取申请列表
+    // 清退成员, 基本完成
+    async expellMember({
+      commit,
+      state
+    }, option) {
+      let groupId = state.groupInfo._id,
+        userId = option.userId;
+
+      let res = await api.expellMember(groupId, userId);
+      commit("group_saveMember", {
+        _id: userId,
+        statusMsg: "已清退"
+      });
+    },
+
+    // 获取申请列表, 基本完成
     async getApplys({
       commit
-    }) {
-      let res = await api.getApplys();
-      commit("group_pushApplys", res);
+    }, option) {
+      let groupId = option.groupId,
+        res = await api.getApplys(groupId);
+
+      commit("group_pushApplys", res.data);
     },
 
-    // 同意申请
+    // 同意申请, 基本完成
     async agreeApply({
       commit
-    }) {
-      let res = await api.agreeApply();
+    }, option) {
+      let groupId = option.groupId,
+        uesrId = option.uesrId,
+        callback = option.callback;
+
+      let res = await api.agreeApply(groupId, uesrId);
+      commit("group_saveApplys", {
+        _id: uesrId,
+        statusMsg: "已通过"
+      });
     },
 
-    // 拒绝申请
+    // 拒绝申请, 基本完成
     async rejectApply({
       commit
-    }) {
-      let res = await api.rejectApply();
+    }, option) {
+      let groupId = option.groupId,
+        uesrId = option.uesrId;
+      let res = await api.rejectApply(groupId, uesrId);
+
+      commit("group_saveApplys", {
+        _id: uesrId,
+        statusMsg: "已拒绝"
+      });
     },
 
     // 获取小组消息, 基本完成
@@ -337,11 +397,17 @@ const actions = {
       !!callback && callback();
     },
 
-    // 邀请好友
+    // 邀请好友, 基本完成
     async inviteFriends({
-      commit
-    }) {
-      let res = await api.inviteFriends();
+      commit,
+      state
+    }, option) {
+      let groupId = state.groupInfo._id,
+        userId = option.userId,
+        callback = option.callback;
+
+      await api.inviteFriends(groupId, userId);
+      !!callback && callback();
     },
 
     // 设置小组

@@ -204,15 +204,46 @@ Mock
   })
   // 获取小组成员
   .mock(/group\/\d+\/members/, function() {
+    var result = Mock.mock({
+      "list|1-15": [{
+        _id: /\d{8}/,
+        avatar: "/img/default-avatar.png",
+        name: function() {
+          return Random.cname();
+        },
+        "grade|1-50": 50,
+        "score|1-100": 100,
+        "no": /\d{2}/,
+        "date": function() {
+          return Random.datetime('yyyy-MM-dd');
+        },
+        statusMsg: "清退"
+      }]
+    })
+
+    return result.list
+  })
+  // 清退成员
+  .mock(/group\/\d+\/expell_member/, function() {
     return {
-      "data ": null,
+      "data ": "OK",
     }
   })
   // 获取申请列表
   .mock(/group\/\d+\/pending_members/, function() {
-    return {
-      "data ": null,
-    }
+    var result = Mock.mock({
+      "list|1-10": [{
+        "avatar": "/img/default-avatar.png",
+        "name": function() {
+          return Random.cword(3, 5);
+        },
+        "_id": /\d{8}/,
+        "level|1-5": 5,
+        "statusMsg": ""
+      }]
+    });
+
+    return result.list
   })
   // 同意申请
   .mock(/group\/\d+\/approve/, function() {
