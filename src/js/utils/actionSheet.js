@@ -6,12 +6,14 @@ class actionSheet {
       show: true,
       actions
     });
+    store.commit("page_setPopup", this);
   }
 
-  hide() {
+  close() {
     store.commit("page_showActionSheet", {
       show: false
     });
+    store.commit("page_setPopup");
   }
 }
 

@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import routes from "js/routes.js";
+import routes from "js/routes";
+import cordova from "js/cordova";
 import store from "store";
 import api from "api";
 
@@ -22,7 +23,9 @@ if (localStorage.authenticated) {
   store.commit("diary_setDefaultChannels");
 }
 
-new Vue(Vue.util.extend({
+let vue = new Vue(Vue.util.extend({
   router,
   store
 }, require("components/app.vue"))).$mount("#app");
+
+new cordova(vue);

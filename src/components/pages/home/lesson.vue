@@ -90,6 +90,7 @@
         this.$router.push("/pages/lesson-publish");
       },
       selectDate() {
+        this.$store.commit("page_setPopup", this.flatpickr);
         this.flatpickr.open();
       },
       cardDetail(cardId) {
@@ -159,8 +160,18 @@
           self.$store.dispatch("lesson_selectDate", selectedDates[0]).then(res => {
             self.record = res;
           });
+        },
+        onClose() {
+          self.$store.commit("page_setPopup");
         }
       });
+
+      this.$on("closePopup", () => {
+        self.flatpickr.close();
+      });
+    },
+    beforeDestroy() {
+      this.$off("closePopup");
     },
     destroyed() {
       if (this.flatpickr) {

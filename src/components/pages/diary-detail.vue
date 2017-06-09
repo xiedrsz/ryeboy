@@ -144,7 +144,7 @@
         ]);
       },
       async sendComment() {
-        if (this.authenticated) {
+        if (!this.authenticated) {
           dialog.text("你还没有登录。");
           return;
         }

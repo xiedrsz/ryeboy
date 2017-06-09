@@ -5,4 +5,5 @@ www/
 src/dist/
 *.log
 *.log.*
+*.cmd
 memo

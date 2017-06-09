@@ -15,6 +15,27 @@ class dialog {
       type: "alert",
       content
     });
+    store.commit("page_setPopup", this);
+  }
+
+  prompt(content, ok, cancel) {
+    store.commit("page_showDialog", {
+      show: true,
+      type: "prompt",
+      content,
+      event: {
+        ok,
+        cancel
+      }
+    });
+    store.commit("page_setPopup", this);
+  }
+
+  close() {
+    store.commit("page_showDialog", {
+      show: false
+    });
+    store.commit("page_setPopup");
   }
 }
 

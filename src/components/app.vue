@@ -9,24 +9,18 @@
     <modal-dialog v-show="dialog.show"
                   :type="dialog.type"
                   :content="dialog.content"
-                  :title="dialog.title" />
+                  :title="dialog.title"
+                  @ok="$emit(dialog.event.ok)"
+                  @cancel="$emit(dialog.event.cancel)" />
     <action-sheet v-show="actionSheet.show"
-                  @actionClick="actionClick"
+                  @actionClick="emit"
                   :actions="actionSheet.actions" />
   </div>
 </template>
 
 <script>
   export default {
-    methods: {
-      actionClick(clickHandler) {
-        this.$children.forEach(el => {
-          if (el.emit) {
-            el.emit(clickHandler);
-          }
-        });
-      }
-    },
+    methods: {},
     computed: {
       loading() {
         return this.$store.state.page.loading;
@@ -42,6 +36,11 @@
       "modal-loading": require("components/ui/modal-loading.vue"),
       "modal-dialog": require("components/ui/modal-dialog.vue"),
       "action-sheet": require("components/ui/action-sheet.vue"),
+    },
+    mounted() {
+      this.$on("exit", () => {
+        navigator.app.exitApp();
+      });
     }
   };
 </script>
