@@ -1,15 +1,14 @@
 <template>
   <div class="page full-page" title="创建组(3/3)">
-    <label class="create-lable" v-for="age in ageGroups">
+    <label class="create-lable" v-for="(age,index) in ageGroups" :for="'radio_'+index" @click.stop.prevent="select(index)">
       <span class="create-value">{{age}}</span>
-      <input name="ageRange" type="radio" />
-      <!-- v-model="currentValue" :value="getKey(one)" -->
-      <i class="material-icons">{{checked?'radio_button_unchecked':'check_circle'}}</i>
+      <input name="ageRange" type="radio" :id="'radio_'+index" v-model="radioValue" />
+      <!-- v-model="currentValue" :value="getKey(one)" check_circle ref="icon"-->
+      <i class="material-icons" :class="{'check': index == radioValue }">{{index == radioValue ? 'check_circle':'radio_button_unchecked'}}</i>
     </label>
     <div class="btn-box">
       <button @click="create" class="btn-main">创建</button>
     </div>
-
   </div>
 </template>
 <script>
@@ -17,13 +16,23 @@
     data() {
         return {
           checked: true,
-          ageGroups: ["15岁以下", '16岁-23岁', '24岁-30岁', '31岁-45岁', '45岁以上']
+          ageGroups: ["15岁以下", '16岁-23岁', '24岁-30岁', '31岁-45岁', '45岁以上'],
+          radioValue: 0
         }
       },
       methods: {
-        create() {
-          this.$store.dispatch("createGroup");
-        }
+        select(index) {
+            this.radioValue = index
+              /*this.$nextTick(()=>{          
+                this.$refs.icon.forEach((n)=>{
+                  n.innerHTML = "radio_button_unchecked"
+                })
+                this.$refs.icon[index].innerHTML = "check_circle"
+              })*/
+          },
+          create() {
+            this.$store.dispatch("createGroup");
+          }
       }
   };
 </script>
@@ -66,5 +75,12 @@
   .btn-main:active {
     background: #0078a9;
     outline: none;
+  }
+  
+  .material-icons {
+    color: #a5a5a5;
+    &.check {
+      color: #00aaee;
+    }
   }
 </style>

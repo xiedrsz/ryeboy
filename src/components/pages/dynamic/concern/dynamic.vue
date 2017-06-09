@@ -85,6 +85,29 @@
         let mainContentHeight = document.querySelector("main").clientHeight;
         this.slideContentHeight = (mainContentHeight - document.querySelector(".mdl-grid").clientHeight - 1) + "px";
         this.setSlideContentHeight();
+      },
+      beforeRouteLeave(to, from, next){
+        //保存滚动的位置
+        let positions = [];
+        this.$el.querySelectorAll(".slide-content").forEach((item)=>{
+          positions.push(item.scrollTop);
+        })
+        from.meta.scrollPosition = {
+          "slide-content": _.reverse(positions)          
+        } 
+        console.log(from)       
+        next();
+      },
+      beforeRouteEnter(to,from,next){
+        // 恢复滚动位置
+        next(vm => {
+          let scrollPosition = to.meta.scrollPosition;
+          if (scrollPosition) {
+            vm.$el.querySelectorAll(".slide-content").forEach(item => {
+              item.scrollTop = scrollPosition["slide-content"].pop();
+            });
+          }  
+        });
       }
   };
 </script>
