@@ -18,9 +18,10 @@ class dialog {
     store.commit("page_setPopup", this);
   }
 
-  prompt(content, ok, cancel) {
+  prompt(content, ok, cancel, vm) {
     store.commit("page_showDialog", {
       show: true,
+      vm,
       type: "prompt",
       content,
       event: {
@@ -35,7 +36,6 @@ class dialog {
     store.commit("page_showDialog", {
       show: false
     });
-    store.commit("page_setPopup");
   }
 }
 

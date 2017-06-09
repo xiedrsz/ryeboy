@@ -1,5 +1,4 @@
 const dialog = require("js/utils/dialog");
-const actionSheet = require("js/utils/actionSheet");
 
 var vue = null;
 var keyboardWillHide = false;

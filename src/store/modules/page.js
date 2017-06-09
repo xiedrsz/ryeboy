@@ -5,6 +5,7 @@ const state = {
   popup: null, // 页面弹出内容，可能是对话框、操作列表、日期选择器等
   dialog: {
     show: false,
+    vm: null,
     type: "alert",
     title: "",
     content: "",
@@ -15,6 +16,7 @@ const state = {
   },
   actionSheet: {
     show: false,
+    vm: null,
     actions: []
   }
 };
@@ -31,9 +33,15 @@ const mutations = {
   },
   page_showDialog(state, data) {
     Object.assign(state.dialog, data);
+    if (state.dialog.show == false) {
+      state.popup = null;
+    }
   },
   page_showActionSheet(state, data) {
     Object.assign(state.actionSheet, data);
+    if (state.dialog.show == false) {
+      state.popup = null;
+    }
   },
   page_setPopup(state, popup) {
     if (popup) {

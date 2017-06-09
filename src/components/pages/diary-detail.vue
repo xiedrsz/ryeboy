@@ -141,7 +141,7 @@
             text: "回复评论",
             clickHandler: "replyComment"
           }
-        ]);
+        ], this);
       },
       async sendComment() {
         if (!this.authenticated) {
@@ -244,7 +244,7 @@
       users() {
         return this.$store.getters.getDiaryUsers;
       },
-      
+
     },
     beforeDestroy() {
       this.$off("copyComment");

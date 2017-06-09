@@ -10,17 +10,35 @@
                   :type="dialog.type"
                   :content="dialog.content"
                   :title="dialog.title"
-                  @ok="$emit(dialog.event.ok)"
-                  @cancel="$emit(dialog.event.cancel)" />
+                  @ok="dialogOk"
+                  @cancel="dialogCancel" />
     <action-sheet v-show="actionSheet.show"
-                  @actionClick="emit"
                   :actions="actionSheet.actions" />
   </div>
 </template>
 
 <script>
   export default {
-    methods: {},
+    methods: {
+      dialogOk() {
+        if (this.dialog.event.ok) {
+          if (this.dialog.vm) {
+            this.dialog.vm.$emit(this.dialog.event.ok);
+          } else {
+            this.$emit(this.dialog.event.ok);
+          }
+        }
+      },
+      dialogCancel() {
+        if (this.dialog.event.cancel) {
+          if (this.dialog.vm) {
+            this.dialog.vm.$emit(this.dialog.event.cancel);
+          } else {
+            this.$emit(this.dialog.event.cancel);
+          }
+        }
+      }
+    },
     computed: {
       loading() {
         return this.$store.state.page.loading;
