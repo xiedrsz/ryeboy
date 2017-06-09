@@ -67,7 +67,18 @@ const state = {
   searchList: [],
 
   // 小组临时信息，用于创建组时暂存
-  groupInfoTmp: {},
+  groupInfoTmp: {
+    // 默认
+    level: "0",
+    medal: "0",
+    score: 0,
+
+    // 缺少参数
+    memNum: 1,
+    memMax: 50,
+    levelMax: 5,
+    medalMax: 30
+  },
 
   // 小组成员列表
   members: [],
@@ -121,12 +132,15 @@ const getters = {
         groupClass = state.groupClass,
         groups = state.groups;
 
-      _.forEach(groupClass, (item) => {
+      // 暂时屏蔽分类
+      /*_.forEach(groupClass, (item) => {
         label = item.id;
         result[label] = _.filter(state.groups, (tmp) => {
           return tmp.classify.indexOf(label) > -1
         });
-      });
+      });*/
+
+      result.all = groups;
 
       return result
     }
@@ -235,7 +249,7 @@ const mutations = {
     group_saveGroups(state, obj) {
       let id = obj.id,
         tmp = _.filter(state.groups, {
-          id: id
+          _id: id
         });
       !!tmp[0] && _.assign(tmp[0], obj);
     }
@@ -246,7 +260,22 @@ const actions = {
   async getGroups({
       commit
     }, name) {
-      let res = await api.getGroups(name);
+      let res = await api.getGroups(name),
+        groups = res.data,
+        defInfo = {
+          note: "加入",
+
+          // 补，后期要删除
+          memNum: 1,
+          memMax: 50,
+          levelMax: 5,
+          medalMax: 30
+        };
+
+      _.forEach(groups, (item) => {
+        _.assign(item, defInfo);
+      });
+
       commit("group_pushGroup", res.data);
     },
 
@@ -254,12 +283,12 @@ const actions = {
     async addGroup({
       commit
     }, option) {
-      let id = option.id,
-        userid = option.userid,
-        res = await api.addGroup(id, userid);
+      let groupId = option.groupId,
+        userId = option.userId,
+        res = await api.addGroup(groupId, userId);
 
       commit("group_saveGroups", {
-        id: id,
+        id: groupId,
         note: "已申请"
       });
     },
@@ -276,8 +305,11 @@ const actions = {
     async createGroup({
       commit,
       state
-    }) {
-      let res = await api.createGroup("name", "agejange", "descrption");
+    }, option) {
+      let callback = option.callback,
+        res = await api.createGroup(state.groupInfoTmp);
+
+      !!res.data.group._id && callback && callback(res.data.group);
     },
 
     // 获取小组成员, 基本完成
@@ -311,6 +343,8 @@ const actions = {
     }, option) {
       let groupId = option.groupId,
         res = await api.getApplys(groupId);
+      
+      console.log(res)
 
       commit("group_pushApplys", res.data);
     },

@@ -15,7 +15,7 @@
           <span>团简介</span>
           <span>40个</span>
         </div>
-        <textarea v-model="descrption" rows="3" placeholder="40个以内" />
+        <textarea v-model="description" rows="3" placeholder="40个以内" />
       </div>
     </div>
   </div>
@@ -25,7 +25,7 @@
     data() {
         return {
           name: "",
-          descrption: ""
+          description: ""
         }
       },
       components: {
@@ -38,7 +38,7 @@
       },
       created() {
         this.name = this.groupInfoTmp.name;
-        this.descrption = this.groupInfoTmp.descrption;
+        this.description = this.groupInfoTmp.description;
       },
       mounted() {
         // 监听 下一步 事件
@@ -55,9 +55,8 @@
         saveInfo() {
           this.$store.commit("group_saveTmp", {
             name: this.name,
-            descrption: this.descrption
+            description: this.description
           });
-          console.log(this.groupInfoTmp)
         }
       }
   };

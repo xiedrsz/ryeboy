@@ -16,15 +16,15 @@
             <ul class="find-list">
 
               <li class="mdl-list__item mdl-list__item--bottom-divider" v-for="(item, index) in groups[channel.id]">
-                <img :src="item.avatar" width="36" height="36" />
+                <img :src="item.avatar||'/img/default-avatar.png'" width="36" height="36" />
                 <div class="find-list-content">
                   <span class="group-name">{{item.name}}</span>
-                  <span class="group-level"> {{item.gradeNum+"/"+item.gradeMax}}
+                  <span class="group-level"> {{item.level+"/"+item.levelMax}}
                     <i v-for="i in new Array(item.level)" class="material-icons md-12 star-gray">star</i>
                   </span>
-                  <span class="group-info">小组描述:{{item.descrption}}</span>
+                  <span class="group-info">小组描述:{{item.description}}</span>
                 </div>
-                <span @click="join(item.id, item.note)" class="mdl-list__item-note">{{item.note}}</span>
+                <span @click="join(item._id, item.note)" class="mdl-list__item-note">{{item.note}}</span>
               </li>
 
             </ul>
@@ -91,8 +91,8 @@
           join(id, note) {
             if (note == "加入") {
               this.$store.dispatch("addGroup", {
-                id,
-                userid: "123"
+                groupId: id,
+                userId: "59389e3d9c4d0228d7313b1b"
               });
             }
           }

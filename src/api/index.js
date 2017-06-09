@@ -1,7 +1,7 @@
 import axios from "axios";
 import config from "js/config";
 // 引入 mocks
-import "../../mocks"
+// import "../../mocks"
 
 axios.defaults.baseURL = config.apiAddress;
 
@@ -168,11 +168,9 @@ class api {
   }
 
   // 创建小组
-  static createGroup(name, agejange, descrption) {
+  static createGroup(group) {
     return axios.post("/groups", {
-      group: {
-        name: "MM"
-      }
+      group
     })
   }
 

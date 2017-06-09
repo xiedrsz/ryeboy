@@ -5,15 +5,16 @@
         <li class="info-item">
           <span class="info-left">头像</span>
           <span class="info-right">
-            <img :src="groupInfo.avatar" class="lazyload" width="48" height="48" />
+            <img :src="groupInfo.avatar||'/img/default-avatar.png'" class="lazyload" width="48" height="48" />
             <img src="/img/change-avater.png" class="lazyload" width="48" height="48" @click="changeAvater" />
           </span>
         </li>
         <li class="info-item">
-          <span class="info-left">组名ID</span>
+          <!--          <span class="info-left">组名ID</span>-->
+          <span class="info-left">组名</span>
           <span class="info-right">
             <span class="group-name">{{groupInfo.name}}</span>
-            <span class="group-id">{{"ID:"+groupInfo._id}}</span>
+            <!--            <span class="group-id">{{"ID:"+groupInfo._id}}</span>-->
           </span>
 
         </li>
@@ -50,7 +51,7 @@
         <li class="info-item">
           <span class="info-left">等级</span>
           <span class="info-right right-arrow">
-            <span class="group-name">{{groupInfo.gradeNum+"/"+groupInfo.gradeMax}}</span>
+            <span class="group-name">{{groupInfo.level+"/"+groupInfo.levelMax}}</span>
             <i class="material-icons md-16 group-level">favorite</i>
             <router-link to='/dynamic/group-grade'>
               <i class="icon icon-right"></i>
@@ -60,7 +61,7 @@
         <li class="info-item">
           <span class="info-left">勋章</span>
           <span class="info-right right-arrow">
-            <span class="group-name">{{groupInfo.medalNum+"/"+groupInfo.medalMax}}</span>
+            <span class="group-name">{{groupInfo.medal+"/"+groupInfo.medalMax}}</span>
             <router-link to='/dynamic/group-medal'>
               <i class="icon icon-right"></i>
             </router-link>
@@ -71,13 +72,13 @@
         <li class="info-item">
           <span class="info-left">适合人群</span>
           <span class="info-right right-arrow">
-            <span class="group-name">{{groupInfo.minAge+"-"+groupInfo.maxAge}} 年龄段</span>
+            <span class="group-name">{{groupInfo.age_range}} 年龄段</span>
           </span>
         </li>
         <li class="info-item" @click="saveDescrption">
           <span class="info-left">简介</span>
           <span class="info-right">
-            <span class="group-name">{{groupInfo.descrption}}</span>
+            <span class="group-name">{{groupInfo.description}}</span>
             <i class="icon icon-right"></i>
           </span>
         </li>
@@ -135,7 +136,7 @@
       methods: {
         // 获取小组信息
         getGroupInfo() {
-            !this.groupInfo._id && this.$store.dispatch("getGroupInfo", "123");
+            !this.groupInfo._id && this.$store.dispatch("getGroupInfo", "593a4c716d3b3619b82de167");
           },
           // 更换头像，未实现
           changeAvater() {
@@ -183,8 +184,8 @@
   }
   
   .info-left {
-    flex: 0 0 3em;
-    width: 3em;
+    flex: 0 0 4em;
+    width: 4em;
     padding: 0 1em;
     font-size: 14px;
     line-height: 18px;

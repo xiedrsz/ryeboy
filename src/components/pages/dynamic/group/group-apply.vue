@@ -44,7 +44,7 @@
       // 获取申请列表
       getApplys() {
           this.$store.dispatch("getApplys", {
-            groupId: "123"
+            groupId: "593a4a596d3b3619b82de164"
           });
         },
         // 拒绝

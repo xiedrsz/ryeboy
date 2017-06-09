@@ -3,35 +3,55 @@
     <label class="create-lable" v-for="(age,index) in ageGroups" :for="'radio_'+index" @click.stop.prevent="select(index)">
       <span class="create-value">{{age}}</span>
       <input name="ageRange" type="radio" :id="'radio_'+index" v-model="radioValue" />
-      <!-- v-model="currentValue" :value="getKey(one)" check_circle ref="icon"-->
       <i class="material-icons" :class="{'check': index == radioValue }">{{index == radioValue ? 'check_circle':'radio_button_unchecked'}}</i>
     </label>
     <div class="btn-box">
-      <button @click="create" class="btn-main">创建</button>
+      <button @click="create" class="btn-main">确认创建</button>
     </div>
   </div>
 </template>
+
 <script>
+  const ageRanges = ["0-15", "16-23", "24-30", "31-45", "45-"];
+
   export default {
     data() {
         return {
           checked: true,
           ageGroups: ["15岁以下", '16岁-23岁', '24岁-30岁', '31岁-45岁', '45岁以上'],
-          radioValue: 0
+          radioValue: 0,
+          age_range: ""
         }
+      },
+      computed: {
+        groupInfoTmp() {
+          return this.$store.state.group.groupInfoTmp;
+        }
+      },
+      created() {
+        this.age_range = this.groupInfoTmp.age_range || "0-15";
+        this.radioValue = ageRanges.indexOf(this.age_range);
       },
       methods: {
         select(index) {
-            this.radioValue = index
-              /*this.$nextTick(()=>{          
-                this.$refs.icon.forEach((n)=>{
-                  n.innerHTML = "radio_button_unchecked"
-                })
-                this.$refs.icon[index].innerHTML = "check_circle"
-              })*/
+            this.radioValue = index;
+            this.age_range = ageRanges[index];
           },
           create() {
-            this.$store.dispatch("createGroup");
+            this.$store.commit("group_saveTmp", {
+              age_range: this.age_range,
+              creator: "59389e3d9c4d0228d7313b19"
+            });
+
+            this.$store.dispatch("createGroup", {
+              callback: (group) => {
+                this.$store.commit("group_saveTmp", group);
+                this.$store.commit("group_saveInfo", this.groupInfoTmp);
+                this.$router.push({
+                  path: '/dynamic/group-info'
+                })
+              }
+            });
           }
       }
   };
