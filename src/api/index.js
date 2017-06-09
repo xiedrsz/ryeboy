@@ -5,6 +5,10 @@ import "../../mocks"
 
 axios.defaults.baseURL = config.apiAddress;
 
+axios.defaults.headers = {
+  'Authorization': 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5Mzg5ZTNkOWM0ZDAyMjhkNzMxM2IxOSIsImlhdCI6MTQ5NjkwOTQ5NX0.0wr7uKcl5XeIcn10yXRbdTk8sDg54LfF_m4-95X2axs'
+};
+
 class api {
   static getLessonDetail(id) {
     return axios.get("/getLessonDetail", {
@@ -142,7 +146,7 @@ class api {
   static getGroups(name) {
     return axios.get("/groups", {
       params: {
-        name
+        name: ""
       }
     })
   }
@@ -166,9 +170,9 @@ class api {
   // 创建小组
   static createGroup(name, agejange, descrption) {
     return axios.post("/groups", {
-      name,
-      agejange,
-      descrption
+      group: {
+        name: "MM"
+      }
     })
   }
 

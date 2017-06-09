@@ -277,7 +277,7 @@ const actions = {
       commit,
       state
     }) {
-      let res = await api.createGroup(state.groupInfoTmp);
+      let res = await api.createGroup("name", "agejange", "descrption");
     },
 
     // 获取小组成员, 基本完成

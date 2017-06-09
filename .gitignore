@@ -6,3 +6,4 @@ www/
 *.log.*
 memo
 node_modules.zip
+package-lock.json
