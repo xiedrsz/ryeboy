@@ -60,10 +60,12 @@
               this.$store.commit("user_setAuth", data.user);
               let redirect = this.$route.query.redirect;
               this.$store.dispatch("getSubscribedChannels").then(() => {
-                this.$router.replace(redirect ? redirect : "/");
+                setTimeout(() => {
+                  dialog.hideLoading();
+                  this.$router.replace(redirect ? redirect : "/");
+                }, 1000);
               });
             }
-            dialog.hideLoading();
           }).catch((err) => {
             console.log(err);
             this.errorText = "网络出错。";

@@ -12,7 +12,8 @@
                   rows="8"></textarea>
       </div>
       <div class="actions-container">
-        <div class="action">插入图片</div>
+        <div class="action"
+             @click="insertPicture">插入图片</div>
         <div class="action">添加标签</div>
       </div>
     </div>
@@ -21,6 +22,7 @@
 
 <script>
   const moment = require("moment");
+  import app from "js/app";
 
   export default {
     data() {
@@ -29,6 +31,19 @@
       };
     },
     methods: {
+      insertPicture() {
+        if (app.deviceready) {
+          navigator.camera.getPicture(function cameraSuccess(imageUri) {
+            console.log(imageUri);
+          }, function cameraError(error) {
+            console.debug("Unable to obtain picture: " + error, "app");
+          }, {
+            destinationType: Camera.DestinationType.FILE_URI,
+            sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+            mediaType: Camera.MediaType.PICTURE
+          });
+        }
+      },
       init() {
 
       },

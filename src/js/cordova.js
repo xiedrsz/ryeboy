@@ -1,27 +1,22 @@
 const dialog = require("js/utils/dialog");
 
-var vue = null;
-var keyboardWillHide = false;
-var keyboardWillHideTimeout;
-var keyboardVisible = false;
-
 class cordova {
   back() {
-    if (keyboardVisible || keyboardWillHide) {
-      keyboardVisible = false;
-      keyboardWillHide = false;
-      clearTimeout(keyboardWillHideTimeout);
+    if (this.keyboardVisible || this.keyboardWillHide) {
+      this.keyboardVisible = false;
+      this.keyboardWillHide = false;
+      clearTimeout(this.keyboardWillHideTimeout);
       return;
     }
 
-    let store = vue.$store;
+    let store = this.app.vue.$store;
 
     if (store.getters.page_popup) {
       store.getters.page_popup.close();
       return;
     }
 
-    let route = vue.$router.currentRoute;
+    let route = this.app.vue.$router.currentRoute;
     if (route.matched[0].path == "/home") {
       dialog.prompt("你确定退出吗？", "exit");
       return;
@@ -39,25 +34,30 @@ class cordova {
   }
 
   keyboardhide() {
-    keyboardVisible = false;
-    keyboardWillHide = true;
-    keyboardWillHideTimeout = setTimeout(() => {
-      keyboardWillHide = false;
+    this.keyboardVisible = false;
+    this.keyboardWillHide = true;
+    this.keyboardWillHideTimeout = setTimeout(() => {
+      this.keyboardWillHide = false;
     }, 200);
   }
 
   keyboardshow() {
-    keyboardVisible = true;
+    this.keyboardVisible = true;
   }
 
-  constructor(__vue) {
-    vue = __vue;
+  constructor(app) {
+    this.app = app;
+    this.keyboardWillHide = false;
+    this.keyboardWillHideTimeout;
+    this.keyboardVisible = false;
+    app.deviceready = false;
     document.addEventListener("deviceready", () => {
-      document.addEventListener("backbutton", this.back, false);
+      app.deviceready = true;
+      document.addEventListener("backbutton", this.back.bind(this), false);
       document.addEventListener("resume", this.resume, false);
       document.addEventListener("pause", this.pause, false);
-      window.addEventListener("native.keyboardhide", this.keyboardhide);
-      window.addEventListener("native.keyboardshow", this.keyboardshow);
+      window.addEventListener("native.keyboardhide", this.keyboardhide.bind(this));
+      window.addEventListener("native.keyboardshow", this.keyboardshow.bind(this));
     }, false);
   }
 }
