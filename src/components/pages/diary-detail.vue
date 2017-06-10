@@ -106,6 +106,7 @@
   const actionSheet = require("js/utils/actionSheet");
 
   const pageSize = 10;
+  var inputElement = null;
 
   export default {
     data() {
@@ -249,10 +250,13 @@
     beforeDestroy() {
       this.$off("copyComment");
       this.$off("replyComment");
+      window.removeEventListener("resize", this.adjustHeight);
+      inputElement.removeEventListener("autosize:resized", this.adjustHeight);
     },
     async mounted() {
       this.$on("copyComment", this.copyComment);
       this.$on("replyComment", this.replyComment);
+      window.addEventListener("resize", this.adjustHeight);
 
       let diaryId = this.$route.query.id;
 
@@ -284,11 +288,9 @@
 
             this.adjustHeight();
 
-            let ta = document.querySelector(".input-box");
-            autosize(ta);
-            ta.addEventListener("autosize:resized", () => {
-              this.adjustHeight();
-            });
+            inputElement = document.querySelector(".input-box");
+            autosize(inputElement);
+            inputElement.addEventListener("autosize:resized", this.adjustHeight);
           } catch (error) {
             console.log(error);
           }

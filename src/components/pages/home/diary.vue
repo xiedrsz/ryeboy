@@ -61,7 +61,7 @@
                             :text="item.escapedText"
                             :time="item.time" />
               </ul>
-              <infinite-scroll v-if="enableInfiniteScroll && channelDatas[channel.id].nomore == false"
+              <infinite-scroll v-if="channelDatas[channel.id].nomore == false"
                                :onInfinite="infinite">
                 <div slot="no-more">没有更多内容了</div>
               </infinite-scroll>
@@ -81,7 +81,6 @@
       return {
         slideContentPosition: 0,
         slideContentHeight: 0,
-        enableInfiniteScroll: false,
       };
     },
     computed: {
@@ -187,12 +186,7 @@
         }
       });
     },
-    deactivated() {
-      this.enableInfiniteScroll = false;
-    },
     activated() {
-      this.enableInfiniteScroll = true;
-
       if (this.channelChanged) {
         this.setSlideContentHeight();
         this.$store.commit("diary_setChannelChanged", false);
