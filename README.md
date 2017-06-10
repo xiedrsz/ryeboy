@@ -9,7 +9,7 @@ npm run dev
 ## 安卓手机调试
 构建 cordova 代码
 ```shell
-gulp cordova-build
+gulp build
 ```
 运行
 ```shell
