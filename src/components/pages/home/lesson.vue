@@ -39,7 +39,7 @@
                  class="card">
               <img class="card-icon"
                    @click="cardDetail(card.id)"
-                   :src="'../../img/card-' + card.id + '.png'">
+                   :src="require('img/card-' + card.id + '.png')">
               <div class="card-name">{{ card.name }}</div>
               <checkbox :id="card.id"
                         :disabled="published"
@@ -69,6 +69,34 @@
       };
     },
     methods: {
+      init() {
+        document.querySelector(".card-container").style.height = (document.querySelector("main").clientHeight - document.querySelector(".action-container").clientHeight - 1) + "px";
+        let self = this;
+
+        this.flatpickr = new flatpickr(document.querySelector(".date-selector"), {
+          clickOpens: false,
+          disableMobile: true,
+          defaultDate: this.selectedDate,
+          locale: require("flatpickr/dist/l10n/zh.js").zh,
+          disable: [
+            function(date) {
+              return datetime.date(date).isAfter(datetime.date(moment()));
+            }
+          ],
+          onChange(selectedDates) {
+            self.$store.dispatch("lesson_selectDate", selectedDates[0]).then(res => {
+              self.record = res;
+            });
+          },
+          onClose() {
+            self.$store.commit("page_setPopup");
+          }
+        });
+
+        this.$on("closePopup", () => {
+          self.flatpickr.close();
+        });
+      },
       assignRecord() {
         this.$store.dispatch("lesson_assignRecord").then(res => {
           this.record = res;
@@ -90,6 +118,7 @@
         this.$router.push("/pages/lesson-publish");
       },
       selectDate() {
+        this.$store.commit("page_setPopup", this.flatpickr);
         this.flatpickr.open();
       },
       cardDetail(cardId) {
@@ -137,30 +166,22 @@
         return this.record.weightedCards;
       }
     },
-    mounted() {
-      if (!this.authenticated) {
-        return;
-      }
-
-      document.querySelector(".card-container").style.height = (document.querySelector("main").clientHeight - document.querySelector(".action-container").clientHeight - 1) + "px";
-      let self = this;
-
-      this.flatpickr = new flatpickr(document.querySelector(".date-selector"), {
-        clickOpens: false,
-        disableMobile: true,
-        defaultDate: this.selectedDate,
-        locale: require("flatpickr/dist/l10n/zh.js").zh,
-        disable: [
-          function(date) {
-            return datetime.date(date).isAfter(datetime.date(moment()));
-          }
-        ],
-        onChange(selectedDates) {
-          self.$store.dispatch("lesson_selectDate", selectedDates[0]).then(res => {
-            self.record = res;
+    watch: {
+      authenticated(newVal) {
+        if (newVal) {
+          this.$nextTick(() => {
+            this.init();
           });
         }
-      });
+      }
+    },
+    mounted() {
+      if (this.authenticated) {
+        this.init();
+      }
+    },
+    beforeDestroy() {
+      this.$off("closePopup");
     },
     destroyed() {
       if (this.flatpickr) {

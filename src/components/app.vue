@@ -9,9 +9,10 @@
     <modal-dialog v-show="dialog.show"
                   :type="dialog.type"
                   :content="dialog.content"
-                  :title="dialog.title" />
+                  :title="dialog.title"
+                  @ok="dialogOk"
+                  @cancel="dialogCancel" />
     <action-sheet v-show="actionSheet.show"
-                  @actionClick="actionClick"
                   :actions="actionSheet.actions" />
   </div>
 </template>
@@ -19,12 +20,23 @@
 <script>
   export default {
     methods: {
-      actionClick(clickHandler) {
-        this.$children.forEach(el => {
-          if (el.emit) {
-            el.emit(clickHandler);
+      dialogOk() {
+        if (this.dialog.event.ok) {
+          if (this.dialog.vm) {
+            this.dialog.vm.$emit(this.dialog.event.ok);
+          } else {
+            this.$emit(this.dialog.event.ok);
           }
-        });
+        }
+      },
+      dialogCancel() {
+        if (this.dialog.event.cancel) {
+          if (this.dialog.vm) {
+            this.dialog.vm.$emit(this.dialog.event.cancel);
+          } else {
+            this.$emit(this.dialog.event.cancel);
+          }
+        }
       }
     },
     computed: {
@@ -42,6 +54,11 @@
       "modal-loading": require("components/ui/modal-loading.vue"),
       "modal-dialog": require("components/ui/modal-dialog.vue"),
       "action-sheet": require("components/ui/action-sheet.vue"),
+    },
+    mounted() {
+      this.$on("exit", () => {
+        navigator.app.exitApp();
+      });
     }
   };
 </script>

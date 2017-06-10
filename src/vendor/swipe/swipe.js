@@ -10,6 +10,8 @@ function Swipe(container, options) {
 
   "use strict";
 
+  var activated = true;
+
   // utilities
   var noop = function() {}; // simple no operation function
   var offloadFn = function(fn) {
@@ -242,6 +244,9 @@ function Swipe(container, options) {
   var events = {
 
     handleEvent: function(event) {
+      if (!activated) {
+        return;
+      }
       switch (event.type) {
         case 'touchstart':
           this.start(event);
@@ -531,6 +536,12 @@ function Swipe(container, options) {
 
       // return total number of slides
       return length;
+    },
+    setActivated() {
+      activated = true;
+    },
+    setDeactivated() {
+      activated = false;
     },
     kill: function() {
 

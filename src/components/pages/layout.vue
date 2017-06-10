@@ -32,9 +32,6 @@
       }
     },
     methods: {
-      emit(clickHandler) {
-        this.$children[0].$emit(clickHandler);
-      },
       updateHeader() {
         let page = document.querySelector(".page");
         if (page) {

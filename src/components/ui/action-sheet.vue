@@ -21,7 +21,10 @@
         this.$store.commit("page_showActionSheet", {
           show: false
         });
-        this.$emit("actionClick", clickHandler);
+        let vm = this.$store.state.page.actionSheet.vm;
+        if (vm) {
+          vm.$emit(clickHandler);
+        }
       }
     }
   };

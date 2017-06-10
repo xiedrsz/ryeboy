@@ -8,7 +8,7 @@
     <div class="item-content">
       <div class="username">
         <img v-if="verified"
-             :src="'../../img/v.png'"
+             :src="require('img/v.png')"
              class="v" />
         <span>{{ username }}</span>
       </div>

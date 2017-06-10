@@ -26,7 +26,7 @@
                   <div class="lesson"
                        v-for="card in cards">
                     <img class="card-icon"
-                         :src="'../img/card-' + card.id + '.png'">
+                         :src="require('img/card-' + card.id + '.png')">
                     <div class="card-name">{{ card.name }}</div>
                   </div>
                 </div>
@@ -59,7 +59,7 @@
               <div class="item-content">
                 <div class="username">
                   <img v-if="comment.verified"
-                       :src="'../img/v.png'"
+                       :src="require('img/v.png')"
                        class="v" />
                   <span>{{ comment.username }}</span>
                   <span class="userlv">{{ comment.userlv }}</span>
@@ -106,6 +106,7 @@
   const actionSheet = require("js/utils/actionSheet");
 
   const pageSize = 10;
+  var inputElement = null;
 
   export default {
     data() {
@@ -141,10 +142,10 @@
             text: "回复评论",
             clickHandler: "replyComment"
           }
-        ]);
+        ], this);
       },
       async sendComment() {
-        if (this.authenticated) {
+        if (!this.authenticated) {
           dialog.text("你还没有登录。");
           return;
         }
@@ -243,15 +244,19 @@
       },
       users() {
         return this.$store.getters.getDiaryUsers;
-      }
+      },
+
     },
     beforeDestroy() {
       this.$off("copyComment");
       this.$off("replyComment");
+      window.removeEventListener("resize", this.adjustHeight);
+      inputElement.removeEventListener("autosize:resized", this.adjustHeight);
     },
     async mounted() {
       this.$on("copyComment", this.copyComment);
       this.$on("replyComment", this.replyComment);
+      window.addEventListener("resize", this.adjustHeight);
 
       let diaryId = this.$route.query.id;
 
@@ -283,11 +288,9 @@
 
             this.adjustHeight();
 
-            let ta = document.querySelector(".input-box");
-            autosize(ta);
-            ta.addEventListener("autosize:resized", () => {
-              this.adjustHeight();
-            });
+            inputElement = document.querySelector(".input-box");
+            autosize(inputElement);
+            inputElement.addEventListener("autosize:resized", this.adjustHeight);
           } catch (error) {
             console.log(error);
           }
