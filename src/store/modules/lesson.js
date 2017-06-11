@@ -84,13 +84,14 @@ const mutations = {
     let card = record.weightedCards[0].cards.find(card => {
       return card.id == 100;
     });
-    if (data) {
-      record.diary.text = data;
+    if (data.text) {
+      record.diary.text = data.text;
       record.selectedCards[card.id] = true;
     } else {
       record.diary.text = "";
       record.selectedCards[card.id] = false;
     }
+    record.diary.pictures = data.pictures;
   },
   lesson_setDeselect(state, data) {
     if (data.checked) {
@@ -142,7 +143,8 @@ const actions = {
     if (record === undefined) {
       record = {
         diary: {
-          text: ""
+          text: "",
+          pictures: []
         },
         published: false,
         weightedCards: [],

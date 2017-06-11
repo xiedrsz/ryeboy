@@ -12,7 +12,7 @@
              v-if="actions && actions.length > 0">
           <div class="mdl-navigation__link"
                v-for="action in actions"
-               @click="emit(action.clickHandler)">{{ action.text }}</div>
+               @click="action.click">{{ action.text }}</div>
         </nav>
       </div>
     </header>
@@ -36,7 +36,6 @@
         let page = document.querySelector(".page");
         if (page) {
           this.$store.commit("page_setTitle", page.getAttribute("title"));
-          this.$store.commit("page_setActions", page.getAttribute("actions"));
         }
       }
     },

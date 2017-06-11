@@ -1,3 +1,5 @@
+import Vue from "vue";
+
 const state = {
   title: "",
   actions: [],
@@ -26,7 +28,7 @@ const mutations = {
     state.title = title;
   },
   page_setActions(state, actions) {
-    state.actions = JSON.parse(actions);
+    Vue.set(state, "actions", actions);
   },
   page_showLoading(state, show) {
     state.loading = show;

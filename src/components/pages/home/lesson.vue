@@ -65,7 +65,8 @@
   export default {
     data() {
       return {
-        record: {}
+        record: {},
+        initialized: false
       };
     },
     methods: {
@@ -96,6 +97,8 @@
         this.$on("closePopup", () => {
           self.flatpickr.close();
         });
+
+        this.initialized = true;
       },
       assignRecord() {
         this.$store.dispatch("lesson_assignRecord").then(res => {
@@ -166,15 +169,6 @@
         return this.record.weightedCards;
       }
     },
-    watch: {
-      authenticated(newVal) {
-        if (newVal) {
-          this.$nextTick(() => {
-            this.init();
-          });
-        }
-      }
-    },
     mounted() {
       if (this.authenticated) {
         this.init();
@@ -192,6 +186,10 @@
     activated() {
       if (!this.authenticated) {
         return;
+      }
+
+      if (!this.initialized) {
+        this.init();
       }
 
       this.assignRecord();

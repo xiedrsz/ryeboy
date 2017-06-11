@@ -48,14 +48,15 @@ class cordova {
   constructor(app) {
     this.app = app;
     this.keyboardWillHide = false;
-    this.keyboardWillHideTimeout;
     this.keyboardVisible = false;
+
     app.deviceready = false;
+
     document.addEventListener("deviceready", () => {
       app.deviceready = true;
       document.addEventListener("backbutton", this.back.bind(this), false);
-      document.addEventListener("resume", this.resume, false);
-      document.addEventListener("pause", this.pause, false);
+      document.addEventListener("resume", this.resume.bind(this), false);
+      document.addEventListener("pause", this.pause.bind(this), false);
       window.addEventListener("native.keyboardhide", this.keyboardhide.bind(this));
       window.addEventListener("native.keyboardshow", this.keyboardshow.bind(this));
     }, false);

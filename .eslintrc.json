@@ -14,7 +14,8 @@
     "componentHandler": false,
     "axios": false,
     "Swipe": false,
-    "lazySizes": false
+    "lazySizes": false,
+    "Camera": false
   },
   "rules": {
     "indent": [

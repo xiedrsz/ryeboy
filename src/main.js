@@ -12,15 +12,8 @@ const router = new VueRouter({
   routes
 });
 
-if (localStorage.authenticated) {
-  store.commit("user_assignAuth", JSON.parse(localStorage.user));
-  store.dispatch("initSubscribedChannels");
-  store.dispatch("lesson_loadSettings");
-} else {
-  store.commit("diary_setDefaultChannels");
-}
-
-app.init(new Vue(Vue.util.extend({
+app.init();
+app.show(new Vue(Vue.util.extend({
   router,
   store
 }, require("components/app.vue"))).$mount("#app"));
