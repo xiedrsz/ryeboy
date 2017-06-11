@@ -49,7 +49,6 @@
         let index = _.findIndex(this.pictures, item => {
           return item.id == id;
         });
-        console.log(index);
         this.pictures.splice(index, 1);
       },
       insertPicture() {
@@ -72,11 +71,11 @@
         }
 
         this.pictures.push({
-          id: _.uniqueId(),
+          id: _.uniqueId(_.now()),
           path: require("img/card-100.png")
         });
         this.pictures.push({
-          id: _.uniqueId(),
+          id: _.uniqueId(_.now()),
           path: require("img/card-101.png")
         });
       },
