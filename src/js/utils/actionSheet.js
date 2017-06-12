@@ -1,10 +1,9 @@
 import store from "store";
 
 class actionSheet {
-  show(actions, vm) {
+  show(actions) {
     store.commit("page_showActionSheet", {
       show: true,
-      vm,
       actions
     });
     store.commit("page_setPopup", this);
@@ -12,7 +11,8 @@ class actionSheet {
 
   close() {
     store.commit("page_showActionSheet", {
-      show: false
+      show: false,
+      actions: []
     });
   }
 }

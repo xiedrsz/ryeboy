@@ -18,14 +18,16 @@
       <div class="picture-container"
            v-if="pictures.length > 0">
         <div v-for="picture in pictures"
-             class="inserted-picture-wrap"
-             @click="removePicture(picture.id)"
-             :data-badge="'×'">
+             class="inserted-picture-wrap">
           <img :src="picture.path"
+               @click.stop="showPicture"
                class="inserted-picture">
+          <i class="material-icons md-16 remove-picture"
+             @click="removePicture(picture.id)">clear</i>
         </div>
       </div>
     </div>
+  </div>
   </div>
 </template>
 
@@ -45,6 +47,7 @@
       };
     },
     methods: {
+      showPicture() {},
       removePicture(id) {
         let index = _.findIndex(this.pictures, item => {
           return item.id == id;
@@ -58,26 +61,28 @@
         }
 
         if (app.deviceready) {
-          // navigator.camera.getPicture(imageUri => {
-          //   this.record.pictures.push(imageUri);
-          //   console.log(imageUri);
-          // }, error => {
-          //   console.debug("Unable to obtain picture: " + error, "app");
-          // }, {
-          //   destinationType: Camera.DestinationType.FILE_URI,
-          //   sourceType: Camera.PictureSourceType.pictureLIBRARY,
-          //   mediaType: Camera.MediaType.PICTURE
-          // });
+          navigator.camera.getPicture(imageUri => {
+            console.log(imageUri);
+            this.pictures.push({
+              id: _.uniqueId(_.now()),
+              path: imageUri
+            });
+          }, error => {
+            console.debug("Unable to obtain picture: " + error, "app");
+          }, {
+            destinationType: Camera.DestinationType.FILE_URI,
+            sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+            mediaType: Camera.MediaType.PICTURE,
+            targetWidth: 512,
+            targetHeight: 512,
+            quality: 75,
+          });
+        } else {
+          this.pictures.push({
+            id: _.uniqueId(_.now()),
+            path: "img/card-100.png"
+          });
         }
-
-        this.pictures.push({
-          id: _.uniqueId(_.now()),
-          path: require("img/card-100.png")
-        });
-        this.pictures.push({
-          id: _.uniqueId(_.now()),
-          path: require("img/card-101.png")
-        });
       },
       init() {
 
@@ -117,7 +122,7 @@
       this.save();
     },
     mounted() {
-      app.actions.show([{
+      app.toolbars.create([{
         text: "完成",
         click: this.finish
       }]);
@@ -172,7 +177,6 @@
     width: 64px;
     height: 64px;
     object-fit: cover;
-    margin-right: 8px;
     border: 1px solid $color-disable;
   }
 
@@ -183,16 +187,15 @@
 
   .inserted-picture-wrap {
     position: relative;
+    padding-top: 8px;
+    padding-right: 16px;
   }
 
-  .inserted-picture-wrap[data-badge]:after {
-    content: attr(data-badge);
+  .remove-picture {
+    top: 0;
+    right: 8px;
     position: absolute;
-    top: -11px;
-    right: -1px;
-    font-size: 1.2em;
-    color: $color-blue;
-    width: 16px;
-    height: 16px;
+    background-color: white;
+    color: $color-secondary-text;
   }
 </style>

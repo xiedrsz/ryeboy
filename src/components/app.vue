@@ -10,8 +10,8 @@
                   :type="dialog.type"
                   :content="dialog.content"
                   :title="dialog.title"
-                  @ok="dialogOk"
-                  @cancel="dialogCancel" />
+                  @ok="dialogOkCallback"
+                  @cancel="dialogCancelCallback" />
     <action-sheet v-show="actionSheet.show"
                   :actions="actionSheet.actions" />
   </div>
@@ -20,24 +20,18 @@
 <script>
   export default {
     methods: {
-      dialogOk() {
-        if (this.dialog.event.ok) {
-          if (this.dialog.vm) {
-            this.dialog.vm.$emit(this.dialog.event.ok);
-          } else {
-            this.$emit(this.dialog.event.ok);
-          }
+      dialogOkCallback() {
+        if (this.dialog.okCallback) {
+          this.dialog.okCallback();
+          this.dialog.okCallback = null;
         }
       },
-      dialogCancel() {
-        if (this.dialog.event.cancel) {
-          if (this.dialog.vm) {
-            this.dialog.vm.$emit(this.dialog.event.cancel);
-          } else {
-            this.$emit(this.dialog.event.cancel);
-          }
+      dialogCancelCallback() {
+        if (this.dialog.cancelCallback) {
+          this.dialog.cancelCallback();
+          this.dialog.cancelCallback = null;
         }
-      }
+      },
     },
     computed: {
       loading() {
@@ -54,11 +48,6 @@
       "modal-loading": require("components/ui/modal-loading.vue"),
       "modal-dialog": require("components/ui/modal-dialog.vue"),
       "action-sheet": require("components/ui/action-sheet.vue"),
-    },
-    mounted() {
-      this.$on("exit", () => {
-        navigator.app.exitApp();
-      });
-    }
+    } 
   };
 </script>

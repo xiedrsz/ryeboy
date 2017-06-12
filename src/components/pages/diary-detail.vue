@@ -137,10 +137,10 @@
         actionSheet.show([
           {
             text: "复制",
-            clickHandler: "copyComment",
+            click: this.copyComment.bind(this),
           }, {
             text: "回复评论",
-            clickHandler: "replyComment"
+            click: this.replyComment.bind(this)
           }
         ], this);
       },
@@ -248,14 +248,10 @@
 
     },
     beforeDestroy() {
-      this.$off("copyComment");
-      this.$off("replyComment");
       window.removeEventListener("resize", this.adjustHeight);
       inputElement.removeEventListener("autosize:resized", this.adjustHeight);
     },
     async mounted() {
-      this.$on("copyComment", this.copyComment);
-      this.$on("replyComment", this.replyComment);
       window.addEventListener("resize", this.adjustHeight);
 
       let diaryId = this.$route.query.id;

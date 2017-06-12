@@ -35,7 +35,7 @@
       content: {
         type: String,
         default: ""
-      }
+      },
     },
     computed: {
       enableTitle() {

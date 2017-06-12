@@ -105,7 +105,7 @@
       this.save();
     },
     mounted() {
-      app.actions.show([{
+      app.toolbars.create([{
         text: "完成",
         click: this.finish
       }]);

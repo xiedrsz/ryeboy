@@ -18,23 +18,22 @@ class dialog {
     store.commit("page_setPopup", this);
   }
 
-  prompt(content, ok, cancel, vm) {
+  prompt(content, okCallback, cancelCallback) {
     store.commit("page_showDialog", {
       show: true,
-      vm,
       type: "prompt",
       content,
-      event: {
-        ok,
-        cancel
-      }
+      okCallback,
+      cancelCallback
     });
     store.commit("page_setPopup", this);
   }
 
   close() {
     store.commit("page_showDialog", {
-      show: false
+      show: false,
+      okCallback: null,
+      cancelCallback: null
     });
   }
 }

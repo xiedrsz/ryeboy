@@ -2,23 +2,19 @@ import Vue from "vue";
 
 const state = {
   title: "",
-  actions: [],
+  toolbars: [],
   loading: false,
   popup: null, // 页面弹出内容，可能是对话框、操作列表、日期选择器等
   dialog: {
     show: false,
-    vm: null,
     type: "alert",
     title: "",
     content: "",
-    event: {
-      ok: "",
-      cancel: ""
-    }
+    okCallback: null,
+    cancelCallback: null,
   },
   actionSheet: {
     show: false,
-    vm: null,
     actions: []
   }
 };
@@ -27,8 +23,8 @@ const mutations = {
   page_setTitle(state, title) {
     state.title = title;
   },
-  page_setActions(state, actions) {
-    Vue.set(state, "actions", actions);
+  page_setToolbars(state, toolbars) {
+    Vue.set(state, "toolbars", toolbars);
   },
   page_showLoading(state, show) {
     state.loading = show;

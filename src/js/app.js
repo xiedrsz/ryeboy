@@ -1,7 +1,7 @@
 import store from "store";
 import cordova from "js/cordova";
 import dialog from "js/utils/dialog";
-import actions from "js/utils/actions";
+import toolbars from "js/utils/toolbars";
 
 require("lazysizes");
 
@@ -13,7 +13,7 @@ class app {
   init() {
     this.cordova = new cordova(this);
     this.dialog = dialog;
-    this.actions = actions;
+    this.toolbars = toolbars;
 
     if (localStorage.authenticated) {
       store.commit("user_assignAuth", JSON.parse(localStorage.user));

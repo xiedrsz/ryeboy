@@ -9,10 +9,10 @@
         <span class="mdl-layout-title">{{ title }}</span>
         <div class="mdl-layout-spacer"></div>
         <nav class="mdl-navigation"
-             v-if="actions && actions.length > 0">
+             v-if="toolbars && toolbars.length > 0">
           <div class="mdl-navigation__link"
-               v-for="action in actions"
-               @click="action.click">{{ action.text }}</div>
+               v-for="item in toolbars"
+               @click="item.click">{{ item.text }}</div>
         </nav>
       </div>
     </header>
@@ -23,9 +23,12 @@
 </template>
 
 <script>
+  import app from "js/app";
+
   export default {
     watch: {
       "$route" () {
+        app.toolbars.clear();
         this.$nextTick(() => {
           this.updateHeader();
         });
@@ -43,11 +46,13 @@
       title() {
         return this.$store.state.page.title;
       },
-      actions() {
-        return this.$store.state.page.actions;
+      toolbars() {
+        return this.$store.state.page.toolbars;
       }
     },
-
+    beforeMount() {
+      app.toolbars.clear();
+    },
     mounted() {
       this.updateHeader();
     }

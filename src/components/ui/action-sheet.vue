@@ -5,7 +5,7 @@
         <button v-for="action in actions"
                 type="button"
                 class="mdl-button"
-                @click="clickAction(action.clickHandler)">{{ action.text }}</button>
+                @click="eventHandler(action.click)">{{ action.text }}</button>
       </div>
     </div>
   </div>
@@ -17,13 +17,13 @@
       actions: Array
     },
     methods: {
-      clickAction(clickHandler) {
+      eventHandler(click) {
         this.$store.commit("page_showActionSheet", {
-          show: false
+          show: false,
+          actions: []
         });
-        let vm = this.$store.state.page.actionSheet.vm;
-        if (vm) {
-          vm.$emit(clickHandler);
+        if (click) {
+          click();
         }
       }
     }
