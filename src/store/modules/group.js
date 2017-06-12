@@ -91,7 +91,13 @@ const state = {
 
   // 花生小组信息，用于修改或查看小组信息
   groupInfo: {
-    avatar: "",
+    name: "",
+
+    // 缺少参数
+    memNum: 1,
+    memMax: 50,
+    levelMax: 5,
+    medalMax: 30
   },
 
   // 已加入小组频道
@@ -205,9 +211,9 @@ const mutations = {
      * @Param obj Object 新申请对象 eg: { _id: xx, ... }
      */
     group_saveApplys(state, obj) {
-      let _id = obj._id,
+      let id = obj.id,
         tmp = _.filter(state.applys, {
-          _id
+          id
         });
 
       _.assign(tmp[0], obj);
@@ -343,8 +349,6 @@ const actions = {
     }, option) {
       let groupId = option.groupId,
         res = await api.getApplys(groupId);
-      
-      console.log(res)
 
       commit("group_pushApplys", res.data);
     },
@@ -355,12 +359,12 @@ const actions = {
     }, option) {
       let groupId = option.groupId,
         uesrId = option.uesrId,
-        callback = option.callback;
+        callback = option.callback,
+        res = await api.agreeApply(groupId, uesrId);
 
-      let res = await api.agreeApply(groupId, uesrId);
       commit("group_saveApplys", {
-        _id: uesrId,
-        statusMsg: "已通过"
+        id: uesrId,
+        approved: true
       });
     },
 
@@ -369,12 +373,12 @@ const actions = {
       commit
     }, option) {
       let groupId = option.groupId,
-        uesrId = option.uesrId;
-      let res = await api.rejectApply(groupId, uesrId);
+        uesrId = option.uesrId,
+        res = await api.rejectApply(groupId, uesrId);
 
       commit("group_saveApplys", {
-        _id: uesrId,
-        statusMsg: "已拒绝"
+        id: uesrId,
+        rejected: true
       });
     },
 

@@ -1,7 +1,7 @@
 import axios from "axios";
 import config from "js/config";
 // 引入 mocks
-// import "../../mocks"
+import "../../mocks"
 
 axios.defaults.baseURL = config.apiAddress;
 
@@ -19,11 +19,7 @@ class api {
   }
 
   static getUser(userid) {
-    return axios.get("/getUser", {
-      params: {
-        userid
-      }
-    });
+    return axios.get(`/user/${userid}`);
   }
 
   static getRecommendedChannels() {
@@ -190,19 +186,17 @@ class api {
 
   // 获取申请列表, T
   static getApplys(group_id) {
-    return axios.get(`/group/${group_id}/pending_members`)
+    return axios.get(`/group/${group_id}/pending-members`)
   }
 
   // 同意申请, 小组管理员通过用户申请, T
-  static agreeApply(id, userid) {
-    return axios.post(`/group/${id}/approve`, {
-      userid
-    })
+  static agreeApply(group_id, userid) {
+    return axios.post(`/group/${group_id}/process-applicant/approve/${userid}`)
   }
 
   // 拒绝申请, T
   static rejectApply(group_id, userid) {
-    return axios.get(`/group/${group_id}/reject/${userid}`)
+    return axios.post(`/group/${group_id}/process-applicant/reject/${userid}`)
   }
 
   // 根据id获取对应小组的成员日记, T
@@ -246,8 +240,5 @@ class api {
     return axios.get("/answerQuestionnaire")
   }
 }
-
-// 暂时暴露到全局
-window.api = api;
 
 export default api;

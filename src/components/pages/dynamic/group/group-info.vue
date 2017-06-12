@@ -117,7 +117,7 @@
         }
       },
       created() {
-        this.getGroupInfo();
+        !this.groupInfo._id && this.getGroupInfo();
       },
       mounted() {
         // 监听 设置 事件
@@ -136,7 +136,7 @@
       methods: {
         // 获取小组信息
         getGroupInfo() {
-            !this.groupInfo._id && this.$store.dispatch("getGroupInfo", "593a4c716d3b3619b82de167");
+            this.$store.dispatch("getGroupInfo", "593a4a596d3b3619b82de164");
           },
           // 更换头像，未实现
           changeAvater() {

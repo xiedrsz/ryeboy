@@ -3,22 +3,25 @@
     <ul class="apply-list">
 
       <li v-for="item in applys" class="mdl-list__item mdl-list__item--bottom-divider">
-        <img :src="item.avatar" width="36" height="36" />
-        <div class="apply-list-content" @click="detail(item._id)">
-          <span class="apply-name">{{item.name}}</span>
-          <span class="apply-name">{{"等级："+item.level}}</span>
+        <user-item :id="item.id" class="flex">
+          <template scope="props">
+            <img :src="props.user.avatar||'/img/default-avatar.png'" width="36" height="36" />
+            <div class="apply-list-content" @click="detail(item.id)">
+              <span class="apply-name">{{props.user.username}}</span>
+              <span class="apply-name">{{"等级："+props.user.level}}</span>
+            </div>
+          </template>
+        </user-item>
 
-          <!--<span class="apply-level">申请加入:花生小组</span>
-          <span class="apply-info">理由:大海</span>-->
-        </div>
-        <span v-show="!!item.statusMsg" class="mdl-list__item-note">
-          {{item.statusMsg}}
+        <span v-show="item.rejected||item.approved" class="mdl-list__item-note">
+          {{item.approved?"已通过":"已拒绝"}}
         </span>
-        <span v-show="!item.statusMsg" class="mdl-list__item-note">
-          <button @click="reject(item._id)" class="mdl-button mdl-js-button mdl-button--fab btn-reject">
+
+        <span v-show="!item.rejected&&!item.approved" class="mdl-list__item-note">
+          <button @click="reject(item.id)" class="mdl-button mdl-js-button mdl-button--fab btn-reject">
             <i class="material-icons">close</i>
           </button>
-          <button @click="approve(item._id)" class="mdl-button mdl-js-button mdl-button--fab btn-agree">
+          <button @click="approve(item.id)" class="mdl-button mdl-js-button mdl-button--fab btn-agree">
             <i class="material-icons">done</i>
           </button>
         </span>
@@ -30,7 +33,7 @@
 <script>
   export default {
     components: {
-
+      "user-item": require("ui/user-item.vue"),
     },
     computed: {
       applys() {
@@ -39,6 +42,10 @@
     },
     created() {
       !this.applys[0] && this.getApplys();
+
+      this.$store.dispatch("getUser", {
+        userId: "59389e3d9c4d0228d7313b1b"
+      });
     },
     methods: {
       // 获取申请列表
@@ -50,14 +57,14 @@
         // 拒绝
         reject(uesrId) {
           this.$store.dispatch("rejectApply", {
-            groupId: "123",
+            groupId: "593a4a596d3b3619b82de164",
             uesrId
           });
         },
         // 同意
         approve(uesrId) {
           this.$store.dispatch("agreeApply", {
-            groupId: "123",
+            groupId: "593a4a596d3b3619b82de164",
             uesrId
           });
         },
@@ -99,5 +106,10 @@
       font-size: 18px;
       color: #fff;
     }
+  }
+  
+  .flex {
+    display: flex;
+    flex: 1;
   }
 </style>
