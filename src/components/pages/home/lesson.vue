@@ -135,10 +135,10 @@
         return this.userlv >= card.unlock;
       },
       selectCard(data) {
-        this.$store.dispatch("lesson_selectCard", data);
+        this.$store.commit("lesson_selectCard", data);
       },
       selectAllCards(data) {
-        this.$store.dispatch("lesson_selectAllCards", data);
+        this.$store.commit("lesson_selectAllCards", data);
       }
     },
     computed: {
