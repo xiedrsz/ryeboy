@@ -26,9 +26,11 @@
 
 <script>
   const moment = require("moment");
+  const _ = require("lodash");
   const datetime = require("js/utils/datetime");
   const dialog = require("js/utils/dialog");
   import api from "api";
+  import app from "js/app";
 
   export default {
     data() {
@@ -58,18 +60,47 @@
       };
     },
     methods: {
-      publish() {
-        this.$store.dispatch("lesson_getPublishData").then(data => {
+      upload(fileURL, ft) {
+        return new Promise((resolve, reject) => {
+          ft.upload(fileURL, encodeURI(`${app.config.apiAddress}/upload`), res => {
+            resolve(res);
+          }, error => {
+            reject(error);
+          }, {
+            fileName: `${_.now()}.jpg`,
+          });
+        });
+      },
+      async publish() {
+        let ft = new FileTransfer();
+        let getPictureUrl = function(res) {
+          return JSON.parse(res.response).url;
+        };
+
+        try {
+          let data = await this.$store.dispatch("lesson_getPublishData");
+
+          // 上传图片文件
+          let length = data.pictures ? data.pictures.length : 0;
+          for (var index = 0; index < length; index++) {
+            var picture = data.pictures[index];
+            let res = await this.upload(picture.path, ft);
+            let pictureUrl = getPictureUrl(res);
+            this.$store.commit("lesson_setPictureUrl", {
+              id: picture.id,
+              url: `${app.config.apiAddress}/upload/${pictureUrl}`
+            });
+          }
+
+          // 提交数据
           data.privacy = Number(this.privacy);
           data.time = datetime.utcDate(data.time);
-          return api.publishLesson(data);
-        }).then(() => {
-          return this.$store.dispatch("lesson_publish");
-        }).then(() => {
+          await api.publishLesson(data);
+          await this.$store.dispatch("lesson_publish");
           history.go(-1);
-        }).catch(() => {
+        } catch (error) {
           dialog.text("发布失败，可能是网络不给力。");
-        });
+        }
       },
     },
     components: {

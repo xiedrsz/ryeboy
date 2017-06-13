@@ -10,7 +10,7 @@
                   :disabled="published"
                   rows="8"></textarea>
       </div>
-      <div class="actions-container">
+      <div class="actions-container" v-show="!published">
         <div class="action"
              @click="insertPicture">插入图片</div>
         <div class="action">添加标签</div>
@@ -19,10 +19,10 @@
            v-if="pictures.length > 0">
         <div v-for="picture in pictures"
              class="inserted-picture-wrap">
-          <img :src="picture.path"
+          <img :src="picture.url ? picture.url: picture.path"
                @click.stop="showPicture"
                class="inserted-picture">
-          <i class="material-icons md-16 remove-picture"
+          <i class="material-icons md-16 remove-picture" v-show="!published"
              @click="removePicture(picture.id)">clear</i>
         </div>
       </div>

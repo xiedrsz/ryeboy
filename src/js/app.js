@@ -1,4 +1,5 @@
 import store from "store";
+import config from "js/config";
 import cordova from "js/cordova";
 import dialog from "js/utils/dialog";
 import toolbars from "js/utils/toolbars";
@@ -11,6 +12,7 @@ class app {
   }
 
   init() {
+    this.config = config;
     this.cordova = new cordova(this);
     this.dialog = dialog;
     this.toolbars = toolbars;

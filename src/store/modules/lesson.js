@@ -78,6 +78,14 @@ const getters = {
 };
 
 const mutations = {
+  lesson_setPictureUrl(state, data) {
+    let dateKey = getDateKey(state);
+    let record = state.records[dateKey];
+    let picture = _.find(record.diary.pictures, item => {
+      return item.id == data.id;
+    });
+    picture.url = data.url;
+  },
   lesson_setDiary(state, data) {
     let dateKey = getDateKey(state);
     let record = state.records[dateKey];
@@ -251,6 +259,7 @@ const actions = {
       userid,
       time: state.selectedDate,
       text: record.diary.text,
+      pictures: record.diary.pictures,
       expectedExp: 0
     };
 

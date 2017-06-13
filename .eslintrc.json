@@ -15,7 +15,8 @@
     "axios": false,
     "Swipe": false,
     "lazySizes": false,
-    "Camera": false
+    "Camera": false,
+    "FileTransfer": false
   },
   "rules": {
     "indent": [
