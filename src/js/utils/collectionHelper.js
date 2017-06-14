@@ -1,5 +1,5 @@
 class collectionHelper {
-  remove(array, element) {
+  static remove(array, element) {
     let index = array.indexOf(element);
     if (index >= 0) {
       array.splice(index, 1);
@@ -7,4 +7,4 @@ class collectionHelper {
   }
 }
 
-module.exports = new collectionHelper();
+module.exports = collectionHelper;

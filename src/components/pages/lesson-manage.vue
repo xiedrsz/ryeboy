@@ -55,9 +55,6 @@
 </template>
 
 <script>
-  import textHelper from "js/utils/textHelper";
-  import app from "js/app";
-
   export default {
     components: {
       "checkbox": require("ui/checkbox.vue"),
@@ -98,14 +95,14 @@
         return `[${value}级]`;
       },
       getGroupName(group) {
-        return textHelper.getLessonGroupName(group);
+        return this.$app.textHelper.getLessonGroupName(group);
       }
     },
     beforeDestroy() {
       this.save();
     },
     mounted() {
-      app.toolbars.create([{
+      this.$app.toolbars.create([{
         text: "完成",
         click: this.finish
       }]);

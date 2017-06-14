@@ -35,7 +35,6 @@
 
 <script>
   import api from "api";
-  import textHelper from "js/utils/textHelper.js";
 
   export default {
     data() {
@@ -82,7 +81,7 @@
         }).content = res.data.tutorial;
         this.tabs.find(item => {
           return item.id == "faq";
-        }).content = textHelper.escape(res.data.faq);
+        }).content = this.$app.textHelper.escape(res.data.faq);
       });
 
       let slideContentHeight = (document.querySelector("main").clientHeight -

@@ -34,7 +34,6 @@
 <script>
   const moment = require("moment");
   import _ from "lodash";
-  import app from "js/app";
 
   export default {
     data() {
@@ -56,11 +55,11 @@
       },
       insertPicture() {
         if (this.pictures.length >= 3) {
-          app.dialog.text("只能插入3张图片。");
+          this.$app.dialog.text("只能插入3张图片。");
           return;
         }
 
-        if (app.deviceready) {
+        if (this.$app.deviceready) {
           navigator.camera.getPicture(imageUri => {
             console.log(imageUri);
             this.pictures.push({
@@ -78,10 +77,10 @@
             quality: 75,
           });
         } else {
-          this.pictures.push({
-            id: _.uniqueId(_.now()),
-            path: "img/card-100.png"
-          });
+          // this.pictures.push({
+          //   id: _.uniqueId(_.now()),
+          //   path: "img/card-100.png"
+          // });
         }
       },
       init() {
@@ -122,7 +121,7 @@
       this.save();
     },
     mounted() {
-      app.toolbars.create([{
+      this.$app.toolbars.create([{
         text: "完成",
         click: this.finish
       }]);

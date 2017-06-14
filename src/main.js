@@ -1,8 +1,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import app from "js/app";
 import routes from "js/routes";
 import store from "store";
-import app from "js/app";
 
 Vue.use(VueRouter);
 Vue.use({
@@ -16,6 +16,8 @@ const router = new VueRouter({
   base: __dirname,
   routes
 });
+
+console.log(app);
 
 app.init();
 app.show(new Vue(Vue.util.extend({

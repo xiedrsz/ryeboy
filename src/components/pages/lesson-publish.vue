@@ -27,10 +27,7 @@
 <script>
   const moment = require("moment");
   const _ = require("lodash");
-  const datetime = require("js/utils/datetime");
-  const dialog = require("js/utils/dialog");
   import api from "api";
-  import app from "js/app";
 
   export default {
     data() {
@@ -62,7 +59,7 @@
     methods: {
       upload(fileURL, ft) {
         return new Promise((resolve, reject) => {
-          ft.upload(fileURL, encodeURI(`${app.config.apiAddress}/upload`), res => {
+          ft.upload(fileURL, encodeURI(`${this.$app.config.apiAddress}/upload`), res => {
             resolve(res);
           }, error => {
             reject(error);
@@ -73,7 +70,7 @@
       },
       async publish() {
         let ft = new FileTransfer();
-        let getPictureUrl = function(res) {
+        let getUploadedName = function(res) {
           return JSON.parse(res.response).url;
         };
 
@@ -81,25 +78,28 @@
           let data = await this.$store.dispatch("lesson_getPublishData");
 
           // 上传图片文件
+          let pictures = [];
           let length = data.pictures ? data.pictures.length : 0;
           for (var index = 0; index < length; index++) {
             var picture = data.pictures[index];
             let res = await this.upload(picture.path, ft);
-            let pictureUrl = getPictureUrl(res);
+            let name = getUploadedName(res);
             this.$store.commit("lesson_setPictureUrl", {
               id: picture.id,
-              url: `${app.config.apiAddress}/upload/${pictureUrl}`
+              url: `${this.$app.config.apiAddress}/upload/${name}` 
             });
+            pictures.push(name);
           }
 
           // 提交数据
+          data.pictures = pictures;
           data.privacy = Number(this.privacy);
-          data.time = datetime.utcDate(data.time);
+          data.time = this.$app.datetime.utcDate(data.time);
           await api.publishLesson(data);
           await this.$store.dispatch("lesson_publish");
           history.go(-1);
         } catch (error) {
-          dialog.text("发布失败，可能是网络不给力。");
+          this.$app.dialog.text("发布失败，可能是网络不给力。");
         }
       },
     },

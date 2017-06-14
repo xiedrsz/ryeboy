@@ -16,6 +16,16 @@ class app {
   }
 
   init() {
+    if (localStorage.authenticated) {
+      store.commit("user_assignAuth", JSON.parse(localStorage.user));
+      store.dispatch("initSubscribedChannels");
+      store.dispatch("lesson_loadSettings");
+    } else {
+      store.commit("diary_setDefaultChannels");
+    }
+  }
+
+  constructor() {
     this.config = config;
     this.cordova = new cordova(this);
     this.dialog = dialog;
@@ -24,14 +34,6 @@ class app {
     this.collectionHelper = collectionHelper;
     this.datetime = datetime;
     this.actionSheet = actionSheet;
-
-    if (localStorage.authenticated) {
-      store.commit("user_assignAuth", JSON.parse(localStorage.user));
-      store.dispatch("initSubscribedChannels");
-      store.dispatch("lesson_loadSettings");
-    } else {
-      store.commit("diary_setDefaultChannels");
-    }
   }
 }
 

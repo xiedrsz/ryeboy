@@ -2,16 +2,16 @@ const moment = require("moment");
 moment.locale("zh-CN");
 
 class datetime {
-  utcDate(time) {
+  static utcDate(time) {
     let offset = moment(time).utcOffset();
     return this.date(moment.utc(time).add(offset, "m")).toDate();
   }
 
-  date(date) {
+  static date(date) {
     return moment(date).hours(0).minutes(0).seconds(0).millisecond(0);
   }
 
-  formatDiaryCreated(createdAt) {
+  static formatDiaryCreated(createdAt) {
     let current = moment(createdAt);
     let now = moment();
     let format = "H:mm";
@@ -30,7 +30,7 @@ class datetime {
     return current.format(format);
   }
 
-  formatDiaryDate(date) {
+  static formatDiaryDate(date) {
     let current = moment(date);
     let now = moment();
     let format = "M[月]D[日]";
@@ -40,7 +40,7 @@ class datetime {
     return current.format(format);
   }
 
-  formatCreated(createdAt) {
+  static formatCreated(createdAt) {
     let current = moment(createdAt);
     let now = moment();
     let format = "H:mm";
@@ -58,4 +58,4 @@ class datetime {
   }
 }
 
-module.exports = new datetime();
+module.exports = datetime;

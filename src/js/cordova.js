@@ -1,5 +1,3 @@
-const dialog = require("js/utils/dialog");
-
 class cordova {
   back() {
     if (this.keyboardVisible || this.keyboardWillHide) {
@@ -18,7 +16,7 @@ class cordova {
 
     let route = this.app.vue.$router.currentRoute;
     if (route.matched[0].path == "/home") {
-      dialog.prompt("你确定退出吗？", () => {
+      this.app.dialog.prompt("你确定退出吗？", () => {
         navigator.app.exitApp();
       });
       return;

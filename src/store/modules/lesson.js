@@ -1,10 +1,10 @@
 import Vue from "vue";
 import _ from "lodash";
 import api from "api";
+import datetime from "js/utils/datetime";
+import textHelper from "js/utils/textHelper";
+import collectionHelper from "js/utils/collectionHelper";
 const cards = require("store/cards.json");
-const datetime = require("js/utils/datetime");
-const textHelper = require("js/utils/textHelper");
-const ch = require("js/utils/collectionHelper");
 const moment = require("moment");
 
 function getDateKey(state) {
@@ -114,7 +114,7 @@ const mutations = {
   },
   lesson_setDeselect(state, data) {
     if (data.checked) {
-      ch.remove(state.deselects, data.id);
+      collectionHelper.remove(state.deselects, data.id);
     } else {
       state.deselects.push(data.id);
     }
@@ -189,6 +189,13 @@ const actions = {
           if (res.status == 200) {
             record.published = true;
             record.diary.text = res.data.text;
+            if (res.data.pictures) {
+              res.data.pictures.forEach(item => {
+                record.diary.pictures.push({
+                  url: textHelper.getPictureUrl(item)
+                });
+              });
+            }
             res.data.checkedCards.forEach(cardId => {
               Vue.set(record.selectedCards, cardId.toString(), true);
             });

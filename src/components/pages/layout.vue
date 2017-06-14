@@ -23,12 +23,10 @@
 </template>
 
 <script>
-  import app from "js/app";
-
   export default {
     watch: {
       "$route" () {
-        app.toolbars.clear();
+        this.$app.toolbars.clear();
         this.$nextTick(() => {
           this.updateHeader();
         });
@@ -51,7 +49,7 @@
       }
     },
     beforeMount() {
-      app.toolbars.clear();
+      this.$app.toolbars.clear();
     },
     mounted() {
       this.updateHeader();

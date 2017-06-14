@@ -33,9 +33,6 @@
 </template>
 
 <script>
-  import config from "js/config";
-  import textHelper from "js/utils/textHelper";
-
   export default {
     components: {
       "list": require("ui/list.vue"),
@@ -49,18 +46,18 @@
         return this.$store.state.user;
       },
       username() {
-        return textHelper.getUserName(this.user);
+        return this.$app.textHelper.getUserName(this.user);
       },
       verified() {
         return this.user.level == "70";
       },
       userlv() {
-        return textHelper.getUserLevel(this.user);
+        return this.$app.textHelper.getUserLevel(this.user);
       },
       avatar() {
         let user = this.user;
         if (this.user.portrait) {
-          return `${config.ossAddress}/portraits/${user._id}_${user.portrait}.jpg`;
+          return `${this.$app.config.ossAddress}/portraits/${user._id}_${user.portrait}.jpg`;
         } else {
           return "../../img/default-avatar.png";
         }
