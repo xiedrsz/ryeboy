@@ -26,7 +26,6 @@
 
 <script>
   import api from "api";
-  const dialog = require("js/utils/dialog");
 
   export default {
     data: function() {
@@ -50,7 +49,7 @@
       submit() {
         if (this.account && this.password) {
           this.errorText = "";
-          dialog.showLoading();
+          this.$app.dialog.showLoading();
           api.login(this.account, this.password).then(res => {
             let data = res.data;
             if (data.error) {
@@ -61,7 +60,7 @@
               let redirect = this.$route.query.redirect;
               this.$store.dispatch("getSubscribedChannels").then(() => {
                 setTimeout(() => {
-                  dialog.hideLoading();
+                  this.$app.dialog.hideLoading();
                   this.$router.replace(redirect ? redirect : "/");
                 }, 1000);
               });
@@ -69,7 +68,7 @@
           }).catch((err) => {
             console.log(err);
             this.errorText = "网络出错。";
-            dialog.hideLoading();
+            this.$app.dialog.hideLoading();
           });
         } else {
           this.errorText = "请填写帐号密码。";

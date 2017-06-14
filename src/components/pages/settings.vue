@@ -21,7 +21,6 @@
 
 <script>
   import api from "api";
-  const dialog = require("js/utils/dialog");
 
   export default {
     components: {
@@ -40,7 +39,7 @@
       },
       clearLocalStorage() {
         localStorage.clear();
-        dialog.text("本地缓存已经清除");
+        this.$app.dialog.text("本地缓存已经清除");
       }
     },
     computed: {
