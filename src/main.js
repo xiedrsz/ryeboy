@@ -5,6 +5,11 @@ import store from "store";
 import app from "js/app";
 
 Vue.use(VueRouter);
+Vue.use({
+  install() {
+    Vue.prototype.$app = app;
+  }
+});
 
 const router = new VueRouter({
   mode: "hash",

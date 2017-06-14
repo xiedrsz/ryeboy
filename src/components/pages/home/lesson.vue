@@ -58,9 +58,7 @@
 
 <script>
   const flatpickr = require("flatpickr");
-  const datetime = require("js/utils/datetime");
   const moment = require("moment");
-  const dialog = require("js/utils/dialog");
 
   export default {
     data() {
@@ -81,7 +79,7 @@
           locale: require("flatpickr/dist/l10n/zh.js").zh,
           disable: [
             function(date) {
-              return datetime.date(date).isAfter(datetime.date(moment()));
+              return self.$app.datetime.date(date).isAfter(self.$app.datetime.date(moment()));
             }
           ],
           onChange(selectedDates) {
@@ -112,7 +110,7 @@
         this.$store.dispatch("lesson_save");
         let dateText = moment(this.selectedDate).format("M[月]D[日]");
 
-        dialog.text(`${dateText}的功课已保存在本地`);
+        this.$app.dialog.text(`${dateText}的功课已保存在本地`);
       },
       publish() {
         if (this.published) {
@@ -145,7 +143,7 @@
       selectedDateText() {
         let date = moment(this.selectedDate);
         let suffix = "";
-        let diffDays = date.diff(datetime.date(moment()), "days");
+        let diffDays = date.diff(this.$app.datetime.date(moment()), "days");
         if (diffDays == -1) {
           suffix = "昨天";
         } else if (diffDays == 0) {

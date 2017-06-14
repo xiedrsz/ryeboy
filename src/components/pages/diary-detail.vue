@@ -102,8 +102,6 @@
   import api from "api";
   import _ from "lodash";
   import autosize from "autosize";
-  const dialog = require("js/utils/dialog");
-  const actionSheet = require("js/utils/actionSheet");
 
   const pageSize = 10;
   var inputElement = null;
@@ -134,7 +132,7 @@
       },
       openCommentActions(comment) {
         this.selectedComment = comment;
-        actionSheet.show([
+        this.$app.actionSheet.show([
           {
             text: "复制",
             click: this.copyComment.bind(this),
@@ -146,7 +144,7 @@
       },
       async sendComment() {
         if (!this.authenticated) {
-          dialog.text("你还没有登录。");
+          this.$app.dialog.text("你还没有登录。");
           return;
         }
         if (this.comment) {
@@ -175,7 +173,7 @@
             });
 
           } catch (error) {
-            dialog.text("提交评论未成功。");
+            this.$app.dialog.text("提交评论未成功。");
           }
         }
       },
