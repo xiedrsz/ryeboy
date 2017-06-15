@@ -14,6 +14,13 @@
       </div>
       <div class="text"
            v-html="text"></div>
+      <div class="picture-block"
+           v-if="pictures.length > 0">
+        <div v-for="picture in pictures">
+          <img :data-src="picture"
+               class="picture lazyload">
+        </div>
+      </div>
       <div class="comment">
         <div>{{ time }}</div>
         <div class="mdl-layout-spacer" />
@@ -35,6 +42,7 @@
       username: String,
       avatar: String,
       text: String,
+      pictures: Array,
       time: String,
       verified: Boolean,
       likeCount: {
@@ -131,5 +139,19 @@
     width: 16px;
     height: 16px;
     margin-right: 4px;
+  }
+
+  .picture {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    margin-right: 3px;
+    margin-bottom: 3px;
+  }
+
+  .picture-block {
+    @include flex-row;
+    @include flex-wrap;
+    margin: 12px 0 8px 0;
   }
 </style>

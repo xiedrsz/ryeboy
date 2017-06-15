@@ -22,7 +22,7 @@
           <img :src="picture.url ? picture.url: picture.path"
                @click.stop="showPicture"
                class="inserted-picture">
-          <i class="material-icons md-16 remove-picture" v-show="!published"
+          <i class="material-icons md-18 remove-picture" v-show="!published"
              @click="removePicture(picture.id)">clear</i>
         </div>
       </div>
@@ -77,10 +77,10 @@
             quality: 75,
           });
         } else {
-          // this.pictures.push({
-          //   id: _.uniqueId(_.now()),
-          //   path: "img/card-100.png"
-          // });
+          this.pictures.push({
+            id: _.uniqueId(_.now()),
+            path: "img/default-avatar.png"
+          });
         }
       },
       init() {
@@ -173,10 +173,9 @@
   }
 
   .inserted-picture {
-    width: 64px;
-    height: 64px;
+    width: 80px;
+    height: 80px;
     object-fit: cover;
-    border: 1px solid $color-disable;
   }
 
   .picture-container {
@@ -187,14 +186,15 @@
   .inserted-picture-wrap {
     position: relative;
     padding-top: 8px;
-    padding-right: 16px;
+    padding-right: 3px;
   }
 
   .remove-picture {
     top: 0;
-    right: 8px;
+    right: 2px;
     position: absolute;
     background-color: white;
+    opacity: 0.8;
     color: $color-secondary-text;
   }
 </style>

@@ -17,8 +17,6 @@ const router = new VueRouter({
   routes
 });
 
-console.log(app);
-
 app.init();
 app.show(new Vue(Vue.util.extend({
   router,

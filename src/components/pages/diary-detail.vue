@@ -14,6 +14,12 @@
                 <span>{{ diary.username }}</span>
                 <span class="userlv">{{ diary.userlv }}</span>
               </div>
+              <div class="picture-block" v-if="diary.pictures.length > 0">
+                <div v-for="picture in diary.pictures">
+                  <img :data-src="picture"
+                       class="picture lazyload">
+                </div>
+              </div>
               <div class="text"
                    v-html="diary.escapedText"></div>
               <div class="lesson-block">
@@ -259,6 +265,7 @@
         let comments = [];
         let res = await api.getDiary(diaryId);
         let diary = res.data;
+
         this.cards = await this.$store.dispatch("lesson_getCards", diary.checkedCards);
 
         users.push({
@@ -485,5 +492,19 @@
   .send {
     margin-right: 16px;
     color: $color-secondary-text;
+  }
+
+  .picture {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    margin-right: 3px;
+    margin-bottom: 3px;
+  }
+
+  .picture-block {
+    @include flex-row;
+    @include flex-wrap;
+    margin: 12px 0 8px 0;
   }
 </style>

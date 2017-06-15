@@ -57,6 +57,7 @@
                             :commentCount="item.commentCount"
                             :avatar="item.avatar"
                             :username="item.username"
+                            :pictures="item.pictures"
                             :verified="item.verified"
                             :text="item.escapedText"
                             :time="item.time" />

@@ -107,6 +107,15 @@ function updateDiaries(diaries) {
         diary.avatar = require("img/default-avatar.png");
       }
     }
+
+    let pictures = [];
+    if (diary.pictures) {
+      diary.pictures.forEach(item => {
+        pictures.push(textHelper.getPictureUrl(item));
+      });
+    }
+    diary.pictures = pictures;
+    
     diary.time = datetime.formatDiaryCreated(diary.createdAt);
     diary.escapedText = textHelper.escape(textHelper.getDiaryText(diary));
   });
