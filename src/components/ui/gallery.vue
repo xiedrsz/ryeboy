@@ -127,6 +127,11 @@
             this.getSlideDimensions(slide);
           }
         });
+        this.photoswipe.listen("close", () => {
+          this.$store.commit("page_setPopup");
+        });
+
+        this.$store.commit("page_setPopup", this.photoswipe);
       },
       close() {
         this.photoswipe.close();
