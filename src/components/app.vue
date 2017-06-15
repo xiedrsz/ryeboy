@@ -5,6 +5,8 @@
       <router-view v-if="$route.meta.keepAlive"></router-view>
     </keep-alive>
     <router-view v-if="!$route.meta.keepAlive"></router-view>
+
+    <!-- 全屏组件 -->
     <modal-loading v-show="loading" />
     <modal-dialog v-show="dialog.show"
                   :type="dialog.type"
@@ -14,6 +16,7 @@
                   @cancel="dialogCancelCallback" />
     <action-sheet v-show="actionSheet.show"
                   :actions="actionSheet.actions" />
+    <gallery ref="gallery" />
   </div>
 </template>
 
@@ -48,6 +51,7 @@
       "modal-loading": require("components/ui/modal-loading.vue"),
       "modal-dialog": require("components/ui/modal-dialog.vue"),
       "action-sheet": require("components/ui/action-sheet.vue"),
-    } 
+      "gallery": require("ui/gallery.vue"),
+    }
   };
 </script>

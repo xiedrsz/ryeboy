@@ -14,9 +14,11 @@
                 <span>{{ diary.username }}</span>
                 <span class="userlv">{{ diary.userlv }}</span>
               </div>
-              <div class="picture-block" v-if="diary.pictures.length > 0">
-                <div v-for="picture in diary.pictures">
+              <div class="picture-block"
+                   v-if="diary.pictures.length > 0">
+                <div v-for="(picture, index) in diary.pictures">
                   <img :data-src="picture"
+                       @click="openPicture(index)"
                        class="picture lazyload">
                 </div>
               </div>
@@ -129,6 +131,18 @@
       };
     },
     methods: {
+      openPicture(index) {
+        let list = [];
+        this.diary.pictures.forEach(item => {
+          list.push({
+            src: item,
+            w: 0,
+            h: 0,
+            doGetSlideDimensions: true
+          });
+        });
+        this.$root.$refs.gallery.open(index, list);
+      },
       setLike() {},
       copyComment() {},
       replyComment() {
@@ -240,7 +254,7 @@
       "infinite-scroll": require("ui/infinite-scroll.vue"),
       "spinner": require("ui/spinner.vue"),
       "textfield": require("ui/textfield.vue"),
-      "button-icon": require("ui/button-icon.vue"),
+      "button-icon": require("ui/button-icon.vue")
     },
     computed: {
       authenticated() {
