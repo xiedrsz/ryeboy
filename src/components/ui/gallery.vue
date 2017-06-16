@@ -106,13 +106,27 @@
         fullscreenEl: false,
         history: false,
         shareEl: false,
-        tapToClose: true,
+        tapToClose: false,
+        pinchToClose: false,
         loop: false,
-        showHideOpacity: true
+        showHideOpacity: true,
+        showAnimationDuration: 0,
+        hideAnimationDuration: 0,
+        closeOnVerticalDrag: false,
+        closeOnScroll: false,
+        maxSpreadZoom : 2
       }) {
         let options = Object.assign({
           index: index
         }, params);
+        options.getDoubleTapZoom = (isMouseClick, item) =>{
+          if (isMouseClick) {
+            return 1;
+          } else {
+            console.log(item);
+            return item.initialZoomLevel <= 0.5 ? 1 : 2;
+          }
+        };
         this.photoswipe = new PhotoSwipe(this.$el, PhotoSwipeUI_Default, list, options);
         this.photoswipe.init();
         this.photoswipe.listen("gettingData", (index, slide) => {
