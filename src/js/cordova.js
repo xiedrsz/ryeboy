@@ -1,13 +1,17 @@
 class cordova {
   back() {
+    let store = this.app.vue.$store;
+
+    if (store.page.loading) {
+      return;
+    }
+
     if (this.keyboardVisible || this.keyboardWillHide) {
       this.keyboardVisible = false;
       this.keyboardWillHide = false;
       clearTimeout(this.keyboardWillHideTimeout);
       return;
     }
-
-    let store = this.app.vue.$store;
 
     if (store.getters.page_popup) {
       store.getters.page_popup.close();

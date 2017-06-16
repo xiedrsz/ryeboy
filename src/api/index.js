@@ -4,6 +4,15 @@ import config from "js/config";
 axios.defaults.baseURL = config.apiAddress;
 
 class api {
+  static getPersonalDiaries(userid, last) {
+    return axios.get("/getPersonalDiaries", {
+      params: {
+        userid,
+        last
+      }
+    });
+  }
+
   static addDiaryComment(id, comment) {
     return axios.post("/addDiaryComment", {
       id,
