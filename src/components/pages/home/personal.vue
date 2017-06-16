@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div class="basic" v-if="authenticated">
+    <div class="basic"
+         v-if="authenticated">
       <img :data-src="avatar"
            class="avatar lazyload">
       <div class="info">
@@ -19,10 +20,11 @@
       <list-item text="注册" />
     </list>
     <list v-if="authenticated">
-      <list-item text="我的等级" />
-      <list-item text="我的日记" />
-      <list-item text="我的收藏" />
-      <list-item text="我的服务" />
+      <list-item text="等级" />
+      <list-item text="日记"
+                 v-on:click.native="$router.push('/pages/personal-diary')" />
+      <list-item text="消息" />
+      <list-item text="收藏" />
     </list>
     <list>
       <list-item text="设置"

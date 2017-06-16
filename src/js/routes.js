@@ -3,7 +3,7 @@ const home = [
 ];
 
 const pages = [
-  "login", "settings", "channel-manage", "lesson-manage", "change-password", "lesson-detail", "lesson-diary", "lesson-publish", "diary-detail"
+  "login", "settings", "channel-manage", "lesson-manage", "change-password", "lesson-detail", "lesson-diary", "lesson-publish", "diary-detail", "personal-diary"
 ];
 
 const routes = [{
