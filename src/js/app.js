@@ -12,6 +12,14 @@ import actionSheet from "js/utils/actionSheet";
 require("lazysizes");
 
 class app {
+  delay(timeout) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve();
+      }, timeout);
+    });
+  }
+
   show(vue) {
     this.vue = vue;
   }

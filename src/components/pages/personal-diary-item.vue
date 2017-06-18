@@ -1,17 +1,11 @@
 <template>
   <li class="item-container"
       @click="$router.push('/pages/diary-detail?id=' + id)">
-    <div class="item-avatar">
-      <img :data-src="avatar"
-           class="lazyload" />
+    <div class="item-date">
+      <div class="date">{{ date }}</div>
+      <div class="week">{{ week }}</div>
     </div>
     <div class="item-content">
-      <div class="username">
-        <img v-if="verified"
-             :src="require('img/v.png')"
-             class="v" />
-        <span>{{ username }}</span>
-      </div>
       <div class="text"
            v-html="text"></div>
       <div class="picture-block"
@@ -44,6 +38,8 @@
       text: String,
       pictures: Array,
       time: String,
+      date: String,
+      week: String,
       verified: Boolean,
       likeCount: {
         type: Number,
@@ -62,32 +58,26 @@
   @import "~scss/main.scss";
   .item-container {
     @include flex-row;
+    margin-bottom: 16px;
   }
 
-  .item-avatar {
-    background: white;
-    width: 40px;
-    height: 40px;
-    border: 1px solid $color-divider;
-    border-radius: 50%;
+  .item-date {
+    width: 80px;
+    color: $color-secondary-text;
   }
 
-  .item-avatar img {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
-    border-radius: 50%;
+  .date {
+    font-size: 12px;
   }
 
   .item-content {
-    margin-left: 16px;
+    margin-left: 0px;
     font-size: 16px;
     width: 100%;
   }
 
   .text {
-    color: $color-secondary-text;
-    margin-top: 8px;
+    color: $color-text;
     line-height: 20px;
     position: relative;
     overflow: hidden;
@@ -142,11 +132,11 @@
   }
 
   .picture {
-    width: 80px;
-    height: 80px;
+    width: 48px;
+    height: 48px;
     object-fit: cover;
-    margin-right: 3px;
-    margin-bottom: 3px;
+    margin-right: 2px;
+    margin-bottom: 2px;
   }
 
   .picture-block {

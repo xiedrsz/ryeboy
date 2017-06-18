@@ -11,17 +11,18 @@
     <div v-if="tabIndex == 1">
 
     </div>
-    <div v-else>
+    <div class="content-wrap"
+         v-else>
       <ul class="mdl-list">
         <personal-diary-item v-for="item in diaries"
                              :id="item._id"
                              :likeCount="item.likeCount"
                              :commentCount="item.commentCount"
-                             :username="item.username"
                              :pictures="item.pictures"
-                             :verified="item.verified"
                              :text="item.escapedText"
-                             :time="item.time" />
+                             :time="item.time"
+                             :date="item.dateWithoutYear"
+                             :week="item.week" />
       </ul>
       <infinite-scroll v-if="nomore == false"
                        :onInfinite="infinite">
@@ -57,18 +58,10 @@
     methods: {
       infinite() {
 
-      },
-      async delay() {
-        return new Promise(resolve => {
-          setTimeout(() => {
-            resolve();
-          }, 2000);
-        });
       }
     },
     computed: {
       userid() {
-        console.log(this.$store);
         return this.$store.state.user._id;
       }
     },
@@ -77,14 +70,14 @@
       "infinite-scroll": require("ui/infinite-scroll.vue"),
     },
     async mounted() {
+      document.querySelector(".content-wrap").style.height = (document.querySelector("main").clientHeight -
+        document.querySelector(".tabs").clientHeight - 1) + "px";
+
       this.$app.dialog.showLoading();
-      await this.delay();
-      console.log(this.userid);
-      let res = await this.$app.api.getPersonalDiaries(this.userid);
-      console.log(res);
+      let res = await this.$app.api.getPersonalDiaries("582c6af47236a860e8fffcb2");
       let diaries = res.data;
-      console.log(diaries);
       await this.$store.dispatch("updateDiaries", diaries);
+      this.nomore = diaries.length < this.$app.config.pageSize;
       this.diaries = diaries;
       this.$app.dialog.hideLoading();
     }
@@ -109,5 +102,10 @@
 
   .tab-link.active {
     color: $color-blue;
+  }
+
+  .content-wrap {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
   }
 </style>

@@ -30,6 +30,18 @@ class datetime {
     return current.format(format);
   }
 
+  static formatDiaryWeek(date) {
+    let current = moment(date);
+    let format = "[周]dd";
+    return current.format(format);
+  }
+
+  static formatDiaryDateWithoutYear(date) {
+    let current = moment(date);
+    let format = "M[月]D[日]";
+    return current.format(format);
+  }
+
   static formatDiaryDate(date) {
     let current = moment(date);
     let now = moment();

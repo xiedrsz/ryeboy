@@ -39,9 +39,18 @@ routes.forEach(item => {
   if (item.path == "/pages") {
     item.children = [];
     pages.forEach(childrenPath => {
+      let keepAlive = false;
+      switch (childrenPath) {
+      case "personal-diary":
+        keepAlive = true;
+        break;
+      }
       item.children.push({
         path: childrenPath,
         name: childrenPath,
+        meta: {
+          keepAlive
+        },
         component: require(`components/pages/${childrenPath}.vue`)
       });
     });

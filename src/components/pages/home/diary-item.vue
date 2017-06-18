@@ -142,11 +142,11 @@
   }
 
   .picture {
-    width: 80px;
-    height: 80px;
+    width: 48px;
+    height: 48px;
     object-fit: cover;
-    margin-right: 3px;
-    margin-bottom: 3px;
+    margin-right: 2px;
+    margin-bottom: 2px;
   }
 
   .picture-block {

@@ -5,7 +5,6 @@ import _ from "lodash";
 const config = require("js/config.js");
 const datetime = require("js/utils/datetime.js");
 const textHelper = require("js/utils/textHelper.js");
-const pageSize = 10;
 
 // 默认订阅频道
 const defaultSubscribedChannels = [
@@ -117,6 +116,8 @@ function updateDiaries(diaries) {
     diary.pictures = pictures;
     
     diary.time = datetime.formatDiaryCreated(diary.createdAt);
+    diary.dateWithoutYear = datetime.formatDiaryDateWithoutYear(diary.date);
+    diary.week = datetime.formatDiaryWeek(diary.date);
     diary.escapedText = textHelper.escape(textHelper.getDiaryText(diary));
   });
 }
@@ -307,7 +308,7 @@ const actions = {
       }
       updateDiaries(diaries);
 
-      let nomore = diaries.length < pageSize;
+      let nomore = diaries.length < config.pageSize;
 
       commit("diary_setChannelData", {
         label,
@@ -397,7 +398,7 @@ const actions = {
       commit("diary_setChannelData", {
         label,
         assign: {
-          nomore: diaries.length < pageSize,
+          nomore: diaries.length < config.pageSize,
           loadstate: diaries.length == 0 ? "empty" : "ok",
         },
         diaries

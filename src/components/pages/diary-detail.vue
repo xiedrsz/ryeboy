@@ -111,7 +111,6 @@
   import _ from "lodash";
   import autosize from "autosize";
 
-  const pageSize = 10;
   var inputElement = null;
 
   export default {
@@ -230,7 +229,7 @@
           });
 
           this.$nextTick(() => {
-            let nomore = comments.length < pageSize;
+            let nomore = comments.length < this.$app.config.pageSize;
             this.last += comments.length;
 
             if (nomore) {
@@ -299,7 +298,7 @@
             let el = document.querySelector(".lesson-list");
             this.showAllLessons = el.scrollHeight > el.clientHeight;
             this.nomore = comments.length >= diary.commentCount;
-            this.last = pageSize;
+            this.last = this.$app.config.pageSize;
 
             this.adjustHeight();
 

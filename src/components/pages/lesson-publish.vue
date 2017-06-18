@@ -69,7 +69,6 @@
         });
       },
       async publish() {
-        let ft = new FileTransfer();
         let getUploadedName = function(res) {
           return JSON.parse(res.response).url;
         };
@@ -80,15 +79,19 @@
           // 上传图片文件
           let pictures = [];
           let length = data.pictures ? data.pictures.length : 0;
-          for (var index = 0; index < length; index++) {
-            var picture = data.pictures[index];
-            let res = await this.upload(picture.path, ft);
-            let name = getUploadedName(res);
-            this.$store.commit("lesson_setPictureUrl", {
-              id: picture.id,
-              url: `${this.$app.config.apiAddress}/upload/${name}` 
-            });
-            pictures.push(name);
+
+          if (length > 0) {
+            let ft = new FileTransfer();
+            for (var index = 0; index < length; index++) {
+              var picture = data.pictures[index];
+              let res = await this.upload(picture.path, ft);
+              let name = getUploadedName(res);
+              this.$store.commit("lesson_setPictureUrl", {
+                id: picture.id,
+                url: `${this.$app.config.apiAddress}/upload/${name}`
+              });
+              pictures.push(name);
+            }
           }
 
           // 提交数据
