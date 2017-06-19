@@ -4,11 +4,12 @@ import config from "js/config";
 axios.defaults.baseURL = config.apiAddress;
 
 class api {
-  static getPersonalDiaries(userid, last) {
+  static getPersonalDiaries(userid, last, filter) {
     return axios.get("/getPersonalDiaries", {
       params: {
         userid,
-        last
+        last,
+        filter
       }
     });
   }

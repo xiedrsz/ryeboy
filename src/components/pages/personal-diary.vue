@@ -2,8 +2,9 @@
   <div class="page"
        title="我的日记">
     <div class="tabs">
-      <div v-for="tab in tabs"
+      <div v-for="(tab, index) in tabs"
            class="tab-link"
+           @click="clickTab(index)"
            :class="{ active: tab.active }">
         {{ tab.text }}
       </div>
@@ -33,6 +34,9 @@
 </template>
 
 <script>
+  import _ from "lodash";
+  let refresh = false;
+
   export default {
     data() {
       return {
@@ -52,12 +56,94 @@
         ],
         tabIndex: 0,
         diaries: [],
-        nomore: true
+        nomore: true,
+        enableClickTab: true,
+        filter: "",
+        last: new Date()
       };
     },
-    methods: {
-      infinite() {
+    beforeRouteLeave(to, from, next) {
+      // 保存滚动位置
+      from.meta.scrollPosition = {
+        "content-wrap": this.$el.querySelector(".content-wrap").scrollTop
+      };
+      next();
+    },
+    beforeRouteEnter(to, from, next) {
+      if (from.name != "diary-detail") {
+        refresh = true;
+      }
 
+      // 恢复滚动位置
+      next(vm => {
+        let scrollPosition = to.meta.scrollPosition;
+        if (scrollPosition) {
+          vm.$el.querySelector(".content-wrap").scrollTop = scrollPosition["content-wrap"];
+        }
+      });
+    },
+    methods: {
+      async load() {
+        this.diaries = [];
+        this.nomore = true;
+        this.filter = this.tabIndex == 2 ? "recommend" : "";
+        this.$app.dialog.showLoading();
+        await this.getData("582c6af47236a860e8fffcb2", undefined, this.filter);
+        this.$app.dialog.hideLoading();
+      },
+      reload() {
+        this.switchTab(0);
+        this.load();
+      },
+      switchTab(index) {
+        this.tabs[this.tabIndex].active = false;
+        this.tabs[index].active = true;
+        this.tabIndex = index;
+      },
+      clickTab(index) {
+        if (!this.enableClickTab) {
+          return;
+        }
+        if (this.tabIndex != index) {
+          this.switchTab(index);
+          this.load(index);
+        }
+      },
+      async getData(userid, last, filter) {
+        let res = await this.$app.api.getPersonalDiaries(userid, last, filter);
+        let diaries = res.data;
+        await this.$app.delay(1000);
+        await this.$store.dispatch("updateDiaries", diaries);
+        this.nomore = diaries.length < this.$app.config.pageSize;
+
+        if (last) {
+          diaries.forEach(item => {
+            this.diaries.push(item);
+          });
+        } else {
+          this.diaries = diaries;
+        }
+        this.last = _.last(diaries).date;
+      },
+      async infinite(infiniteScroll) {
+        this.enableClickTab = false;
+        await this.getData("582c6af47236a860e8fffcb2", this.last, this.filter);
+
+        this.$nextTick(() => {
+          if (this.nomore) {
+            infiniteScroll.$emit("$InfiniteScroll:complete");
+          } else {
+            infiniteScroll.$emit("$InfiniteScroll:loaded");
+          }
+
+          this.enableClickTab = true;
+        });
+      }
+    },
+    activated() {
+      if (refresh) {
+        refresh = false;
+        this.reload();
       }
     },
     computed: {
@@ -66,20 +152,14 @@
       }
     },
     components: {
-      "personal-diary-item": require("components/pages/personal-diary-item.vue"),
+      "personal-diary-item": require("components/pages/personal-diary/personal-diary-item.vue"),
       "infinite-scroll": require("ui/infinite-scroll.vue"),
     },
     async mounted() {
       document.querySelector(".content-wrap").style.height = (document.querySelector("main").clientHeight -
         document.querySelector(".tabs").clientHeight - 1) + "px";
 
-      this.$app.dialog.showLoading();
-      let res = await this.$app.api.getPersonalDiaries("582c6af47236a860e8fffcb2");
-      let diaries = res.data;
-      await this.$store.dispatch("updateDiaries", diaries);
-      this.nomore = diaries.length < this.$app.config.pageSize;
-      this.diaries = diaries;
-      this.$app.dialog.hideLoading();
+      this.load(0);
     }
   };
 </script>
