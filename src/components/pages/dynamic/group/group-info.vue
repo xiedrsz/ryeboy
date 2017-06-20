@@ -20,13 +20,15 @@
         </li>
         <li class="info-item">
           <span class="info-left">{{"组员"+groupInfo.memNum+"/"+groupInfo.memMax}}</span>
-          <span class="info-right">
+          <span class="info-right right-arrow">
             <img src="/img/default-avatar.png" class="lazyload" width="36" height="36" />
             <img src="/img/default-avatar.png" class="lazyload" width="36" height="36" />
             <img src="/img/default-avatar.png" class="lazyload" width="36" height="36" />
-            <router-link to='/dynamic/group-member'>
-              <i class="icon icon-right"></i>
-            </router-link>
+
+            <!-- <router-link to=''> -->
+                <i class="material-icons md-36 navigate_next" @click="$router.push('/dynamic/group-member')">navigate_next</i>
+              <!-- <i class="icon icon-right"></i> -->
+            <!-- </router-link> -->
           </span>
         </li>
 
@@ -53,18 +55,20 @@
           <span class="info-right right-arrow">
             <span class="group-name">{{groupInfo.level+"/"+groupInfo.levelMax}}</span>
             <i class="material-icons md-16 group-level">favorite</i>
-            <router-link to='/dynamic/group-grade'>
+            <!-- <router-link to='/dynamic/group-grade'>
               <i class="icon icon-right"></i>
-            </router-link>
+            </router-link> -->
+            <i class="material-icons md-36 navigate_next" @click="$router.push('/dynamic/group-grade')">navigate_next</i>
           </span>
         </li>
         <li class="info-item">
           <span class="info-left">勋章</span>
           <span class="info-right right-arrow">
             <span class="group-name">{{groupInfo.medal+"/"+groupInfo.medalMax}}</span>
-            <router-link to='/dynamic/group-medal'>
-              <i class="icon icon-right"></i>
-            </router-link>
+             <!-- <router-link to='/dynamic/group-medal'>
+         <i class="icon icon-right"></i>
+        </router-link> -->
+            <i class="material-icons md-36 navigate_next" @click="$router.push('/dynamic/group-medal')">navigate_next</i>
           </span>
         </li>
       </ul>
@@ -77,9 +81,9 @@
         </li>
         <li class="info-item" @click="saveDescrption">
           <span class="info-left">简介</span>
-          <span class="info-right">
+          <span class="info-right right-arrow">
             <span class="group-name">{{groupInfo.description}}</span>
-            <i class="icon icon-right"></i>
+            <i class="material-icons md-36 navigate_next">navigate_next</i>
           </span>
         </li>
         <li class="info-item" @click="goToDiary">
@@ -87,6 +91,7 @@
           <span class="info-right right-arrow">
             <img src="/img/default-avatar.png" class="lazyload" width="36" height="36" />
             <span class="group-name">你就会更好</span>
+            <i class="material-icons md-36 navigate_next" v-if="false">navigate_next</i>
           </span>
         </li>
       </ul>
@@ -96,6 +101,8 @@
           <span class="info-right right-arrow">
             <router-link to='/dynamic/group-find'>
               <span class="find-more">发现更多小组</span>
+            
+            <i class="material-icons md-36 navigate_next">navigate_next</i>
             </router-link>
           </span>
         </li>
@@ -194,9 +201,9 @@
   
   .info-right {
     flex: 1;
-    display: flex;
-    align-items: center;
-    min-height: 34px;
+    position: relative;
+    min-height: 36px;
+    line-height: 36px;
     border-bottom: 1px solid $color-divider;
     padding: 5px 0;
     img + img,
@@ -206,12 +213,14 @@
     span + i {
       margin-left: 10px;
     }
+    &.right-arrow{
+      padding: 5px 36px 5px 0;
+    }
   }
-  
-  .info-right.right-arrow {
-    padding: 5px 20px 5px 0;
+  .material-icons.navigate_next{
+    position: absolute;
+    right: 0;
   }
-  
   .group-level {
     color: #ff9800;
   }

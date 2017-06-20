@@ -4,7 +4,7 @@
       <div class="info-medal-title">勋章由组员的蜕变史点亮</div>
       <div class="info-medal-grid">
         <div class="grids-30" v-for="num in medalNum">
-          <img src="/img/default-avatar.png" class="lazyload" width="36" height="36" />
+          <img src="/img/medal-icon.png" class="lazyload" width="36" height="36" />
           <span class="medal-num">{{num}}</span>
         </div>
       </div>
@@ -80,6 +80,7 @@
     display: flex;
     align-items: center;
     padding: 5px 0;
+    border-bottom: 1px solid $color-divider;
   }
   
   .sorting-level {
