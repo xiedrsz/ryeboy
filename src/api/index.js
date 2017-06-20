@@ -6,7 +6,8 @@ import "../../mocks"
 axios.defaults.baseURL = config.apiAddress;
 
 axios.defaults.headers = {
-  'Authorization': 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5Mzg5ZTNkOWM0ZDAyMjhkNzMxM2IxOSIsImlhdCI6MTQ5NjkwOTQ5NX0.0wr7uKcl5XeIcn10yXRbdTk8sDg54LfF_m4-95X2axs'
+  'Authorization': 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5Mzg5ZTNkOWM0ZDAyMjhkNzMxM2IxOSIsImlhdCI6MTQ5NzkyNTA5NX0.Sp7dhmB2Hyo0zJCgLrOggX8gQUKRYe3YmxEcEo3Z1Ic',
+  Accept: 'application/json'
 };
 
 class api {
@@ -19,7 +20,7 @@ class api {
   }
 
   static getUser(userid) {
-    return axios.get(`/user/${userid}`);
+    return axios.get(`/users/${userid}`);
   }
 
   static getRecommendedChannels() {
@@ -175,13 +176,9 @@ class api {
     return axios.get(`/group/${group_id}/members`)
   }
 
-  // 清退成员， 未有接口, T
+  // 清退成员, T
   static expellMember(group_id, user_id) {
-    return axios.get(`/group/${group_id}/expell_member`, {
-      params: {
-        user_id
-      }
-    })
+    return axios.post(`/group/${group_id}/remove-member/${user_id}`)
   }
 
   // 获取申请列表, T
@@ -211,7 +208,7 @@ class api {
 
   // 修改小组资料, 更新小组, T
   static saveGroupInfo(groupInfo) {
-    let group_id = groupInfo.id;
+    let group_id = groupInfo._id;
     return axios.post(`/group/${group_id}`, groupInfo)
   }
 

@@ -4,18 +4,23 @@
       <ul class="member-list">
 
         <li v-for="item in members" class="member-item">
-          <img :src="item.avatar" class="lazyload" width="48" height="48" />
-          <div class="member-info">
-            <div class="member-info-top">
-              <span class="member-name">{{item.name+" LV"+item.grade}}</span>
-              <span class="member-score">{{item.score+"分"}}</span>
-            </div>
-            <div class="member-info-bottom">
-              <span class="member-code">编号：{{item.no}}</span>
-              <span class="member-addgroup-time">入组：{{item.date}}</span>
-            </div>
-          </div>
-          <span class="member-delete" @click="expell(item._id, item.statusMsg)">{{item.statusMsg}}</span>
+          <user-item :id="item.id" class="flex">
+            <template scope="props">
+              <img :src="props.user.avatar||'/img/default-avatar.png'" class="lazyload" width="48" height="48" />
+              <div class="member-info">
+                <div class="member-info-top">
+                  <span class="member-name">{{props.user.username+" LV"+props.user.level}}</span>
+                  <span class="member-score">{{props.user.score+"分"}}</span>
+                </div>
+                <div class="member-info-bottom">
+                  <span class="member-code">入组：{{item.createdAt|time}}</span>
+                  <!--<span class="member-code">编号：{{item.no||'Todo'}}</span>
+                  <span class="member-addgroup-time">入组：{{item.createdAt|time}}</span>-->
+                </div>
+              </div>
+              <a v-show="!!item.statusMsg" class="member-delete" @click="expell(item.id, item.statusMsg)">{{item.statusMsg}}</a>
+            </template>
+          </user-item>
         </li>
 
       </ul>
@@ -36,7 +41,8 @@
   export default {
     components: {
       "list": require("ui/list.vue"),
-      "list-item": require("ui/list-item.vue")
+      "list-item": require("ui/list-item.vue"),
+      "user-item": require("ui/user-item.vue"),
     },
     computed: {
       groupInfo() {
@@ -60,7 +66,7 @@
       // 获取小组成员
       getMembers() {
           this.$store.dispatch("getMembers", {
-            groupId: "123"
+            groupId: "593a4a596d3b3619b82de164"
           });
         },
         // 清退
@@ -91,6 +97,13 @@
     }
     .member-delete {
       @include btn-self;
+      height: 1em;
+      margin: 1em 0;
     }
+  }
+  
+  .flex {
+    display: flex;
+    flex: 1;
   }
 </style>

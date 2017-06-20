@@ -1,7 +1,7 @@
 <template>
   <div class="page full-page" title="群介绍" actions='[{"text":"保存","clickHandler":"save-group-msg"}]'>
     <div class="page-main">
-      <textarea v-model="descrption" rows="8"></textarea>
+      <textarea v-model="description" rows="8"></textarea>
     </div>
   </div>
 </template>
@@ -9,7 +9,7 @@
   export default {
     data() {
         return {
-          descrption: ""
+          description: ""
         }
       },
       components: {
@@ -17,11 +17,11 @@
       },
       methods: {
         save() {
-          if (!!this.descrption) {
+          if (!!this.description) {
             this.$store.dispatch("saveGroupInfo", {
               groupInfo: {
-                id: "123",
-                descrption: this.descrption
+                _id: "593a4a596d3b3619b82de164",
+                description: this.description
               },
               callback: () => {
                 window.history.go(-1);
@@ -37,8 +37,8 @@
           this.save()
         })
 
-        // 初始化 descrption
-        this.descrption = this.groupInfo.descrption
+        // 初始化 description
+        this.description = this.groupInfo.description
       },
       computed: {
         groupInfo() {
