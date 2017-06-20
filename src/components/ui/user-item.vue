@@ -15,7 +15,8 @@
         userInfo: {
           id: "",
           username: "",
-          level: "0"
+          level: "0",
+          score: "0"
         }
       }
     },
@@ -26,7 +27,8 @@
       // 获取用户信息
       getUser(userId) {
         this.$store.dispatch("getUser", {
-          userId: "59389e3d9c4d0228d7313b1b",
+          //userId: "59389e3d9c4d0228d7313b1b",
+          userId: userId,
           callback: (userInfo) => {
             _.assign(this.userInfo, userInfo);
           }

@@ -190,9 +190,9 @@ const mutations = {
      * @Param obj Object 新成员 eg: { _id: xx, ... }
      */
     group_saveMember(state, obj) {
-      let _id = obj._id,
+      let id = obj.id,
         tmp = _.filter(state.members, {
-          _id
+          id
         });
 
       _.assign(tmp[0], obj);
@@ -320,10 +320,20 @@ const actions = {
 
     // 获取小组成员, 基本完成
     async getMembers({
-      commit
+      commit,
+      state
     }, option) {
       let groupId = option.groupId,
         res = await api.getMembers(groupId);
+
+      // 当前用户是组长
+      if (true) {
+        _.forEach(res.data, (item) => {
+          _.assign(item, {
+            statusMsg: "清退"
+          });
+        });
+      }
 
       commit("group_initMember", res.data);
     },
@@ -338,7 +348,7 @@ const actions = {
 
       let res = await api.expellMember(groupId, userId);
       commit("group_saveMember", {
-        _id: userId,
+        id: userId,
         statusMsg: "已清退"
       });
     },
@@ -432,6 +442,8 @@ const actions = {
         res;
       commit("group_saveInfo", groupInfo);
       res = await api.saveGroupInfo(groupInfo);
+
+      console.log(res);
       !!callback && callback();
     },
 
