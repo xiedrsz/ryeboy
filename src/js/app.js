@@ -20,6 +20,11 @@ class app {
     });
   }
 
+  back() {
+    store.commit("page_removeCache");
+    history.go(-1);
+  }
+
   show(vue) {
     this.vue = vue;
   }

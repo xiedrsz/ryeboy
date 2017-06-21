@@ -1,10 +1,9 @@
 <template>
   <div id="app"
        class="mdl-layout__container">
-    <keep-alive>
-      <router-view v-if="$route.meta.keepAlive"></router-view>
+    <keep-alive :include="'home'">
+      <router-view v-keep-scroll-position></router-view>
     </keep-alive>
-    <router-view v-if="!$route.meta.keepAlive"></router-view>
 
     <!-- 全屏组件 -->
     <modal-loading v-show="loading" />

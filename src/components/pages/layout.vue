@@ -2,7 +2,7 @@
   <div class="mdl-layout mdl-layout--fixed-header">
     <header class="mdl-layout__header">
       <button class="mdl-layout-icon mdl-button mdl-js-button mdl-button--icon"
-              onclick="history.go(-1);">
+              @click="back">
         <i class="material-icons">arrow_back</i>
       </button>
       <div class="mdl-layout__header-row">
@@ -17,7 +17,9 @@
       </div>
     </header>
     <main class="mdl-layout__content">
-      <router-view></router-view>
+      <keep-alive :include="cached">
+        <router-view v-keep-scroll-position></router-view>
+      </keep-alive>
     </main>
   </div>
 </template>
@@ -33,6 +35,9 @@
       }
     },
     methods: {
+      back() {
+        this.$app.back();
+      },
       updateHeader() {
         let page = document.querySelector(".page");
         if (page) {
@@ -46,6 +51,9 @@
       },
       toolbars() {
         return this.$store.state.page.toolbars;
+      },
+      cached() {
+        return this.$store.state.page.cached + "";
       }
     },
     beforeMount() {

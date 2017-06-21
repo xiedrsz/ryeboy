@@ -1,15 +1,15 @@
 <template>
-  <div>
+  <div class="content-wrap">
     <ul class="mdl-list">
-      <personal-diary-item v-for="item in diaries"
-                           :id="item._id"
-                           :likeCount="item.likeCount"
-                           :commentCount="item.commentCount"
-                           :pictures="item.pictures"
-                           :text="item.escapedText"
-                           :time="item.time"
-                           :date="item.dateWithoutYear"
-                           :week="item.week" />
+      <diary-item v-for="item in diaries"
+                  :id="item._id"
+                  :likeCount="item.likeCount"
+                  :commentCount="item.commentCount"
+                  :pictures="item.pictures"
+                  :text="item.escapedText"
+                  :time="item.time"
+                  :date="item.dateWithoutYear"
+                  :week="item.week" />
     </ul>
     <infinite-scroll v-if="nomore == false"
                      :onInfinite="infinite">
@@ -33,7 +33,6 @@
       async getData(userid, last, filter) {
         let res = await this.$app.api.getPersonalDiaries(userid, last, filter);
         let diaries = res.data;
-        await this.$app.delay(1000);
         await this.$store.dispatch("updateDiaries", diaries);
         this.nomore = diaries.length < this.$app.config.pageSize;
 
@@ -65,8 +64,12 @@
     },
     components: {
       "infinite-scroll": require("ui/infinite-scroll.vue"),
+      "diary-item": require("components/pages/personal-diary/personal-diary-item.vue")
     },
     async mounted() {
+      document.querySelector(".content-wrap").style.height = (document.querySelector("main").clientHeight -
+        document.querySelector(".tabs").clientHeight - 1) + "px";
+
       this.$app.dialog.showLoading();
       await this.getData("582c6af47236a860e8fffcb2");
       this.$app.dialog.hideLoading();

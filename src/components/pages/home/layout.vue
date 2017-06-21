@@ -14,7 +14,7 @@
     </header>
     <main class="mdl-layout__content">
       <keep-alive>
-        <router-view></router-view>
+        <router-view v-keep-scroll-position></router-view>
       </keep-alive>
     </main>
     <navbar></navbar>

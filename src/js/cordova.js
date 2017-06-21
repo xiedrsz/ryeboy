@@ -26,7 +26,7 @@ class cordova {
       return;
     }
 
-    history.go(-1);
+    this.app.back();
   }
 
   resume() {

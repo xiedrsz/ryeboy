@@ -1,7 +1,8 @@
 <template>
   <div class="page-layout">
     <div class="channel-container-wrap">
-      <div class="channel-container">
+      <div class="channel-container"
+           v-keep-scroll-position>
         <div v-for="item in channels"
              @click="switchChannel"
              :id="item.id"
@@ -20,7 +21,8 @@
              ref="swipe">
         <swipe-slide v-for="channel in channels"
                      :id="channel.id">
-          <div class="slide-content">
+          <div class="slide-content"
+               v-keep-scroll-position>
             <pull-to-refresh :disabled="disableRefresh"
                              @pulltorefresh="pulltorefresh" />
             <div v-if="channelDatas[channel.id]"
@@ -78,6 +80,7 @@
   import _ from "lodash";
 
   export default {
+    name: "diary",
     data() {
       return {
         slideContentPosition: 0,
@@ -162,30 +165,6 @@
       "swipe-slide": require("ui/swipe-slide.vue"),
       "pull-to-refresh": require("ui/pull-to-refresh.vue"),
       "infinite-scroll": require("ui/infinite-scroll.vue"),
-    },
-    beforeRouteLeave(to, from, next) {
-      // 保存滚动位置
-      let positions = [];
-      this.$el.querySelectorAll(".slide-content").forEach(item => {
-        positions.push(item.scrollTop);
-      });
-      from.meta.scrollPosition = {
-        "channel-container": this.$el.querySelector(".channel-container").scrollLeft,
-        "slide-content": _.reverse(positions)
-      };
-      next();
-    },
-    beforeRouteEnter(to, from, next) {
-      // 恢复滚动位置
-      next(vm => {
-        let scrollPosition = to.meta.scrollPosition;
-        if (scrollPosition) {
-          vm.$el.querySelector(".channel-container").scrollLeft = scrollPosition["channel-container"];
-          vm.$el.querySelectorAll(".slide-content").forEach(item => {
-            item.scrollTop = scrollPosition["slide-content"].pop();
-          });
-        }
-      });
     },
     activated() {
       if (this.channelChanged) {

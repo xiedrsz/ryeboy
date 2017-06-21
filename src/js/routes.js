@@ -1,3 +1,5 @@
+import store from "store";
+
 const home = [
   "diary", "lesson", "dynamic", "personal"
 ];
@@ -23,35 +25,33 @@ routes.forEach(item => {
   }
 
   if (item.path == "/home") {
+    item.component.name = "home";
     item.children = [];
     home.forEach(childrenPath => {
+      let component = require(`components/pages/home/${childrenPath}.vue`);
+      component.name = childrenPath;
       item.children.push({
         path: childrenPath,
         name: childrenPath,
-        meta: {
-          keepAlive: true
-        },
-        component: require(`components/pages/home/${childrenPath}.vue`)
+        component
       });
     });
   }
 
   if (item.path == "/pages") {
+    item.component.name = "pages";
     item.children = [];
     pages.forEach(childrenPath => {
-      let keepAlive = false;
-      switch (childrenPath) {
-      case "personal-diary":
-        keepAlive = true;
-        break;
-      }
+      let component = require(`components/pages/${childrenPath}.vue`);
+      component.name = childrenPath;
       item.children.push({
         path: childrenPath,
         name: childrenPath,
-        meta: {
-          keepAlive
-        },
-        component: require(`components/pages/${childrenPath}.vue`)
+        component,
+        beforeEnter: (to, from, next) => {
+          store.commit("page_addCache", to);
+          next();
+        }
       });
     });
   }

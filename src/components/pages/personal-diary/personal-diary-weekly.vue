@@ -1,5 +1,5 @@
 <template>
-  <div class="content-wrap">
+  <div>
     <ul class="mdl-list">
       <diary-item v-for="item in diaries"
                   :id="item._id"
@@ -33,6 +33,7 @@
       async getData(userid, last, filter) {
         let res = await this.$app.api.getPersonalDiaries(userid, last, filter);
         let diaries = res.data;
+        await this.$app.delay(1000);
         await this.$store.dispatch("updateDiaries", diaries);
         this.nomore = diaries.length < this.$app.config.pageSize;
 
@@ -46,7 +47,7 @@
         this.last = _.last(diaries).date;
       },
       async infinite(infiniteScroll) {
-        await this.getData("582c6af47236a860e8fffcb2", this.last, "recommend");
+        await this.getData("582c6af47236a860e8fffcb2", this.last);
 
         this.$nextTick(() => {
           if (this.nomore) {
@@ -67,11 +68,8 @@
       "diary-item": require("components/pages/personal-diary/personal-diary-item.vue")
     },
     async mounted() {
-      document.querySelector(".content-wrap").style.height = (document.querySelector("main").clientHeight -
-        document.querySelector(".tabs").clientHeight - 1) + "px";
-
       this.$app.dialog.showLoading();
-      await this.getData("582c6af47236a860e8fffcb2", undefined, "recommend");
+      await this.getData("582c6af47236a860e8fffcb2");
       this.$app.dialog.hideLoading();
     }
   };
