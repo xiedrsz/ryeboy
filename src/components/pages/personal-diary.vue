@@ -92,9 +92,4 @@
   .tab-link.active {
     color: $color-blue;
   }
-
-  .content-wrap {
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-  }
 </style>

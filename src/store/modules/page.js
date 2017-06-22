@@ -26,6 +26,10 @@ const mutations = {
     state.cached.pop();
   },
   page_addCache(state, route) {
+    let last = _.last(state.cached);
+    if (last && last == route.name) {
+      return;
+    }
     state.cached.push(route.name);
   },
   page_setTitle(state, title) {

@@ -21,3 +21,18 @@ textarea {
 .html-content iframe {
   max-width: 100%;
 }
+
+.content-wrap {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.lazyload,
+.lazyloading {
+  opacity: 0;
+}
+
+.lazyloaded {
+  opacity: 1;
+  transition: opacity 300ms;
+}

@@ -6,7 +6,8 @@
       <div class="week-wrap">
         <div v-for="item in group.items"
              class="week-block">
-          <div class="cover">
+          <div class="cover"
+               @click="showWeekDiaries(item)">
             <img :data-src="item.picture"
                  class="lazyload">
           </div>
@@ -29,6 +30,16 @@
       };
     },
     methods: {
+      showWeekDiaries(item) {
+        this.$router.push({
+          path: "/pages/personal-diary-weekly-list",
+          query: {
+            month: item.month,
+            year: item.year,
+            weekCount: item.weekCount
+          }
+        });
+      },
       async getData(userid, last, filter) {
         let res = await this.$app.api.getPersonalDiaries(userid, last, filter);
         let diaries = res.data;

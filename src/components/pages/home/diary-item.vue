@@ -120,16 +120,6 @@
     margin-left: 4px;
   }
 
-  .lazyload,
-  .lazyloading {
-    opacity: 0;
-  }
-
-  .lazyloaded {
-    opacity: 1;
-    transition: opacity 300ms;
-  }
-
   .username {
     @include flex-row;
     @include flex-vertical-center;
