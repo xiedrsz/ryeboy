@@ -1,20 +1,21 @@
 <template>
-  <div>
-    <ul class="mdl-list">
-      <diary-item v-for="item in diaries"
-                  :id="item._id"
-                  :likeCount="item.likeCount"
-                  :commentCount="item.commentCount"
-                  :pictures="item.pictures"
-                  :text="item.escapedText"
-                  :time="item.time"
-                  :date="item.dateWithoutYear"
-                  :week="item.week" />
-    </ul>
-    <infinite-scroll v-if="nomore == false"
-                     :onInfinite="infinite">
-      <div slot="no-more">没有更多内容了</div>
-    </infinite-scroll>
+  <div class="content-wrap">
+    <div v-for="group in diaries"
+         class="month-block">
+      <div class="title">{{ group.title }}</div>
+      <div class="week-wrap">
+        <div v-for="item in group.items"
+             class="week-block">
+          <div class="cover">
+            <img :data-src="item.picture"
+                 class="lazyload">
+          </div>
+          <div class="statistics">
+            第{{ item.weekCount }}周
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -24,53 +25,82 @@
   export default {
     data() {
       return {
-        diaries: [],
-        nomore: true,
-        last: new Date()
+        diaries: []
       };
     },
     methods: {
       async getData(userid, last, filter) {
         let res = await this.$app.api.getPersonalDiaries(userid, last, filter);
         let diaries = res.data;
-        await this.$app.delay(1000);
-        await this.$store.dispatch("updateDiaries", diaries);
-        this.nomore = diaries.length < this.$app.config.pageSize;
-
-        if (last) {
-          diaries.forEach(item => {
-            this.diaries.push(item);
-          });
-        } else {
-          this.diaries = diaries;
-        }
-        this.last = _.last(diaries).date;
-      },
-      async infinite(infiniteScroll) {
-        await this.getData("582c6af47236a860e8fffcb2", this.last);
-
-        this.$nextTick(() => {
-          if (this.nomore) {
-            infiniteScroll.$emit("$InfiniteScroll:complete");
+        let index = diaries.length;
+        diaries.forEach(item => {
+          item.weekCount = index;
+          if (item.pictures && item.pictures.length > 0) {
+            item.picture = this.$app.textHelper.getPictureUrl(item.pictures[0]);
           } else {
-            infiniteScroll.$emit("$InfiniteScroll:loaded");
+            item.picture = require("img/default-avatar.png");
           }
+          index--;
         });
-      }
+        _.each(_.groupBy(diaries, item => {
+          return item.year + "年" + item.month + "月";
+        }), (value, key) => {
+          this.diaries.push({
+            title: key,
+            items: value
+          });
+        });
+      },
     },
     computed: {
       userid() {
         return this.$store.state.user._id;
       }
     },
-    components: {
-      "infinite-scroll": require("ui/infinite-scroll.vue"),
-      "diary-item": require("components/pages/personal-diary/personal-diary-item.vue")
-    },
     async mounted() {
+      document.querySelector(".content-wrap").style.height = (document.querySelector("main").clientHeight -
+        document.querySelector(".tabs").clientHeight - 1) + "px";
+
       this.$app.dialog.showLoading();
-      await this.getData("582c6af47236a860e8fffcb2");
+      await this.getData("582c6af47236a860e8fffcb2", undefined, "all");
+      // await this.getData(this.userid, undefined, "all");
+
       this.$app.dialog.hideLoading();
     }
   };
 </script>
+
+<style lang="scss"
+       scoped>
+  @import "~scss/main.scss";
+  .month-block {
+    padding: 16px;
+  }
+
+  .week-wrap {
+    @include flex-row;
+    @include flex-wrap;
+    margin-top: 8px;
+  }
+
+  .week-block {
+    margin-bottom: 8px;
+  }
+
+  .statistics {
+    text-align: center;
+    color: $color-hint-text;
+    font-size: 12px;
+  }
+
+  .cover {
+    margin-right: 3px;
+    margin-bottom: 8px;
+  }
+
+  .cover img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+  }
+</style>
