@@ -7,6 +7,24 @@ axios.defaults.validateStatus = function (status) {
 }
 
 class api {
+  static getPersonalDiaries(userid, last, filter, data) {
+    return axios.get("/getPersonalDiaries", {
+      params: {
+        userid,
+        last,
+        filter,
+        data
+      }
+    });
+  }
+
+  static addDiaryComment(id, comment) {
+    return axios.post("/addDiaryComment", {
+      id,
+      comment
+    });
+  }
+
   static getMoreDiaryComments(id, last) {
     return axios.get("/getMoreDiaryComments", {
       params: {

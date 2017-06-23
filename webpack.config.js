@@ -5,7 +5,8 @@ module.exports = {
   context: path.resolve(__dirname, "src"),
   entry: ["babel-polyfill", "./main.js"],
   output: {
-    path: path.resolve(__dirname, "src"),
+    path: path.resolve(__dirname, "src/dist"),
+    publicPath: "dist/",
     filename: "bundle.js"
   },
   module: {
@@ -44,6 +45,7 @@ module.exports = {
       "store": path.resolve(__dirname, "src/store/"),
       "scss": path.resolve(__dirname, "src/scss/"),
       "css": path.resolve(__dirname, "src/css/"),
+      "img": path.resolve(__dirname, "src/img/"),
       "components": path.resolve(__dirname, "src/components/"),
       "vendor": path.resolve(__dirname, "src/vendor/"),
       "ui": path.resolve(__dirname, "src/components/ui")

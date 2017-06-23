@@ -1,32 +1,56 @@
 <template>
   <div id="app"
        class="mdl-layout__container">
-    <keep-alive>
-      <router-view v-if="$route.meta.keepAlive"></router-view>
+    <keep-alive :include="'home'">
+      <router-view v-keep-scroll-position></router-view>
     </keep-alive>
-    <router-view v-if="!$route.meta.keepAlive"></router-view>
+
+    <!-- 全屏组件 -->
     <modal-loading v-show="loading" />
     <modal-dialog v-show="dialog.show"
                   :type="dialog.type"
                   :content="dialog.content"
-                  :title="dialog.title" />
+                  :title="dialog.title"
+                  @ok="dialogOkCallback"
+                  @cancel="dialogCancelCallback" />
+    <action-sheet v-show="actionSheet.show"
+                  :actions="actionSheet.actions" />
+    <gallery ref="gallery" />
   </div>
 </template>
 
 <script>
-export default {
-  computed: {
-    loading() {
-      return this.$store.state.page.loading;
+  export default {
+    methods: {
+      dialogOkCallback() {
+        if (this.dialog.okCallback) {
+          this.dialog.okCallback();
+          this.dialog.okCallback = null;
+        }
+      },
+      dialogCancelCallback() {
+        if (this.dialog.cancelCallback) {
+          this.dialog.cancelCallback();
+          this.dialog.cancelCallback = null;
+        }
+      },
     },
-    dialog() {
-      return this.$store.state.page.dialog;
+    computed: {
+      loading() {
+        return this.$store.state.page.loading;
+      },
+      dialog() {
+        return this.$store.state.page.dialog;
+      },
+      actionSheet() {
+        return this.$store.state.page.actionSheet;
+      }
+    },
+    components: {
+      "modal-loading": require("components/ui/modal-loading.vue"),
+      "modal-dialog": require("components/ui/modal-dialog.vue"),
+      "action-sheet": require("components/ui/action-sheet.vue"),
+      "gallery": require("ui/gallery.vue"),
     }
-  },
-  components: {
-    "modal-loading": require("components/ui/modal-loading.vue"),
-    "modal-dialog": require("components/ui/modal-dialog.vue"),
-  }
-};
-
+  };
 </script>

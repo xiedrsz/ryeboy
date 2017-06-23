@@ -1,9 +1,13 @@
+import store from "store";
+
 const home = [
   "diary", "lesson", "dynamic", "personal"
 ];
 
 const pages = [
-  "login", "settings", "channel-manage", "lesson-manage", "change-password", "lesson-detail", "lesson-diary", "lesson-publish", "diary-detail"
+  "login", "settings", "channel-manage", "lesson-manage", "change-password",
+  "lesson-detail", "lesson-diary", "lesson-publish", "diary-detail",
+  "personal-diary", "personal-diary-weekly-list"
 ];
 
 const routes = [{
@@ -23,26 +27,33 @@ routes.forEach(item => {
   }
 
   if (item.path == "/home") {
+    item.component.name = "home";
     item.children = [];
     home.forEach(childrenPath => {
+      let component = require(`components/pages/home/${childrenPath}.vue`);
+      component.name = childrenPath;
       item.children.push({
         path: childrenPath,
         name: childrenPath,
-        meta: {
-          keepAlive: true
-        },
-        component: require(`components/pages/home/${childrenPath}.vue`)
+        component
       });
     });
   }
 
   if (item.path == "/pages") {
+    item.component.name = "pages";
     item.children = [];
     pages.forEach(childrenPath => {
+      let component = require(`components/pages/${childrenPath}.vue`);
+      component.name = childrenPath;
       item.children.push({
         path: childrenPath,
         name: childrenPath,
-        component: require(`components/pages/${childrenPath}.vue`)
+        component,
+        beforeEnter: (to, from, next) => {
+          store.commit("page_addCache", to);
+          next();
+        }
       });
     });
   }

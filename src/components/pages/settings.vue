@@ -5,8 +5,7 @@
       <list-item text="修改密码"
                  @click.native="$router.push('/pages/change-password')"
                  v-if="authenticated" />
-      <list-item text="设置隐私密码"
-                 v-if="authenticated" />
+      <list-item text="应用锁" />
       <list-item text="清除本地缓存"
                  @click.native="clearLocalStorage" />
       <list-item text="检查版本"
@@ -22,7 +21,6 @@
 
 <script>
   import api from "api";
-  const dialog = require("js/utils/dialog");
 
   export default {
     components: {
@@ -41,7 +39,7 @@
       },
       clearLocalStorage() {
         localStorage.clear();
-        dialog.text("本地缓存已经清除");
+        this.$app.dialog.text("本地缓存已经清除");
       }
     },
     computed: {

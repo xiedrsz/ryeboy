@@ -1,10 +1,10 @@
 import Vue from "vue";
 import _ from "lodash";
 import api from "api";
+import datetime from "js/utils/datetime";
+import textHelper from "js/utils/textHelper";
+import collectionHelper from "js/utils/collectionHelper";
 const cards = require("store/cards.json");
-const datetime = require("js/utils/datetime");
-const textHelper = require("js/utils/textHelper");
-const ch = require("js/utils/collectionHelper");
 const moment = require("moment");
 
 function getDateKey(state) {
@@ -78,23 +78,43 @@ const getters = {
 };
 
 const mutations = {
+  lesson_selectAllCards(state, data) {
+    let record = state.records[getDateKey(state)];
+    Vue.set(record.selectedWeights, data.id.toString(), data.checked);
+    record.weightedCards.find(weight => weight.value == data.id).cards.forEach(card => {
+      Vue.set(record.selectedCards, card.id.toString(), data.checked);
+    });
+  },
+  lesson_selectCard(state, data) {
+    let record = state.records[getDateKey(state)];
+    Vue.set(record.selectedCards, data.id.toString(), data.checked);
+  },
+  lesson_setPictureUrl(state, data) {
+    let dateKey = getDateKey(state);
+    let record = state.records[dateKey];
+    let picture = _.find(record.diary.pictures, item => {
+      return item.id == data.id;
+    });
+    picture.url = data.url;
+  },
   lesson_setDiary(state, data) {
     let dateKey = getDateKey(state);
     let record = state.records[dateKey];
     let card = record.weightedCards[0].cards.find(card => {
       return card.id == 100;
     });
-    if (data) {
-      record.diary.text = data;
-      record.selectedCards[card.id] = true;
+    if (data.text) {
+      record.diary.text = data.text;
+      Vue.set(record.selectedCards, card.id.toString(), true);
     } else {
       record.diary.text = "";
-      record.selectedCards[card.id] = false;
+      Vue.set(record.selectedCards, card.id.toString(), false);
     }
+    record.diary.pictures = data.pictures;
   },
   lesson_setDeselect(state, data) {
     if (data.checked) {
-      ch.remove(state.deselects, data.id);
+      collectionHelper.remove(state.deselects, data.id);
     } else {
       state.deselects.push(data.id);
     }
@@ -142,7 +162,8 @@ const actions = {
     if (record === undefined) {
       record = {
         diary: {
-          text: ""
+          text: "",
+          pictures: []
         },
         published: false,
         weightedCards: [],
@@ -158,18 +179,27 @@ const actions = {
         Object.assign(record, data);
 
         record.checkedCards.forEach(cardId => {
-          record.selectedCards[cardId] = true;
+          Vue.set(record.selectedCards, cardId.toString(), true);
         });
         delete record.checkedCards;
       } else {
         let date = datetime.utcDate(state.selectedDate);
         try {
           let res = await api.getLesson(userid, date);
-          record.published = true;
-          record.diary.text = res.data.text;
-          res.data.checkedCards.forEach(cardId => {
-            record.selectedCards[cardId] = true;
-          });
+          if (res.status == 200) {
+            record.published = true;
+            record.diary.text = res.data.text;
+            if (res.data.pictures) {
+              res.data.pictures.forEach(item => {
+                record.diary.pictures.push({
+                  url: textHelper.getPictureUrl(item)
+                });
+              });
+            }
+            res.data.checkedCards.forEach(cardId => {
+              Vue.set(record.selectedCards, cardId.toString(), true);
+            });
+          }
         } catch (error) {
           console.log(error);
         }
@@ -211,21 +241,6 @@ const actions = {
 
     return record;
   },
-  lesson_selectAllCards({
-    state
-  }, data) {
-    let record = state.records[getDateKey(state)];
-    record.selectedWeights[data.id] = data.checked;
-    record.weightedCards.find(weight => weight.value == data.id).cards.forEach(card => {
-      Vue.set(record.selectedCards, card.id, data.checked);
-    });
-  },
-  lesson_selectCard({
-    state,
-  }, data) {
-    let record = state.records[getDateKey(state)];
-    record.selectedCards[data.id] = data.checked;
-  },
   lesson_getPublishData({
     state,
     rootState
@@ -247,6 +262,7 @@ const actions = {
       userid,
       time: state.selectedDate,
       text: record.diary.text,
+      pictures: record.diary.pictures,
       expectedExp: 0
     };
 

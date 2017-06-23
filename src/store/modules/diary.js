@@ -5,7 +5,6 @@ import _ from "lodash";
 const config = require("js/config.js");
 const datetime = require("js/utils/datetime.js");
 const textHelper = require("js/utils/textHelper.js");
-const pageSize = 10;
 
 // 默认订阅频道
 const defaultSubscribedChannels = [
@@ -79,7 +78,7 @@ function updateComments(comments) {
       if (user.portrait) {
         comment.avatar = `${config.ossAddress}/portraits/${user._id}_${user.portrait}.jpg`;
       } else {
-        comment.avatar = "../../img/default-avatar.png";
+        comment.avatar = require("img/default-avatar.png");
       }
     }
 
@@ -104,10 +103,21 @@ function updateDiaries(diaries) {
       if (user.portrait) {
         diary.avatar = `${config.ossAddress}/portraits/${user._id}_${user.portrait}.jpg`;
       } else {
-        diary.avatar = "../../img/default-avatar.png";
+        diary.avatar = require("img/default-avatar.png");
       }
     }
+
+    let pictures = [];
+    if (diary.pictures) {
+      diary.pictures.forEach(item => {
+        pictures.push(textHelper.getPictureUrl(item));
+      });
+    }
+    diary.pictures = pictures;
+    
     diary.time = datetime.formatDiaryCreated(diary.createdAt);
+    diary.dateWithoutYear = datetime.formatDiaryDateWithoutYear(diary.date);
+    diary.week = datetime.formatDiaryWeek(diary.date);
     diary.escapedText = textHelper.escape(textHelper.getDiaryText(diary));
   });
 }
@@ -298,7 +308,7 @@ const actions = {
       }
       updateDiaries(diaries);
 
-      let nomore = diaries.length < pageSize;
+      let nomore = diaries.length < config.pageSize;
 
       commit("diary_setChannelData", {
         label,
@@ -388,7 +398,7 @@ const actions = {
       commit("diary_setChannelData", {
         label,
         assign: {
-          nomore: diaries.length < pageSize,
+          nomore: diaries.length < config.pageSize,
           loadstate: diaries.length == 0 ? "empty" : "ok",
         },
         diaries

@@ -12,6 +12,10 @@
         <button type="button"
                 class="mdl-button ok"
                 @click="ok">确定</button>
+        <button v-show="enableCancel"
+                type="button"
+                class="mdl-button cancel"
+                @click="cancel">取消</button>
       </div>
     </div>
   </div>
@@ -31,18 +35,36 @@
       content: {
         type: String,
         default: ""
-      }
+      },
     },
     computed: {
       enableTitle() {
-        return this.type != "alert";
+        if (this.type == "alert" || this.type == "prompt") {
+          return false;
+        }
+
+        return true;
+      },
+      enableCancel() {
+        if (this.type == "alert") {
+          return false;
+        }
+
+        return true;
       }
     },
     methods: {
+      cancel() {
+        this.$store.commit("page_showDialog", {
+          show: false
+        });
+        this.$emit("cancel");
+      },
       ok() {
         this.$store.commit("page_showDialog", {
           show: false
         });
+        this.$emit("ok");
       }
     }
   };

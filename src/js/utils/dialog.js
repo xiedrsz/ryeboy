@@ -15,6 +15,26 @@ class dialog {
       type: "alert",
       content
     });
+    store.commit("page_setPopup", this);
+  }
+
+  prompt(content, okCallback, cancelCallback) {
+    store.commit("page_showDialog", {
+      show: true,
+      type: "prompt",
+      content,
+      okCallback,
+      cancelCallback
+    });
+    store.commit("page_setPopup", this);
+  }
+
+  close() {
+    store.commit("page_showDialog", {
+      show: false,
+      okCallback: null,
+      cancelCallback: null
+    });
   }
 }
 

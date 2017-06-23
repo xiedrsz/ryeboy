@@ -1,7 +1,8 @@
 <template>
   <div class="page-layout">
     <div class="channel-container-wrap">
-      <div class="channel-container">
+      <div class="channel-container"
+           v-keep-scroll-position>
         <div v-for="item in channels"
              @click="switchChannel"
              :id="item.id"
@@ -20,7 +21,8 @@
              ref="swipe">
         <swipe-slide v-for="channel in channels"
                      :id="channel.id">
-          <div class="slide-content">
+          <div class="slide-content"
+               v-keep-scroll-position>
             <pull-to-refresh :disabled="disableRefresh"
                              @pulltorefresh="pulltorefresh" />
             <div v-if="channelDatas[channel.id]"
@@ -57,11 +59,12 @@
                             :commentCount="item.commentCount"
                             :avatar="item.avatar"
                             :username="item.username"
+                            :pictures="item.pictures"
                             :verified="item.verified"
                             :text="item.escapedText"
                             :time="item.time" />
               </ul>
-              <infinite-scroll v-if="enableInfiniteScroll && channelDatas[channel.id].nomore == false"
+              <infinite-scroll v-if="channelDatas[channel.id].nomore == false"
                                :onInfinite="infinite">
                 <div slot="no-more">没有更多内容了</div>
               </infinite-scroll>
@@ -77,10 +80,11 @@
   import _ from "lodash";
 
   export default {
+    name: "diary",
     data() {
       return {
+        slideContentPosition: 0,
         slideContentHeight: 0,
-        enableInfiniteScroll: false
       };
     },
     computed: {
@@ -162,12 +166,7 @@
       "pull-to-refresh": require("ui/pull-to-refresh.vue"),
       "infinite-scroll": require("ui/infinite-scroll.vue"),
     },
-    deactivated() {
-      this.enableInfiniteScroll = false;
-    },
     activated() {
-      this.enableInfiniteScroll = true;
-
       if (this.channelChanged) {
         this.setSlideContentHeight();
         this.$store.commit("diary_setChannelChanged", false);

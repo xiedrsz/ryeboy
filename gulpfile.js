@@ -2,9 +2,20 @@ var gulp = require("gulp");
 var shell = require("gulp-shell");
 var replace = require("gulp-replace");
 
-gulp.task("build-js", shell.task("npm run build"));
+function copyFiles() {
+  gulp.src([
+    "src/dist/**",
+    "src/css/**",
+    "src/vendor/**",
+    "!src/vendor/material-design-lite/material.css"
+  ], {
+    base: "src"
+  }).pipe(gulp.dest("www"));
+}
 
-gulp.task("build-index", function() {
+gulp.task("webpack-build", shell.task("npm run build"));
+
+gulp.task("handle-index", function() {
   gulp.src("src/index.html")
     .pipe(replace("href=\"/", "href=\""))
     .pipe(replace("src=\"/", "src=\""))
@@ -12,16 +23,10 @@ gulp.task("build-index", function() {
     .pipe(gulp.dest("www"));
 });
 
-gulp.task("build-cordova-www", ["build-index", "build-js"], function() {
-  gulp.src([
-    "src/js/**",
-    "src/css/**",
-    "src/vendor/**",
-    "!src/vendor/material-design-lite/material.css",
-    "src/bundle.js",
-  ], {
-    base: "src"
-  }).pipe(gulp.dest("www"));
+gulp.task("build", ["handle-index", "webpack-build"], function() {
+  copyFiles();
 });
 
-gulp.task("cordova-build", ["build-cordova-www"]);
+gulp.task("copy", ["handle-index"], function() {
+  copyFiles();
+});

@@ -26,8 +26,7 @@
 
 <script>
   const moment = require("moment");
-  const datetime = require("js/utils/datetime");
-  const dialog = require("js/utils/dialog");
+  const _ = require("lodash");
   import api from "api";
 
   export default {
@@ -58,18 +57,53 @@
       };
     },
     methods: {
-      publish() {
-        this.$store.dispatch("lesson_getPublishData").then(data => {
-          data.privacy = Number(this.privacy);
-          data.time = datetime.utcDate(data.time);
-          return api.publishLesson(data);
-        }).then(() => {
-          return this.$store.dispatch("lesson_publish");
-        }).then(() => {
-          history.go(-1);
-        }).catch(() => {
-          dialog.text("发布失败，可能是网络不给力。");
+      upload(fileURL, ft) {
+        return new Promise((resolve, reject) => {
+          ft.upload(fileURL, encodeURI(`${this.$app.config.apiAddress}/upload`), res => {
+            resolve(res);
+          }, error => {
+            reject(error);
+          }, {
+            fileName: `${_.now()}.jpg`,
+          });
         });
+      },
+      async publish() {
+        let getUploadedName = function(res) {
+          return JSON.parse(res.response).url;
+        };
+
+        try {
+          let data = await this.$store.dispatch("lesson_getPublishData");
+
+          // 上传图片文件
+          let pictures = [];
+          let length = data.pictures ? data.pictures.length : 0;
+
+          if (length > 0) {
+            let ft = new FileTransfer();
+            for (var index = 0; index < length; index++) {
+              var picture = data.pictures[index];
+              let res = await this.upload(picture.path, ft);
+              let name = getUploadedName(res);
+              this.$store.commit("lesson_setPictureUrl", {
+                id: picture.id,
+                url: `${this.$app.config.apiAddress}/upload/${name}`
+              });
+              pictures.push(name);
+            }
+          }
+
+          // 提交数据
+          data.pictures = pictures;
+          data.privacy = Number(this.privacy);
+          data.time = this.$app.datetime.utcDate(data.time);
+          await api.publishLesson(data);
+          await this.$store.dispatch("lesson_publish");
+          history.go(-1);
+        } catch (error) {
+          this.$app.dialog.text("发布失败，可能是网络不给力。");
+        }
       },
     },
     components: {

@@ -6,9 +6,11 @@
       <div class="mdl-cell mdl-cell--2-col-tablet mdl-cell--1-col-phone" />
       <div class="mdl-cell mdl-cell--4-col-tablet mdl-cell--2-col-phone">
         <textfield label="帐号"
+                   :floating="true"
                    v-model="account"
                    class="full-width" />
         <textfield label="密码"
+                   :floating="true"
                    type="password"
                    class="full-width"
                    v-model="password" />
@@ -24,7 +26,6 @@
 
 <script>
   import api from "api";
-  const dialog = require("js/utils/dialog");
 
   export default {
     data: function() {
@@ -48,7 +49,7 @@
       submit() {
         if (this.account && this.password) {
           this.errorText = "";
-          dialog.showLoading();
+          this.$app.dialog.showLoading();
           api.login(this.account, this.password).then(res => {
             let data = res.data;
             if (data.error) {
@@ -58,14 +59,16 @@
               this.$store.commit("user_setAuth", data.user);
               let redirect = this.$route.query.redirect;
               this.$store.dispatch("getSubscribedChannels").then(() => {
-                this.$router.replace(redirect ? redirect : "/");
+                setTimeout(() => {
+                  this.$app.dialog.hideLoading();
+                  this.$router.replace(redirect ? redirect : "/");
+                }, 1000);
               });
             }
-            dialog.hideLoading();
           }).catch((err) => {
             console.log(err);
             this.errorText = "网络出错。";
-            dialog.hideLoading();
+            this.$app.dialog.hideLoading();
           });
         } else {
           this.errorText = "请填写帐号密码。";

@@ -1,75 +1,98 @@
 <template>
   <div class="page"
        title="查看日记">
-    <div v-if="loadstate == 'loaded'"
-         class="page-content">
-      <div class="author-section">
-        <div class="item-avatar">
-          <img :data-src="diary.avatar"
-               class="avatar lazyload" />
-        </div>
-        <div class="item-content">
-          <div class="username">
-            <span>{{ diary.username }}</span>
-            <span class="userlv">{{ diary.userlv }}</span>
-          </div>
-          <div class="text"
-               v-html="diary.escapedText"></div>
-          <div class="lesson-block">
-            <div class="lesson-overview">
-              <span>做到下列{{ cards.length }}项功课，获得了</span>
-              <span class="exp">{{ diary.expectedExp }}成长值</span>
+    <div v-if="loadstate == 'loaded'">
+      <div class="loaded">
+        <div class="content-block">
+          <div class="author-section">
+            <div class="item-avatar">
+              <img :data-src="diary.avatar"
+                   class="avatar lazyload" />
             </div>
-            <div class="lesson-list"
-                 :class="{ 'lesson-list-accordion': lessonAccordion }">
-              <div class="lesson"
-                   v-for="card in cards">
-                <img class="card-icon"
-                     :src="'../img/card-' + card.id + '.png'">
-                <div class="card-name">{{ card.name }}</div>
+            <div class="item-content">
+              <div class="username">
+                <span>{{ diary.username }}</span>
+                <span class="userlv">{{ diary.userlv }}</span>
+              </div>
+              <div class="picture-block"
+                   v-if="diary.pictures.length > 0">
+                <div v-for="(picture, index) in diary.pictures">
+                  <img :data-src="picture"
+                       @click="openPicture(index)"
+                       class="picture lazyload">
+                </div>
+              </div>
+              <div class="text"
+                   v-html="diary.escapedText"></div>
+              <div class="lesson-block">
+                <div class="lesson-overview">
+                  <span>做到下列{{ cards.length }}项功课，获得了</span>
+                  <span class="exp">{{ diary.expectedExp }}成长值</span>
+                </div>
+                <div class="lesson-list"
+                     :class="{ 'lesson-list-accordion': lessonAccordion }">
+                  <div class="lesson"
+                       v-for="card in cards">
+                    <img class="card-icon"
+                         :src="require('img/card-' + card.id + '.png')">
+                    <div class="card-name">{{ card.name }}</div>
+                  </div>
+                </div>
+                <div class="lesson-show-all"
+                     @click="handleShowAllLessons"
+                     v-show="showAllLessons">{{ lessonAccordion ? "全部" : "收起" }}</div>
+              </div>
+              <div class="stat-block">
+                <div>{{ diary.time }}</div>
+                <div class="mdl-layout-spacer" />
+                <div class="counts">
+                  <i class="material-icons md-16"
+                     @click="setLike">favorite_border</i>
+                  <span style="margin-right: 24px">{{ diary.likeCount }}</span>
+                  <i class="material-icons md-16">comment</i>
+                  <span>{{ diary.commentCount }}</span>
+                </div>
               </div>
             </div>
-            <div class="lesson-show-all"
-                 @click="handleShowAllLessons"
-                 v-show="showAllLessons">{{ lessonAccordion ? "全部" : "收起" }}</div>
           </div>
-          <div class="stat-block">
-            <div>{{ diary.time }}</div>
-            <div class="mdl-layout-spacer" />
-            <div class="counts">
-              <i class="material-icons md-16">favorite_border</i>
-              <span style="margin-right: 24px">{{ diary.likeCount }}</span>
-              <i class="material-icons md-16">comment</i>
-              <span>{{ diary.commentCount }}</span>
+          <div class="comment-section">
+            <div class="comment-block"
+                 v-for="comment in comments"
+                 @click="openCommentActions(comment)"
+                 :key="comment.createdAt">
+              <div class="item-avatar">
+                <img :data-src="comment.avatar"
+                     class="avatar lazyload" />
+              </div>
+              <div class="item-content">
+                <div class="username">
+                  <img v-if="comment.verified"
+                       :src="require('img/v.png')"
+                       class="v" />
+                  <span>{{ comment.username }}</span>
+                  <span class="userlv">{{ comment.userlv }}</span>
+                </div>
+                <div class="replied">{{ comment.replied }}</div>
+                <div class="text"
+                     v-html="comment.escapedText"></div>
+                <div class="comment-time">{{ comment.time }}</div>
+              </div>
             </div>
+            <infinite-scroll v-if="!nomore"
+                             :onInfinite="infinite">
+              <div slot="no-more">没有更多内容了</div>
+            </infinite-scroll>
           </div>
         </div>
       </div>
-      <div class="comment-section">
-        <div class="comment-block"
-             v-for="comment in comments">
-          <div class="item-avatar">
-            <img :data-src="comment.avatar"
-                 class="avatar lazyload" />
-          </div>
-          <div class="item-content">
-            <div class="username">
-              <img v-if="comment.verified"
-                   :src="'../img/v.png'"
-                   class="v" />
-              <span>{{ comment.username }}</span>
-              <span class="userlv">{{ comment.userlv }}</span>
-            </div>
-            <div class="replied">{{ comment.replied }}</div>
-            <div class="text"
-                 v-html="comment.escapedText"></div>
-            <div class="comment-time">{{ comment.time }}</div>
-          </div>
-        </div>
-        <infinite-scroll v-if="!nomore"
-                         :onInfinite="infinite">
-          <div slot="no-more">没有更多内容了</div>
-        </infinite-scroll>
+      <div class="input-section">
+        <textarea :placeholder="reply? '回复' + selectedComment.username + ':' : '添加评论:'"
+                  rows="1"
+                  class="input-box"
+                  v-model="comment"></textarea>
+        <button-icon icon="send"
+                     class="send"
+                     @click.native="sendComment" />
       </div>
     </div>
     <div v-if="loadstate == 'error'"
@@ -86,9 +109,9 @@
 <script>
   import api from "api";
   import _ from "lodash";
-  // const dialog = require("js/utils/dialog");
+  import autosize from "autosize";
 
-  const pageSize = 10;
+  var inputElement = null;
 
   export default {
     data() {
@@ -96,6 +119,9 @@
         diary: {},
         comments: [],
         cards: [],
+        comment: "",
+        selectedComment: null,
+        reply: null,
         lessonAccordion: true,
         showAllLessons: false,
         nomore: true,
@@ -104,6 +130,72 @@
       };
     },
     methods: {
+      openPicture(index) {
+        let list = [];
+        this.diary.pictures.forEach(item => {
+          list.push({
+            src: item,
+            w: 0,
+            h: 0,
+            doGetSlideDimensions: true
+          });
+        });
+        this.$root.$refs.gallery.open(index, list);
+      },
+      setLike() {},
+      copyComment() {},
+      replyComment() {
+        this.reply = this.selectedComment.userid;
+        this.comment = "";
+        this.$el.querySelector(".input-box").focus();
+      },
+      openCommentActions(comment) {
+        this.selectedComment = comment;
+        this.$app.actionSheet.show([
+          {
+            text: "复制",
+            click: this.copyComment.bind(this),
+          }, {
+            text: "回复评论",
+            click: this.replyComment.bind(this)
+          }
+        ], this);
+      },
+      async sendComment() {
+        if (!this.authenticated) {
+          this.$app.dialog.text("你还没有登录。");
+          return;
+        }
+        if (this.comment) {
+          let userid = this.$store.state.user._id;
+          let comment = {
+            userid,
+            content: this.comment,
+          };
+          if (this.reply) {
+            comment.reply = this.reply;
+          }
+          let comments = [comment];
+
+          try {
+            let res = await api.addDiaryComment(this.diary._id, comment);
+            comment.createdAt = res.data.createdAt;
+            await this.$store.dispatch("obtainUsers", comments);
+            await this.$store.dispatch("updateComments", comments);
+            this.comments.unshift(comments[0]);
+
+            this.comment = "";
+
+            // 滚动到新的评论
+            this.$nextTick(() => {
+              document.querySelector(".loaded").scrollTop = document.querySelector(".comment-block").offsetTop;
+            });
+
+          } catch (error) {
+            this.$app.dialog.text("提交评论未成功。");
+          }
+        }
+      },
       handleShowAllLessons() {
         this.lessonAccordion = !this.lessonAccordion;
       },
@@ -137,7 +229,7 @@
           });
 
           this.$nextTick(() => {
-            let nomore = comments.length < pageSize;
+            let nomore = comments.length < this.$app.config.pageSize;
             this.last += comments.length;
 
             if (nomore) {
@@ -149,18 +241,36 @@
         } catch (error) {
           infiniteScroll.$emit("$InfiniteScroll:complete");
         }
+      },
+      adjustHeight() {
+        document.querySelector(".loaded").style.height =
+          document.querySelector("main").clientHeight -
+          (document.querySelector(".input-section").clientHeight - 1) +
+          "px";
       }
     },
     components: {
       "infinite-scroll": require("ui/infinite-scroll.vue"),
       "spinner": require("ui/spinner.vue"),
+      "textfield": require("ui/textfield.vue"),
+      "button-icon": require("ui/button-icon.vue")
     },
     computed: {
+      authenticated() {
+        return this.$store.state.user.authenticated;
+      },
       users() {
         return this.$store.getters.getDiaryUsers;
-      }
+      },
+
+    },
+    beforeDestroy() {
+      window.removeEventListener("resize", this.adjustHeight);
+      inputElement.removeEventListener("autosize:resized", this.adjustHeight);
     },
     async mounted() {
+      window.addEventListener("resize", this.adjustHeight);
+
       let diaryId = this.$route.query.id;
 
       try {
@@ -168,6 +278,7 @@
         let comments = [];
         let res = await api.getDiary(diaryId);
         let diary = res.data;
+
         this.cards = await this.$store.dispatch("lesson_getCards", diary.checkedCards);
 
         users.push({
@@ -184,11 +295,16 @@
 
         this.$nextTick(() => {
           try {
-            lazySizes.loader.unveil(document.querySelector(".avatar"));
             let el = document.querySelector(".lesson-list");
             this.showAllLessons = el.scrollHeight > el.clientHeight;
             this.nomore = comments.length >= diary.commentCount;
-            this.last = pageSize;
+            this.last = this.$app.config.pageSize;
+
+            this.adjustHeight();
+
+            inputElement = document.querySelector(".input-box");
+            autosize(inputElement);
+            inputElement.addEventListener("autosize:resized", this.adjustHeight);
           } catch (error) {
             console.log(error);
           }
@@ -330,16 +446,6 @@
     margin-left: 4px;
   }
 
-  .lazyload,
-  .lazyloading {
-    opacity: 0;
-  }
-
-  .lazyloaded {
-    opacity: 1;
-    transition: opacity 300ms;
-  }
-
   .lesson-show-all {
     font-size: 14px;
     color: $color-blue;
@@ -356,5 +462,52 @@
   .userlv {
     font-size: 12px;
     color: $color-hint-text;
+  }
+
+  .input-section {
+    @include flex-row;
+    border-top: 1px solid $color-divider;
+    padding: 8px 0;
+    background-color: $color-hint-block;
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+  }
+
+  .loaded {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .input-box {
+    margin-left: 16px;
+    margin-right: 8px;
+    flex-grow: 1;
+    outline: none;
+    resize: none;
+    border: 0;
+    border-bottom: 1px solid $color-disable;
+    background-color: transparent;
+    max-height: 72px;
+    color: $color-text;
+  }
+
+  .send {
+    margin-right: 16px;
+    color: $color-secondary-text;
+  }
+
+  .picture {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    margin-right: 3px;
+    margin-bottom: 3px;
+  }
+
+  .picture-block {
+    @include flex-row;
+    @include flex-wrap;
+    margin: 12px 0 8px 0;
   }
 </style>

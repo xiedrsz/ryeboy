@@ -1,7 +1,6 @@
 <template>
   <div class="page"
-       title="功课管理"
-       :actions="actions">
+       title="功课管理">
     <div class="page-content">
       <div class="difficulty-container">
         <div class="title-row">
@@ -56,8 +55,6 @@
 </template>
 
 <script>
-  import textHelper from "js/utils/textHelper";
-
   export default {
     components: {
       "checkbox": require("ui/checkbox.vue"),
@@ -70,12 +67,6 @@
       };
     },
     computed: {
-      actions() {
-        return JSON.stringify([{
-          text: "完成",
-          clickHandler: "finish"
-        }]);
-      },
       userid() {
         return this.$store.state.user._id;
       },
@@ -104,14 +95,17 @@
         return `[${value}级]`;
       },
       getGroupName(group) {
-        return textHelper.getLessonGroupName(group);
+        return this.$app.textHelper.getLessonGroupName(group);
       }
     },
     beforeDestroy() {
       this.save();
     },
     mounted() {
-      this.$on("finish", this.finish);
+      this.$app.toolbars.create([{
+        text: "完成",
+        click: this.finish
+      }]);
 
       this.difficulties = this.$store.getters.lesson_getDifficultCards;
       this.lessons = this.$store.getters.lesson_getManagedCards;

@@ -1,28 +1,25 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import routes from "js/routes.js";
+import app from "js/app";
+import routes from "js/routes";
 import store from "store";
-import api from "api";
-
-require("lazysizes");
 
 Vue.use(VueRouter);
+Vue.use({
+  install() {
+    Vue.prototype.$app = app;
+  }
+});
+Vue.use(require("js/plugins/keepScrollPosition.js"));
 
 const router = new VueRouter({
-  mode: "history",
+  mode: "hash",
   base: __dirname,
   routes
 });
 
-if (localStorage.authenticated) {
-  store.commit("user_assignAuth", JSON.parse(localStorage.user));
-  store.dispatch("initSubscribedChannels");
-  store.dispatch("lesson_loadSettings");
-} else {
-  store.commit("diary_setDefaultChannels");
-}
-
-new Vue(Vue.util.extend({
+app.init();
+app.show(new Vue(Vue.util.extend({
   router,
   store
-}, require("components/app.vue"))).$mount("#app");
+}, require("components/app.vue"))).$mount("#app"));

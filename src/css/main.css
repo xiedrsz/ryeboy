@@ -7,6 +7,10 @@ textarea {
   font-size: 14px;
 }
 
+::-webkit-input-placeholder {
+  color: #9e9e9e;
+}
+
 .page-content,
 .content-block {
   display: block;
@@ -16,4 +20,19 @@ textarea {
 .html-content img,
 .html-content iframe {
   max-width: 100%;
+}
+
+.content-wrap {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.lazyload,
+.lazyloading {
+  opacity: 0;
+}
+
+.lazyloaded {
+  opacity: 1;
+  transition: opacity 300ms;
 }
