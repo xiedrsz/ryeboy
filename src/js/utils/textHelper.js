@@ -64,8 +64,4 @@ class textHelper {
   }
 }
 
-<<<<<<< HEAD
 module.exports = textHelper;
-=======
-module.exports = new textHelper();
->>>>>>> 6bb9d82f0801f7d038b2fe6c39e80d10651c2e17
