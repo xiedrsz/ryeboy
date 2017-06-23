@@ -2,6 +2,7 @@ import axios from "axios";
 import config from "js/config";
 
 axios.defaults.baseURL = config.apiAddress;
+axios.defaults.headers["Accept"] = "application/json";
 axios.defaults.validateStatus = function(status) {
   return status >= 200 && status < 500;
 };

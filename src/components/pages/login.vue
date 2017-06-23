@@ -20,16 +20,16 @@
                         text="登录"
                         @click.native="submit">
         </button-colored>
+
+        <p v-if="errorText"
+           class="mdl-color-text--red mt-32">{{ errorText }}</p>
       </div>
-      <p v-if="errorText"
-         class="mdl-color-text--red mt-32">{{ errorText }}</p>
     </div>
+
   </div>
 </template>
 
 <script>
-  import api from "api";
-
   export default {
     data: function() {
       return {
@@ -48,16 +48,26 @@
       }
       next();
     },
+    watch: {
+      errorText(newValue) {
+        if (newValue) {
+          this.$app.dialog.hideLoading();
+        }
+      }
+    },
     methods: {
-      submit() {
+      async submit() {
         if (this.account && this.password) {
           this.errorText = "";
           this.$app.dialog.showLoading();
-          api.login(this.account, this.password).then(res => {
+
+          try {
+            await this.$app.delay(1000);
+            let res = await this.$app.api.login(this.account, this.password);
             let data = res.data;
 
             if (data.error) {
-              this.errorText = "无效的帐号或密码。";
+              this.errorText = data.error;
             } else {
               localStorage.authenticated = true;
               localStorage.jwt = data.token;
@@ -70,11 +80,9 @@
                 }, 1000);
               });
             }
-          }).catch((err) => {
+          } catch (err) {
             console.log(err);
-            this.errorText = "网络出错。";
-            this.$app.dialog.hideLoading();
-          });
+          }
         } else {
           this.errorText = "请填写帐号密码。";
         }
