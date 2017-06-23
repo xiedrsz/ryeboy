@@ -22,4 +22,8 @@ app.init();
 app.show(new Vue(Vue.util.extend({
   router,
   store
+<<<<<<< HEAD
 }, require("components/app.vue"))).$mount("#app"));
+=======
+}, require("components/app.vue"))).$mount("#app");
+>>>>>>> 6bb9d82f0801f7d038b2fe6c39e80d10651c2e17
