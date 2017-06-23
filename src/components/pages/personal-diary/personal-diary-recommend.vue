@@ -33,6 +33,9 @@
       async getData(userid, last, filter) {
         let res = await this.$app.api.getPersonalDiaries(userid, last, filter);
         let diaries = res.data;
+        if (diaries.length == 0) {
+          return;
+        }
         await this.$store.dispatch("updateDiaries", diaries);
         this.nomore = diaries.length < this.$app.config.pageSize;
 

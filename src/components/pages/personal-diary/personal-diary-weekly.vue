@@ -43,6 +43,9 @@
       async getData(userid, last, filter) {
         let res = await this.$app.api.getPersonalDiaries(userid, last, filter);
         let diaries = res.data;
+        if (diaries.length == 0) {
+          return;
+        }
         let index = diaries.length;
         diaries.forEach(item => {
           item.weekCount = index;
