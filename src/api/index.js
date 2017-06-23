@@ -4,7 +4,7 @@ import config from "js/config";
 axios.defaults.baseURL = config.apiAddress;
 axios.defaults.validateStatus = function (status) {
   return status >= 200 && status < 500;
-}
+};
 
 class api {
   static getPersonalDiaries(userid, last, filter, data) {

@@ -3,23 +3,26 @@
        title="登录">
     <div class="mdl-grid"
          style="padding-top: 32px">
-      <div class="mdl-cell mdl-cell--2-col-tablet mdl-cell--1-col-phone" />
+      <div class="mdl-cell mdl-cell--2-col-tablet mdl-cell--1-col-phone"></div>
       <div class="mdl-cell mdl-cell--4-col-tablet mdl-cell--2-col-phone">
         <textfield label="帐号"
                    :floating="true"
                    v-model="account"
-                   class="full-width" />
+                   class="full-width">
+        </textfield>
         <textfield label="密码"
                    :floating="true"
                    type="password"
                    class="full-width"
-                   v-model="password" />
+                   v-model="password">
+        </textfield>
         <button-colored class="full-width mt-32"
                         text="登录"
-                        @click.native="submit" />
-        <p v-if="errorText"
-           class="mdl-color-text--red mt-32">{{ errorText }}</p>
+                        @click.native="submit">
+        </button-colored>
       </div>
+      <p v-if="errorText"
+         class="mdl-color-text--red mt-32">{{ errorText }}</p>
     </div>
   </div>
 </template>
