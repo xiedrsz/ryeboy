@@ -34,7 +34,7 @@
         this.$router.push({
           path: "/pages/personal-diary-weekly-list",
           query: {
-            month: item.month,
+            week: item.week,
             year: item.year,
             weekCount: item.weekCount
           }
@@ -73,8 +73,7 @@
         document.querySelector(".tabs").clientHeight - 1) + "px";
 
       this.$app.dialog.showLoading();
-      await this.getData("582c6af47236a860e8fffcb2", undefined, "all");
-      // await this.getData(this.userid, undefined, "all");
+      await this.getData(this.userid, undefined, "all");
 
       this.$app.dialog.hideLoading();
     }

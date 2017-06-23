@@ -46,7 +46,7 @@
         this.last = _.last(diaries).date;
       },
       async infinite(infiniteScroll) {
-        await this.getData("582c6af47236a860e8fffcb2", this.last);
+        await this.getData(this.userid, this.last);
 
         this.$nextTick(() => {
           if (this.nomore) {
@@ -71,7 +71,7 @@
         document.querySelector(".tabs").clientHeight - 1) + "px";
 
       this.$app.dialog.showLoading();
-      await this.getData("582c6af47236a860e8fffcb2");
+      await this.getData(this.userid);
       this.$app.dialog.hideLoading();
     }
   };

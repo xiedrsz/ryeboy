@@ -49,7 +49,7 @@
       this.title = `第${weekCount}周日记`;
 
       this.$app.dialog.showLoading();
-      await this.getData("582c6af47236a860e8fffcb2");
+      await this.getData(this.userid);
       this.$app.dialog.hideLoading();
     }
   };
