@@ -71,6 +71,7 @@
             } else {
               localStorage.authenticated = true;
               localStorage.jwt = data.token;
+              this.$app.api.setAuthorization();
               this.$store.commit("user_setAuth", data.user);
               let redirect = this.$route.query.redirect;
               this.$store.dispatch("getSubscribedChannels").then(() => {

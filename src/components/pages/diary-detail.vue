@@ -206,9 +206,11 @@
 
         data.forEach(item => {
           comments.push(item);
-          users.push({
-            userid: item.userid
-          });
+          if (item.userid) {
+            users.push({
+              userid: item.userid
+            });
+          }
           if (item.reply) {
             users.push({
               userid: item.reply

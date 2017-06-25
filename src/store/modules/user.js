@@ -20,6 +20,7 @@ function obtain(user) {
 
 const mutations = {
   user_assignAuth(state, user) {
+    console.log(user);
     state.authenticated = true;
     obtain(user);
   },

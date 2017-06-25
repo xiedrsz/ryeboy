@@ -3,13 +3,10 @@ import config from "js/config";
 
 axios.defaults.baseURL = config.apiAddress;
 axios.defaults.headers["Accept"] = "application/json";
-axios.defaults.validateStatus = function(status) {
-  return status >= 200 && status < 500;
-};
 
 class api {
   static getPersonalDiaries(userid, last, filter, data) {
-    return axios.get("/getPersonalDiaries", {
+    return axios.get("/diary/personal", {
       params: {
         userid,
         last,
@@ -20,39 +17,26 @@ class api {
   }
 
   static addDiaryComment(id, comment) {
-    return axios.post("/addDiaryComment", {
+    return axios.post("/diary/addComment", {
       id,
       comment
     });
   }
 
   static getMoreDiaryComments(id, last) {
-    return axios.get("/getMoreDiaryComments", {
-      params: {
-        id,
-        last
-      }
-    });
+    return axios.get(`/diary/${id}/more-comments/${last}`);
   }
 
   static getDiaryComments(id) {
-    return axios.get("/getDiaryComments", {
-      params: {
-        id
-      }
-    });
+    return axios.get(`/diary/${id}/comments`);
   }
 
   static getDiary(id) {
-    return axios.get("/getDiary", {
-      params: {
-        id
-      }
-    });
+    return axios.get(`/diary/${id}`);
   }
 
   static getLesson(userid, date) {
-    return axios.get("/getLesson", {
+    return axios.get("/diary/getLesson", {
       params: {
         userid,
         date
@@ -61,11 +45,11 @@ class api {
   }
 
   static publishLesson(data) {
-    return axios.post("/publishLesson", data);
+    return axios.post("/diary/publishLesson", data);
   }
 
   static getLessonDetail(id) {
-    return axios.get("/getLessonDetail", {
+    return axios.get("/diary/getLessonDetail", {
       params: {
         id
       }
@@ -92,7 +76,7 @@ class api {
   }
 
   static getSubscribedChannels(userid) {
-    return axios.get("/labels", {
+    return axios.get("/getSubscribedChannels", {
       params: {
         userid
       }
@@ -107,7 +91,7 @@ class api {
   }
 
   static logout() {
-    return axios.post("/logout");
+    // return axios.post("/logout");
   }
 
   static getDiaries(label, filter, last) {
@@ -121,9 +105,15 @@ class api {
   }
 
   static getUsers(users) {
-    return axios.get("/users", {
-      users
+    return axios.get("/users/many", {
+      params: {
+        users
+      }
     });
+  }
+
+  static setAuthorization() {
+    axios.defaults.headers.common["Authorization"] = `JWT ${localStorage.jwt}`;
   }
 }
 

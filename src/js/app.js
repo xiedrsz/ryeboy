@@ -31,6 +31,7 @@ class app {
 
   init() {
     if (localStorage.authenticated) {
+      api.setAuthorization();
       store.commit("user_assignAuth", JSON.parse(localStorage.user));
       store.dispatch("initSubscribedChannels");
       store.dispatch("lesson_loadSettings");
