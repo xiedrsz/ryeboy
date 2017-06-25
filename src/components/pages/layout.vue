@@ -12,7 +12,11 @@
              v-if="toolbars && toolbars.length > 0">
           <div class="mdl-navigation__link"
                v-for="item in toolbars"
-               @click="item.click">{{ item.text }}</div>
+               @click="item.click">
+            <i class="material-icons"
+               v-if="item.icon">{{ item.icon }}</i>
+            <span v-if="item.text">{{ item.text }}</span>
+          </div>
         </nav>
       </div>
     </header>

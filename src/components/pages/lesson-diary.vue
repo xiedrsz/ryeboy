@@ -10,7 +10,8 @@
                   :disabled="published"
                   rows="8"></textarea>
       </div>
-      <div class="actions-container" v-show="!published">
+      <div class="actions-container"
+           v-show="!published">
         <div class="action"
              @click="insertPicture">插入图片</div>
         <div class="action">添加标签</div>
@@ -22,7 +23,8 @@
           <img :src="picture.url ? picture.url: picture.path"
                @click.stop="showPicture"
                class="inserted-picture">
-          <i class="material-icons md-18 remove-picture" v-show="!published"
+          <i class="material-icons md-18 remove-picture"
+             v-show="!published"
              @click="removePicture(picture.id)">clear</i>
         </div>
       </div>
