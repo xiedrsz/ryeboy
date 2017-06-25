@@ -5,7 +5,8 @@
       <div>发布{{ dateText }}的功课，发布后不能再修改，自己和小组分别增加升级经验，也让更多的人因你的分享而受益。</div>
       <div class="privacy-container">
         <div class="privacy-label">谁可以看</div>
-        <div v-for="option in options">
+        <div v-for="option in options"
+             :key="option.id">
           <radio :id="option.id"
                  :text="option.text"
                  :value="option.value"
@@ -17,7 +18,8 @@
       <div class="publish-container">
         <button-colored class="publish-button"
                         text="发布"
-                        @click.native="publish" />
+                        @click.native="publish">
+        </button-colored>
       </div>
 
     </div>
@@ -65,7 +67,7 @@
             reject(error);
           }, {
             fileName: `${_.now()}.jpg`,
-          });
+          }, true);
         });
       },
       async publish() {
@@ -102,6 +104,7 @@
           await this.$store.dispatch("lesson_publish");
           history.go(-1);
         } catch (error) {
+          console.log(error);
           this.$app.dialog.text("发布失败，可能是网络不给力。");
         }
       },
