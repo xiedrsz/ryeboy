@@ -59,7 +59,7 @@
     methods: {
       upload(fileURL, ft) {
         return new Promise((resolve, reject) => {
-          ft.upload(fileURL, encodeURI(`${this.$app.config.apiAddress}/upload`), res => {
+          ft.upload(fileURL, encodeURI(`${this.$app.config.apiAddress}/diary/uploadPictures`), res => {
             resolve(res);
           }, error => {
             reject(error);
