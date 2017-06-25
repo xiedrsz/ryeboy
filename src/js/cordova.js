@@ -2,7 +2,7 @@ class cordova {
   back() {
     let store = this.app.vue.$store;
 
-    if (store.page.loading) {
+    if (store.state.page.loading) {
       return;
     }
 
