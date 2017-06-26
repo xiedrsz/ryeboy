@@ -1,6 +1,6 @@
 <template>
   <div class="page"
-       title="我的日记">
+       title="消息">
     <div class="tabs">
       <div v-for="(tab, index) in tabs"
            :key="tab.id"
@@ -25,22 +25,22 @@
         tabs: [
           {
             id: 0,
-            text: "每天日记",
+            text: "评论",
             active: true
           },
           {
             id: 1,
-            text: "每周日记",
+            text: "点赞",
             active: false
           },
           {
             id: 2,
-            text: "精品日记",
+            text: "通知",
             active: false
           }
         ],
         tabIndex: 0,
-        viewType: "daily",
+        viewType: "comment",
       };
     },
     methods: {
@@ -51,15 +51,15 @@
 
         switch (index) {
           case 1:
-            this.viewType = "weekly";
+            this.viewType = "like";
             break;
 
           case 2:
-            this.viewType = "recommend";
+            this.viewType = "notice";
             break;
 
           default:
-            this.viewType = "daily";
+            this.viewType = "comment";
             break;
         }
       }
@@ -70,9 +70,9 @@
       }
     },
     components: {
-      "daily": require("components/pages/personal-diary/personal-diary-daily.vue"),
-      "weekly": require("components/pages/personal-diary/personal-diary-weekly.vue"),
-      "recommend": require("components/pages/personal-diary/personal-diary-recommend.vue"),
+      "comment": require("components/pages/message/message-comment.vue"),
+      "like": require("components/pages/message/message-like.vue"),
+      "notice": require("components/pages/message/message-notice.vue"),
     }
   };
 </script>

@@ -19,6 +19,7 @@
       <div class="picture-container"
            v-if="pictures.length > 0">
         <div v-for="picture in pictures"
+             :key="picture.id"
              class="inserted-picture-wrap">
           <img :src="picture.url ? picture.url: picture.path"
                @click.stop="showPicture"
@@ -78,10 +79,11 @@
             quality: 75,
           });
         } else {
-          this.pictures.push({
-            id: _.uniqueId(_.now()),
-            path: "img/default-avatar.png"
-          });
+          // this.pictures.push({
+          //   id: _.uniqueId(_.now()),
+          //   path: "img/default-avatar.png"
+          // });
+          this.$app.dialog.text("电脑版暂未实现。");
         }
       },
       init() {

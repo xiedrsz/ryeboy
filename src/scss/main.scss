@@ -47,6 +47,12 @@ $color-hint-block: #f4f4f4;
   justify-content: center;
 }
 
+@mixin flex-space-between {
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: space-between;
+  justify-content: space-between;
+}
+
 @mixin flex-wrap {
   -webkit-flex-wrap: wrap;
   -ms-flex-wrap: wrap;

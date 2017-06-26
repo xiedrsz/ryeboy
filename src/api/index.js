@@ -5,6 +5,16 @@ axios.defaults.baseURL = config.apiAddress;
 axios.defaults.headers["Accept"] = "application/json";
 
 class api {
+  static getNotices(userid, last, filter) {
+    return axios.get("/notices", {
+      params: {
+        userid,
+        last,
+        filter
+      }
+    });
+  }
+
   static getPersonalDiaries(userid, last, filter, data) {
     return axios.get("/diary/personal", {
       params: {

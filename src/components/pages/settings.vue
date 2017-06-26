@@ -4,17 +4,18 @@
     <list>
       <list-item text="修改密码"
                  @click.native="$router.push('/pages/change-password')"
-                 v-if="authenticated" />
-      <list-item text="应用锁" />
+                 v-if="authenticated"></list-item>
+      <list-item text="应用锁"></list-item>
+      <list-item text="分享应用"></list-item>
       <list-item text="清除本地缓存"
-                 @click.native="clearLocalStorage" />
+                 @click.native="clearLocalStorage"></list-item>
       <list-item text="检查版本"
-                 :divider="false" />
+                 :divider="false"></list-item>
     </list>
     <div v-if="authenticated"
          style="margin-top: 64px; text-align: center">
       <button-flat text="退出登录"
-                   @click.native="logout" />
+                   @click.native="logout"></button-flat>
     </div>
   </div>
 </template>

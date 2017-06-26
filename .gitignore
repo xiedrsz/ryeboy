@@ -1,9 +1,9 @@
 node_modules/
-plugins/
-platforms/
-www/
+/plugins/
+/platforms/
+/www/
 *.log
 *.log.*
 memo
 *.cmd
-src/dist/
+/src/dist/
