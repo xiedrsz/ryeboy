@@ -6,16 +6,17 @@
     </keep-alive>
 
     <!-- 全屏组件 -->
-    <modal-loading v-show="loading" />
+    <modal-loading v-show="loading"></modal-loading>
     <modal-dialog v-show="dialog.show"
                   :type="dialog.type"
                   :content="dialog.content"
                   :title="dialog.title"
                   @ok="dialogOkCallback"
-                  @cancel="dialogCancelCallback" />
+                  @cancel="dialogCancelCallback"></modal-dialog>
     <action-sheet v-show="actionSheet.show"
-                  :actions="actionSheet.actions" />
-    <gallery ref="gallery" />
+                  :actions="actionSheet.actions"></action-sheet>
+    <gallery ref="gallery"></gallery>
+    <toast ref="toast"></toast>
   </div>
 </template>
 
@@ -51,6 +52,7 @@
       "modal-dialog": require("components/ui/modal-dialog.vue"),
       "action-sheet": require("components/ui/action-sheet.vue"),
       "gallery": require("ui/gallery.vue"),
+      "toast": require("ui/toast.vue"),
     }
   };
 </script>

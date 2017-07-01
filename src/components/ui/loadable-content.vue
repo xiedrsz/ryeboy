@@ -1,28 +1,28 @@
 <template>
   <div>
-    <pull-to-refresh :disabled="disabled"
-                     @pulltorefresh="pulltorefresh"></pull-to-refresh>
+    <pull-to-refresh v-if="pulltorefresh"
+                     :disabled="disabled"
+                     @pulltorefresh="pulltorefresh">
+    </pull-to-refresh>
     <div v-if="loadstate == 'unload'"
          class="unload">
       (未加载)
     </div>
     <div v-else-if="loadstate == 'error'"
-         class="loadstate">
+         class="error">
       (加载错误)
     </div>
     <div v-else-if="loadstate == 'empty'"
-         class="loadstate">
+         class="empty">
       (无内容)
     </div>
     <div v-else-if="loadstate == 'loading'"
-         class="loadstate">
+         class="loading">
       <spinner></spinner>
     </div>
     <div v-else>
-      <ul class="mdl-list">
-        <slot></slot>
-      </ul>
-      <infinite-scroll v-if="nomore == false"
+      <slot></slot>
+      <infinite-scroll v-if="infinite && nomore == false"
                        :onInfinite="infinite">
         <div slot="no-more">没有更多内容了</div>
       </infinite-scroll>
@@ -33,11 +33,18 @@
 <script>
   export default {
     props: {
-      nomore: Boolean,
-      disabled: Boolean,
+      nomore: {
+        type: Boolean,
+        default: true
+      },
       loadstate: String,
       infinite: Function,
-      pulltorefresh: Function
+      pulltorefresh: Function,
+    },
+    computed: {
+      disabled() {
+        return !(this.loadstate == "loaded" || this.loadstate == "error" || this.loadstate == "empty");
+      }
     },
     components: {
       "spinner": require("ui/spinner.vue"),
@@ -46,3 +53,22 @@
     },
   };
 </script>
+
+<style lang="scss"
+       scoped>
+  @import "~scss/main.scss";
+  .loading,
+  .error,
+  .empty {
+    @include flex-row;
+    @include flex-center;
+    height: 128px;
+  }
+
+  .unload {
+    @include flex-row;
+    @include flex-center;
+    height: 256px;
+    color: $color-hint-text;
+  }
+</style>

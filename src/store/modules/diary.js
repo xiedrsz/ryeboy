@@ -114,7 +114,7 @@ function updateDiaries(diaries) {
       });
     }
     diary.pictures = pictures;
-    
+
     diary.time = datetime.formatDiaryCreated(diary.createdAt);
     diary.dateWithoutYear = datetime.formatDiaryDateWithoutYear(diary.date);
     diary.week = datetime.formatDiaryWeek(diary.date);
@@ -146,11 +146,16 @@ const mutations = {
 
   diary_setDefaultChannels(state) {
     state.channels = _.clone(defaultSubscribedChannels);
+    state.channels.forEach(item => {
+      Vue.set(item, "active", false);
+    });
   },
 
   diary_setChannels(state, data) {
-    // console.log(data.channels);
     state.channels = _.clone(data.channels);
+    state.channels.forEach(item => {
+      Vue.set(item, "active", false);
+    });
     // 确保有默认频道
     if (state.channels.length == 0) {
       state.channels.push(defaultSubscribedChannels[0]);
@@ -171,7 +176,7 @@ const mutations = {
     if (channelData.loadstate == "loading") {
       return;
     }
-    if (channelData.loadstate == "ok" && channelData.activedFilter == data.filter) {
+    if (channelData.loadstate == "loaded" && channelData.activedFilter == data.filter) {
       return;
     }
     channelData.activedFilter = data.filter;
@@ -339,7 +344,7 @@ const actions = {
     if (channelData) {
       switch (channelData.loadstate) {
       case "loading":
-      case "ok":
+      case "loaded":
       case "empty":
         return;
       }
@@ -399,7 +404,7 @@ const actions = {
         label,
         assign: {
           nomore: diaries.length < config.pageSize,
-          loadstate: diaries.length == 0 ? "empty" : "ok",
+          loadstate: diaries.length == 0 ? "empty" : "loaded",
         },
         diaries
       });

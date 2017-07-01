@@ -1,30 +1,31 @@
 <template>
   <li class="item-container"
       @click="$router.push('/pages/diary-detail?id=' + id)">
-    <div class="item-avatar">
+    <div class="diary-avatar">
       <img :data-src="avatar"
-           class="lazyload" />
+           class="lazyload">
     </div>
-    <div class="item-content">
-      <div class="username">
+    <div class="diary-main">
+      <div class="diary-username">
         <img v-if="verified"
              :src="require('img/v.png')"
-             class="v" />
+             class="diary-v">
         <span>{{ username }}</span>
       </div>
-      <div class="text"
+      <div class="diary-text"
            v-html="text"></div>
-      <div class="picture-block"
-           v-if="pictures.length > 0">
-        <div v-for="picture in pictures">
+      <div class="diary-picture-container"
+           v-if="pictures && pictures.length > 0">
+        <div v-for="picture in pictures"
+             :key="picture">
           <img :data-src="picture"
-               class="picture lazyload">
+               class="diary-picture lazyload">
         </div>
       </div>
-      <div class="comment">
+      <div class="diary-footer">
         <div>{{ time }}</div>
-        <div class="mdl-layout-spacer" />
-        <div class="counts">
+        <div class="mdl-layout-spacer"></div>
+        <div class="diary-counts">
           <i class="material-icons md-16">favorite_border</i>
           <span style="margin-right: 24px">{{ likeCount }}</span>
           <i class="material-icons md-16">comment</i>
@@ -60,32 +61,16 @@
 <style lang="scss"
        scoped>
   @import "~scss/main.scss";
+  @import "~scss/diary-item.scss";
   .item-container {
     @include flex-row;
   }
 
-  .item-avatar {
-    background: white;
-    width: 40px;
-    height: 40px;
-    border: 1px solid $color-divider;
-    border-radius: 50%;
+  .right {
+    text-align: right;
   }
 
-  .item-avatar img {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
-    border-radius: 50%;
-  }
-
-  .item-content {
-    margin-left: 16px;
-    font-size: 16px;
-    width: 100%;
-  }
-
-  .text {
+  .diary-text {
     color: $color-secondary-text;
     margin-top: 8px;
     line-height: 20px;
@@ -96,52 +81,5 @@
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     display: -webkit-box;
-  }
-
-  .comment {
-    @include flex-row;
-    margin-top: 8px;
-    font-size: 12px;
-    color: $color-hint-text;
-  }
-
-  .right {
-    text-align: right;
-  }
-
-  .counts {
-    @include flex-row;
-    -webkit-align-items: center;
-    -ms-flex-align: center;
-    align-items: center;
-  }
-
-  .counts span {
-    margin-left: 4px;
-  }
-
-  .username {
-    @include flex-row;
-    @include flex-vertical-center;
-  }
-
-  .v {
-    width: 16px;
-    height: 16px;
-    margin-right: 4px;
-  }
-
-  .picture {
-    width: 48px;
-    height: 48px;
-    object-fit: cover;
-    margin-right: 2px;
-    margin-bottom: 2px;
-  }
-
-  .picture-block {
-    @include flex-row;
-    @include flex-wrap;
-    margin: 12px 0 8px 0;
   }
 </style>

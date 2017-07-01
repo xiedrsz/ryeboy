@@ -1,107 +1,98 @@
 <template>
   <div class="page"
        title="查看日记">
-    <div v-if="loadstate == 'loaded'">
-      <div class="loaded">
-        <div class="content-block">
-          <div class="author-section">
-            <div class="item-avatar">
-              <img :data-src="diary.avatar"
-                   class="avatar lazyload" />
+    <loadable-content id="content"
+                      :nomore="nomore"
+                      :loadstate="loadstate"
+                      :infinite="infinite">
+      <div class="content-block">
+        <div class="author-section">
+          <div class="diary-avatar">
+            <img :data-src="diary.avatar"
+                 class="avatar lazyload">
+          </div>
+          <div class="diary-main">
+            <div class="diary-username">
+              <span>{{ diary.username }}</span>
+              <span class="diary-userlv">{{ diary.userlv }}</span>
             </div>
-            <div class="item-content">
-              <div class="username">
-                <span>{{ diary.username }}</span>
-                <span class="userlv">{{ diary.userlv }}</span>
+            <div class="diary-picture-container"
+                 v-if="diary.pictures && diary.pictures.length > 0">
+              <div v-for="(picture, index) in diary.pictures"
+                   :key="index">
+                <img :data-src="picture"
+                     @click="openPicture(index)"
+                     class="diary-picture lazyload">
               </div>
-              <div class="picture-block"
-                   v-if="diary.pictures.length > 0">
-                <div v-for="(picture, index) in diary.pictures">
-                  <img :data-src="picture"
-                       @click="openPicture(index)"
-                       class="picture lazyload">
+            </div>
+            <div class="diary-text"
+                 v-html="diary.escapedText"></div>
+            <div class="lesson-block">
+              <div class="lesson-overview">
+                <span>做到下列{{ cards.length }}项功课，获得了</span>
+                <span class="exp">{{ diary.expectedExp }}成长值</span>
+              </div>
+              <div class="lesson-list"
+                   :class="{ 'lesson-list-accordion': lessonAccordion }">
+                <div class="lesson"
+                     v-for="card in cards"
+                     :key="card.id">
+                  <img class="card-icon"
+                       :src="require('img/card-' + card.id + '.png')">
+                  <div class="card-name">{{ card.name }}</div>
                 </div>
               </div>
-              <div class="text"
-                   v-html="diary.escapedText"></div>
-              <div class="lesson-block">
-                <div class="lesson-overview">
-                  <span>做到下列{{ cards.length }}项功课，获得了</span>
-                  <span class="exp">{{ diary.expectedExp }}成长值</span>
-                </div>
-                <div class="lesson-list"
-                     :class="{ 'lesson-list-accordion': lessonAccordion }">
-                  <div class="lesson"
-                       v-for="card in cards">
-                    <img class="card-icon"
-                         :src="require('img/card-' + card.id + '.png')">
-                    <div class="card-name">{{ card.name }}</div>
-                  </div>
-                </div>
-                <div class="lesson-show-all"
-                     @click="handleShowAllLessons"
-                     v-show="showAllLessons">{{ lessonAccordion ? "全部" : "收起" }}</div>
-              </div>
-              <div class="stat-block">
-                <div>{{ diary.time }}</div>
-                <div class="mdl-layout-spacer" />
-                <div class="counts">
-                  <i class="material-icons md-16"
-                     @click="setLike">favorite_border</i>
-                  <span style="margin-right: 24px">{{ diary.likeCount }}</span>
-                  <i class="material-icons md-16">comment</i>
-                  <span>{{ diary.commentCount }}</span>
-                </div>
+              <div class="lesson-show-all"
+                   @click="handleShowAllLessons"
+                   v-show="showAllLessons">{{ lessonAccordion ? "全部" : "收起" }}</div>
+            </div>
+            <div class="diary-footer">
+              <div>{{ diary.time }}</div>
+              <div class="mdl-layout-spacer"></div>
+              <div class="diary-counts">
+                <i class="material-icons md-16"
+                   @click="setLike">favorite_border</i>
+                <span style="margin-right: 24px">{{ diary.likeCount }}</span>
+                <i class="material-icons md-16">comment</i>
+                <span>{{ diary.commentCount }}</span>
               </div>
             </div>
           </div>
-          <div class="comment-section">
-            <div class="comment-block"
-                 v-for="comment in comments"
-                 @click="openCommentActions(comment)"
-                 :key="comment.createdAt">
-              <div class="item-avatar">
-                <img :data-src="comment.avatar"
-                     class="avatar lazyload" />
-              </div>
-              <div class="item-content">
-                <div class="username">
-                  <img v-if="comment.verified"
-                       :src="require('img/v.png')"
-                       class="v" />
-                  <span>{{ comment.username }}</span>
-                  <span class="userlv">{{ comment.userlv }}</span>
-                </div>
-                <div class="replied">{{ comment.replied }}</div>
-                <div class="text"
-                     v-html="comment.escapedText"></div>
-                <div class="comment-time">{{ comment.time }}</div>
-              </div>
+        </div>
+        <div class="comment-section">
+          <div class="comment-container"
+               v-for="comment in comments"
+               @click="openCommentActions(comment)"
+               :key="comment.createdAt">
+            <div class="comment-avatar">
+              <img :data-src="comment.avatar"
+                   class="avatar lazyload">
             </div>
-            <infinite-scroll v-if="!nomore"
-                             :onInfinite="infinite">
-              <div slot="no-more">没有更多内容了</div>
-            </infinite-scroll>
+            <div class="comment-main">
+              <div class="comment-username">
+                <img v-if="comment.verified"
+                     :src="require('img/v.png')"
+                     class="comment-v">
+                <span>{{ comment.username }}</span>
+                <span class="comment-userlv">{{ comment.userlv }}</span>
+              </div>
+              <div class="comment-replied">{{ comment.replied }}</div>
+              <div class="comment-text"
+                   v-html="comment.escapedText"></div>
+              <div class="comment-time">{{ comment.time }}</div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="input-section">
-        <textarea :placeholder="reply? '回复' + selectedComment.username + ':' : '添加评论:'"
-                  rows="1"
-                  class="input-box"
-                  v-model="comment"></textarea>
-        <button-icon icon="send"
-                     class="send"
-                     @click.native="sendComment" />
-      </div>
-    </div>
-    <div v-if="loadstate == 'error'"
-         class="unload">
-      (加载错误)
-    </div>
-    <div v-if="loadstate == 'loading'"
-         class="loading">
-      <spinner />
+    </loadable-content>
+    <div class="input-section">
+      <textarea :placeholder="reply? '回复' + selectedComment.username + ':' : '添加评论:'"
+                rows="1"
+                class="input-box"
+                v-model="comment"></textarea>
+      <button-icon icon="send"
+                   class="send"
+                   @click.native="sendComment"></button-icon>
     </div>
   </div>
 </template>
@@ -188,7 +179,7 @@
 
             // 滚动到新的评论
             this.$nextTick(() => {
-              document.querySelector(".loaded").scrollTop = document.querySelector(".comment-block").offsetTop;
+              document.querySelector("#content").scrollTop = document.querySelector(".comment-container").offsetTop;
             });
 
           } catch (error) {
@@ -245,17 +236,16 @@
         }
       },
       adjustHeight() {
-        document.querySelector(".loaded").style.height =
+        document.querySelector("#content").style.height =
           document.querySelector("main").clientHeight -
           (document.querySelector(".input-section").clientHeight - 1) +
           "px";
       }
     },
     components: {
-      "infinite-scroll": require("ui/infinite-scroll.vue"),
-      "spinner": require("ui/spinner.vue"),
       "textfield": require("ui/textfield.vue"),
-      "button-icon": require("ui/button-icon.vue")
+      "button-icon": require("ui/button-icon.vue"),
+      "loadable-content": require("ui/loadable-content.vue"),
     },
     computed: {
       authenticated() {
@@ -292,16 +282,15 @@
         await this.$store.dispatch("updateDiaries", [diary]);
         this.$set(this.$data, "diary", diary);
         this.$set(this.$data, "comments", comments);
-
         this.loadstate = "loaded";
 
         this.$nextTick(() => {
           try {
-            let el = document.querySelector(".lesson-list");
-            this.showAllLessons = el.scrollHeight > el.clientHeight;
             this.nomore = comments.length >= diary.commentCount;
             this.last = this.$app.config.pageSize;
 
+            let el = document.querySelector(".lesson-list");
+            this.showAllLessons = el.scrollHeight > el.clientHeight;
             this.adjustHeight();
 
             inputElement = document.querySelector(".input-box");
@@ -322,6 +311,8 @@
 <style lang="scss"
        scoped>
   @import "~scss/main.scss";
+  @import "~scss/diary-item.scss";
+  @import "~scss/comment-item.scss";
   .exp {
     color: $color-blue;
   }
@@ -367,65 +358,14 @@
     background-color: $color-divider;
   }
 
-  .unload,
-  .loading {
-    @include flex-row;
-    @include flex-center;
-    height: 256px;
-    color: $color-hint-text;
-  }
-
   .author-section {
     @include flex-row;
   }
 
-  .comment-block {
-    @include flex-row;
+  .comment-section {
     margin-top: 16px;
     padding-top: 16px;
     border-top: 1px solid $color-divider;
-  }
-
-  .item-avatar {
-    background: white;
-    width: 40px;
-    height: 40px;
-    border: 1px solid $color-divider;
-    border-radius: 50%;
-  }
-
-  .item-avatar img {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
-    border-radius: 50%;
-  }
-
-  .item-content {
-    margin-left: 16px;
-    font-size: 16px;
-    width: 100%;
-  }
-
-  .text {
-    color: $color-text;
-    margin-top: 8px;
-  }
-
-  .username {
-    color: $color-blue;
-    @include flex-row;
-    @include flex-vertical-center;
-  }
-
-  .username span {
-    margin-right: 8px;
-  }
-
-  .v {
-    width: 16px;
-    height: 16px;
-    margin-right: 4px;
   }
 
   .stat-block {
@@ -454,18 +394,6 @@
     margin-top: 8px;
   }
 
-  .comment-time,
-  .replied {
-    color: $color-hint-text;
-    font-size: 12px;
-    margin-top: 8px;
-  }
-
-  .userlv {
-    font-size: 12px;
-    color: $color-hint-text;
-  }
-
   .input-section {
     @include flex-row;
     border-top: 1px solid $color-divider;
@@ -476,7 +404,7 @@
     width: 100%;
   }
 
-  .loaded {
+  #content {
     overflow: auto;
     -webkit-overflow-scrolling: touch;
   }

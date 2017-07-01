@@ -59,10 +59,8 @@
       async submit() {
         if (this.account && this.password) {
           this.errorText = "";
-          this.$app.dialog.showLoading();
 
           try {
-            await this.$app.delay(1000);
             let res = await this.$app.api.login(this.account, this.password);
             let data = res.data;
 
@@ -76,7 +74,6 @@
               let redirect = this.$route.query.redirect;
               this.$store.dispatch("getSubscribedChannels").then(() => {
                 setTimeout(() => {
-                  this.$app.dialog.hideLoading();
                   this.$router.replace(redirect ? redirect : "/");
                 }, 1000);
               });

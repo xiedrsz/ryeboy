@@ -1,22 +1,27 @@
 <template>
   <div class="content-wrap">
-    <div v-for="group in diaries"
-         class="month-block">
-      <div class="title">{{ group.title }}</div>
-      <div class="week-wrap">
-        <div v-for="item in group.items"
-             class="week-block">
-          <div class="cover"
-               @click="showWeekDiaries(item)">
-            <img :data-src="item.picture"
-                 class="lazyload">
-          </div>
-          <div class="statistics">
-            第{{ item.weekCount }}周
+    <loadable-content :nomore="nomore"
+                      :loadstate="loadstate">
+      <div v-for="group in diaries"
+           :key="group.title"
+           class="month-block">
+        <div class="title">{{ group.title }}</div>
+        <div class="week-wrap">
+          <div v-for="item in group.items"
+               :key="item.picture"
+               class="week-block">
+            <div class="cover"
+                 @click="showWeekDiaries(item)">
+              <img :data-src="item.picture"
+                   class="lazyload">
+            </div>
+            <div class="statistics">
+              第{{ item.weekCount }}周
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </loadable-content>
   </div>
 </template>
 
@@ -26,7 +31,9 @@
   export default {
     data() {
       return {
-        diaries: []
+        diaries: [],
+        loadstate: "unload",
+        nomore: true
       };
     },
     methods: {
@@ -41,30 +48,39 @@
         });
       },
       async getData(userid, last, filter) {
-        let res = await this.$app.api.getPersonalDiaries(userid, last, filter);
-        let diaries = res.data;
-        if (diaries.length == 0) {
-          return;
-        }
-        let index = diaries.length;
-        diaries.forEach(item => {
-          item.weekCount = index;
-          if (item.pictures && item.pictures.length > 0) {
-            item.picture = this.$app.textHelper.getPictureUrl(item.pictures[0]);
-          } else {
-            item.picture = require("img/default-avatar.png");
+        try {
+          let res = await this.$app.api.getPersonalDiaries(userid, last, filter);
+          let diaries = res.data;
+          if (diaries.length == 0) {
+            this.loadstate = "empty";
+            return;
           }
-          index--;
-        });
-        _.each(_.groupBy(diaries, item => {
-          return item.year + "年" + item.month + "月";
-        }), (value, key) => {
-          this.diaries.push({
-            title: key,
-            items: value
+          let index = diaries.length;
+          diaries.forEach(item => {
+            item.weekCount = index;
+            if (item.pictures && item.pictures.length > 0) {
+              item.picture = this.$app.textHelper.getPictureUrl(item.pictures[0]);
+            } else {
+              item.picture = require("img/default-avatar.png");
+            }
+            index--;
           });
-        });
+          _.each(_.groupBy(diaries, item => {
+            return item.year + "年" + item.month + "月";
+          }), (value, key) => {
+            this.diaries.push({
+              title: key,
+              items: value
+            });
+          });
+          this.loadstate = "loaded";
+        } catch (error) {
+          this.loadstate = "error";
+        }
       },
+    },
+    components: {
+      "loadable-content": require("ui/loadable-content.vue"),
     },
     computed: {
       userid() {
@@ -74,11 +90,8 @@
     async mounted() {
       document.querySelector(".content-wrap").style.height = (document.querySelector("main").clientHeight -
         document.querySelector(".tabs").clientHeight - 1) + "px";
-
-      this.$app.dialog.showLoading();
+      this.loadstate = "loading";
       await this.getData(this.userid, undefined, "all");
-
-      this.$app.dialog.hideLoading();
     }
   };
 </script>

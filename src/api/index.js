@@ -5,12 +5,13 @@ axios.defaults.baseURL = config.apiAddress;
 axios.defaults.headers["Accept"] = "application/json";
 
 class api {
-  static getNotices(userid, last, filter) {
+  static getNotices(userid, type, lastFetchAt, last) {
     return axios.get("/notices", {
       params: {
-        userid,
+        userid: "57158aedd7baf14a7069f8bf",
+        type,
         last,
-        filter
+        lastFetchAt: new Date("2017-5-20"),
       }
     });
   }

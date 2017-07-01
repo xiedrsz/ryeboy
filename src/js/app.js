@@ -1,3 +1,4 @@
+import axios from "axios";
 import store from "store";
 import api from "api";
 import config from "js/config";
@@ -29,7 +30,30 @@ class app {
     this.vue = vue;
   }
 
+  toast(text) {
+    this.vue.$refs.toast.$el.MaterialSnackbar.showSnackbar({
+      message: text
+    });
+  }
+
   init() {
+    axios.interceptors.request.use(config => {
+      if (config.method == "post") {
+        this.dialog.showLoading();
+      }
+      return config;
+    }, error => {
+      return Promise.reject(error);
+    });
+
+    axios.interceptors.response.use(response => {
+      this.dialog.hideLoading();
+      return response;
+    }, error => {
+      this.dialog.hideLoading();
+      return Promise.reject(error);
+    });
+
     if (localStorage.authenticated) {
       api.setAuthorization();
       store.commit("user_assignAuth", JSON.parse(localStorage.user));
