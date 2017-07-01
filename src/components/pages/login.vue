@@ -61,6 +61,7 @@
           this.errorText = "";
 
           try {
+            this.$el.focus();
             let res = await this.$app.api.login(this.account, this.password);
             let data = res.data;
 
@@ -72,13 +73,11 @@
               this.$app.api.setAuthorization();
               this.$store.commit("user_setAuth", data.user);
               let redirect = this.$route.query.redirect;
-              this.$store.dispatch("getSubscribedChannels").then(() => {
-                setTimeout(() => {
-                  this.$router.replace(redirect ? redirect : "/");
-                }, 1000);
-              });
+              await this.$store.dispatch("getSubscribedChannels");
+              this.$router.replace(redirect ? redirect : "/");
             }
           } catch (err) {
+            this.$app.dialog.text("帐号或密码不正确。");
             console.log(err);
           }
         } else {

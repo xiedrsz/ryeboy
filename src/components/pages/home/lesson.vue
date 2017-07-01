@@ -21,6 +21,7 @@
       </div>
       <div class="card-container">
         <div v-for="weight in cards"
+             :key="weight.name"
              v-show="weight.cards.length > 0"
              class="weight-container">
           <div class="weight-block">
@@ -36,6 +37,7 @@
           </div>
           <div class="card-list">
             <div v-for="card in weight.cards"
+                 :key="card.id"
                  class="card">
               <img class="card-icon"
                    @click="cardDetail(card.id)"

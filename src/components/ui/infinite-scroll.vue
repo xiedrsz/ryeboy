@@ -1,7 +1,7 @@
 <template>
   <div class="infinite-loading-container">
     <div v-show="loadstate == 'loading'">
-      <spinner />
+      <spinner></spinner>
     </div>
     <div class="infinite-status-prompt"
          v-show="loadstate == 'loaded'">
@@ -12,6 +12,9 @@
 
 <script>
   function getScrollParent(elm) {
+    if (!elm) {
+      return null;
+    }
     if (elm.tagName === "BODY") {
       return window;
     } else if (["scroll", "auto"].indexOf(getComputedStyle(elm).overflowY) > -1) {
@@ -40,7 +43,8 @@
         scrollParent: null,
         scrollHandler: null,
         loadstate: "unload",
-        disabled: false
+        disabled: false,
+        initialized: false
       };
     },
     props: {
@@ -51,33 +55,42 @@
       onInfinite: Function
     },
     mounted() {
-      this.scrollParent = getScrollParent(this.$el);
-
-      this.scrollHandler = function scrollHandlerOriginal() {
-        if (this.loadstate != "loading") {
-          this.attemptLoad();
-        }
-      }.bind(this);
-
-      setTimeout(this.scrollHandler, 1);
-      this.scrollParent.addEventListener("scroll", this.scrollHandler);
-
-      this.$on("$InfiniteScroll:loaded", () => {
-        if (this.loadstate == "loading") {
-          this.$nextTick(this.attemptLoad);
-        }
-      });
-      this.$on("$InfiniteScroll:complete", () => {
-        this.loadstate = "loaded";
-        this.scrollParent.removeEventListener("scroll", this.scrollHandler);
-      });
-      this.$on("$InfiniteScroll:reset", () => {
-        this.loadstate = "unload";
-        this.scrollParent.addEventListener("scroll", this.scrollHandler);
-        setTimeout(this.scrollHandler, 1);
-      });
+      this.init();
     },
     methods: {
+      init() {
+        this.scrollParent = getScrollParent(this.$el);
+
+        if (!this.scrollParent) {
+          return;
+        }
+
+        this.scrollHandler = function scrollHandlerOriginal() {
+          if (this.loadstate != "loading") {
+            this.attemptLoad();
+          }
+        }.bind(this);
+
+        setTimeout(this.scrollHandler, 1);
+        this.scrollParent.addEventListener("scroll", this.scrollHandler);
+
+        this.$on("$InfiniteScroll:loaded", () => {
+          if (this.loadstate == "loading") {
+            this.$nextTick(this.attemptLoad);
+          }
+        });
+        this.$on("$InfiniteScroll:complete", () => {
+          this.loadstate = "loaded";
+          this.scrollParent.removeEventListener("scroll", this.scrollHandler);
+        });
+        this.$on("$InfiniteScroll:reset", () => {
+          this.loadstate = "unload";
+          this.scrollParent.addEventListener("scroll", this.scrollHandler);
+          setTimeout(this.scrollHandler, 1);
+        });
+
+        this.initialized = true;
+      },
       attemptLoad() {
         if (this.disabled) {
           return;
@@ -95,6 +108,10 @@
       this.disabled = true;
     },
     activated() {
+      if (!this.initialized) {
+        this.init();
+      }
+
       this.disabled = false;
       this.attemptLoad();
     },

@@ -126,6 +126,14 @@ class api {
   static setAuthorization() {
     axios.defaults.headers.common["Authorization"] = `JWT ${localStorage.jwt}`;
   }
+
+  static delay(timeout) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve();
+      }, timeout);
+    });
+  }
 }
 
 export default api;

@@ -391,6 +391,7 @@ const actions = {
     });
 
     try {
+      await api.delay(2000);
       let res = await api.getDiaries(label, filter);
       let diaries = res.data;
       let users = getUnstoredUsers(diaries);
