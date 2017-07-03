@@ -118,7 +118,9 @@
     margin-left: 10px;
     line-height: 16px;
   }
-  
+  .group-name{
+    font-size: 14px;
+  }
   .page-layout {
     @include flex-column;
     width: 100%;

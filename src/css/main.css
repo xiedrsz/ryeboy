@@ -35,6 +35,9 @@ z-index: 10000;
 background: rgba(0, 0, 0, 0.3);
 }
 
+.material-icons.navigate_next{
+  color:#a5a5a5;
+}
 .icon-right{
     width: 30px;
     min-height: 34px;

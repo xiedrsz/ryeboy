@@ -51,6 +51,7 @@
 .sub-item{
   @include flex-row;
   padding: 15px;
+  border-bottom:1px solid $color-divider;
   .item-content{
     flex:1;
     margin-left:5px;

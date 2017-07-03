@@ -77,6 +77,7 @@
   }
   
   .grade-box {
+    margin-top: 15px;
     .grade-title {
       @include flex-row;
       @include flex-vertical-center;
