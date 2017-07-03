@@ -10,7 +10,7 @@
             </list-item>
           </list>
 
-          <unusual-loading @dateReloader="getConcern"></unusual-loading>
+          <unusual-loading :option.syn="loading" @dateReloader="getConcern"></unusual-loading>
           <!--<infinite-scroll v-if="true" :onInfinite="infinite">
             <div slot="no-more">没有更多内容了</div>
           </infinite-scroll>-->
@@ -29,8 +29,12 @@
       },
       computed: {
         concern() {
-          return this.$store.state.concern.concern;
-        }
+            return this.$store.state.concern.concern;
+          },
+          // loading 组件
+          loading() {
+            return this.$store.state.concern.loading;
+          }
       },
       methods: {
         setSlideContentHeight() {
@@ -73,29 +77,28 @@
         "list": require("ui/list.vue"),
         "list-item": require("ui/list-item.vue")
       },
-      beforeRouteLeave(to, from, next){
+      beforeRouteLeave(to, from, next) {
         //保存滚动的位置
         let positions = [];
-        this.$el.querySelectorAll(".slide-content").forEach((item)=>{
+        this.$el.querySelectorAll(".slide-content").forEach((item) => {
           positions.push(item.scrollTop);
         })
         from.meta.scrollPosition = {
-          "slide-content": _.reverse(positions)          
-        } 
-        console.log(from)       
+          "slide-content": _.reverse(positions)
+        }
         next();
       },
-      beforeRouteEnter(to,from,next){
+      beforeRouteEnter(to, from, next) {
         // 恢复滚动位置
         next(vm => {
-          
+
           let scrollPosition = to.meta.scrollPosition;
 
           if (scrollPosition) {
             vm.$el.querySelectorAll(".slide-content").forEach(item => {
               item.scrollTop = scrollPosition["slide-content"].pop();
             });
-          }  
+          }
         });
       }
   };

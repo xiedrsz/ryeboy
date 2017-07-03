@@ -227,22 +227,71 @@ const actions = {
 
     // 获取关注人, 基本完成
     async getConcern({
-      commit
+      commit,
+      state
     }) {
-      let res = await api.getConcerns(),
-        list = res.data;
+      commit("save_loading", {
+        no: false,
+        err: false,
+        none: false,
+        icon: true
+      });
+
+      let list = [];
+
+      await api.getConcerns().then((res) => {
+        !!res && (list = res.data);
+      }).catch(() => {
+        commit("save_loading", {
+          err: true
+        });
+      });
 
       commit("concern_addConcern", list);
+
+      if (!state.concern[0]) {
+        commit("save_loading", {
+          none: true
+        });
+      }
+
+      commit("save_loading", {
+        icon: false
+      });
     },
 
     // 获取粉丝，基本完成
     async getFans({
       commit
     }) {
-      let res = await api.getFans(),
-        list = res.data;
+      commit("save_loading", {
+        no: false,
+        err: false,
+        none: false,
+        icon: true
+      });
+
+      let list = [];
+
+      await api.getFans().then((res) => {
+        !!res && (list = res.data);
+      }).catch(() => {
+        commit("save_loading", {
+          err: true
+        });
+      });
 
       commit("concern_addFans", list);
+
+      if (!state.fans[0]) {
+        commit("save_loading", {
+          none: true
+        });
+      }
+
+      commit("save_loading", {
+        icon: false
+      });
     },
 
     // 获取新关注人列表, 基本完成

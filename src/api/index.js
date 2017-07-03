@@ -79,12 +79,12 @@ class api {
 
   // 获取关注人, T
   static getConcerns() {
-    return axios.get("/getConcerns")
+    return axios.get("/followees")
   }
 
   // 获取粉丝, T
   static getFans() {
-    return axios.get("/getFans")
+    return axios.get("/followers")
   }
 
   // 获取新关注人/换一批, T

@@ -34,7 +34,7 @@ Mock
     return result.list
   })
   //获取已关注的用户总数，关注用户上限，用户头像，用户名，是否取消关注
-  .mock(/getConcerns/, function() {
+  .mock(/followees/, function() {
     var result = Mock.mock({
       "list|1-15": [{
         _id: /\d{8}/,
@@ -54,7 +54,7 @@ Mock
     return result.list;
   })
   //获取粉丝总数，粉丝头像，用户名，粉丝ID号，点击头像进入个人页面
-  .mock(/getFans/, function() {
+  .mock(/followers/, function() {
     var result = Mock.mock({
       "list|1-15": [{
         _id: '56e4d40d731956005ce0156a',
