@@ -21,8 +21,6 @@
 </template>
 
 <script>
-  import api from "api";
-
   export default {
     components: {
       "button-flat": require("components/ui/button-flat.vue"),
@@ -31,11 +29,7 @@
     },
     methods: {
       logout() {
-        api.logout();
-
-        localStorage.removeItem("authenticated");
-        localStorage.removeItem("user");
-        this.$store.commit("user_deleteAuth");
+        this.$app.afterLogout();
         this.$router.replace("/");
       },
       clearLocalStorage() {

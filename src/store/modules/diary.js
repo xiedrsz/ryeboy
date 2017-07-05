@@ -55,8 +55,10 @@ const state = {
 function getUnstoredUsers(data) {
   let result = [];
   data.forEach(item => {
-    if (state.users[item.userid] === undefined) {
-      result.push(item.userid);
+    if (item.userid) {
+      if (state.users[item.userid] === undefined) {
+        result.push(item.userid);
+      }
     }
   });
   return result;
@@ -140,6 +142,21 @@ const getters = {
 };
 
 const mutations = {
+  diary_setLike(state, data) {
+    _.each(state.channelDatas, channel => {
+      channel.diaries.forEach(diary => {
+        if (diary._id == data.id) {
+          diary.like = data.like;
+          if (data.like) {
+            diary.likeCount++;
+          } else {
+            diary.likeCount--;
+          }
+        }
+      });
+    });
+  },
+
   diary_setChannelChanged(state, changed) {
     state.channelChanged = changed === undefined ? true : changed;
   },
@@ -297,14 +314,16 @@ const actions = {
 
   async getMoreDiaries({
     commit,
-    state
+    state,
+    rootState
   }, infiniteScroll) {
     let label = state.activedChannel;
     let channelData = state.channelDatas[label];
+    let userid = rootState.user._id;
 
     try {
       let filter = channelData.activedFilter;
-      let res = await api.getDiaries(label, filter, _.last(channelData.diaries).createdAt);
+      let res = await api.getDiaries(label, filter, _.last(channelData.diaries).createdAt, userid);
       let diaries = res.data;
       let users = getUnstoredUsers(diaries);
       if (users.length > 0) {
@@ -335,11 +354,13 @@ const actions = {
 
   async getDiaries({
     commit,
-    state
+    state,
+    rootState
   }) {
     let label = state.activedChannel;
     let filter = "recommend";
     let channelData = state.channelDatas[label];
+    let userid = rootState.user._id;
 
     if (channelData) {
       switch (channelData.loadstate) {
@@ -391,9 +412,9 @@ const actions = {
     });
 
     try {
-      await api.delay(2000);
-      let res = await api.getDiaries(label, filter);
+      let res = await api.getDiaries(label, filter, null, userid);
       let diaries = res.data;
+      console.log(diaries);
       let users = getUnstoredUsers(diaries);
       if (users.length > 0) {
         res = await api.getUsers(users);

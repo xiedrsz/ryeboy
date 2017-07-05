@@ -26,8 +26,30 @@ class app {
     history.go(-1);
   }
 
+  // 登录之后的一些处理
+  async afterLogin(data) {
+    localStorage.authenticated = true;
+    localStorage.jwt = data.token;
+
+    this.api.setAuthorization();
+
+    store.commit("user_setAuth", data.user);
+    store.commit("diary_setChannelChanged");
+    await store.dispatch("getSubscribedChannels");
+  }
+
+  //注销之后的一些处理
+  afterLogout() {
+    this.api.logout();
+    localStorage.removeItem("authenticated");
+    localStorage.removeItem("user");
+    store.commit("user_deleteAuth");
+    store.commit("diary_setChannelChanged");
+  }
+
   show(vue) {
     this.vue = vue;
+    this.user = vue.$store.state.user;
   }
 
   toast(text) {
