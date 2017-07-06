@@ -22,10 +22,13 @@
     </div>
     <div v-else>
       <slot></slot>
-      <infinite-scroll v-if="infinite && nomore == false"
-                       :onInfinite="infinite">
-        <div slot="no-more">没有更多内容了</div>
+      <infinite-scroll ref="infiniteScroll"
+                       v-if="infinite && nomore == false"
+                       :onInfinite="internalInfinite">
+        <div slot="error">(加载错误)</div>
       </infinite-scroll>
+      <div class="nomore"
+           v-if="infinite && nomore == true">(没有更多内容了)</div>
     </div>
   </div>
 </template>
@@ -39,7 +42,24 @@
       },
       loadstate: String,
       infinite: Function,
-      pulltorefresh: Function,
+      pulltorefresh: Function
+    },
+    methods: {
+      async internalInfinite(infiniteScroll) {
+        try {
+          await this.infinite();
+
+          this.$nextTick(() => {
+            if (this.nomore) {
+              infiniteScroll.$emit("$InfiniteScroll:complete");
+            } else {
+              infiniteScroll.$emit("$InfiniteScroll:loaded");
+            }
+          });
+        } catch (error) {
+          infiniteScroll.$emit("$InfiniteScroll:error");
+        }
+      },
     },
     computed: {
       disabled() {
@@ -69,6 +89,13 @@
     @include flex-row;
     @include flex-center;
     height: 256px;
+    color: $color-hint-text;
+  }
+
+  .nomore {
+    @include flex-row;
+    @include flex-center;
+    margin-bottom: 32px;
     color: $color-hint-text;
   }
 </style>

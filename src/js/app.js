@@ -47,6 +47,16 @@ class app {
     store.commit("diary_setChannelChanged");
   }
 
+  adjustScrollableElement(selector, containerList) {
+    let height = document.querySelector("main").clientHeight;
+    if (containerList) {
+      containerList.forEach(item => {
+        height -= document.querySelector(item).clientHeight;
+      });
+    }
+    document.querySelector(selector).style.height = height + "px";
+  }
+
   show(vue) {
     this.vue = vue;
     this.user = vue.$store.state.user;

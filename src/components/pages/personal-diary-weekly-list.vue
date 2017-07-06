@@ -36,6 +36,7 @@
         let diaries = res.data;
         if (diaries.length == 0) {
           this.loadstate = "empty";
+          return;
         }
         await this.$store.dispatch("updateDiaries", diaries);
         this.diaries = diaries;
@@ -52,7 +53,7 @@
       "loadable-content": require("ui/loadable-content.vue"),
     },
     async mounted() {
-      document.querySelector(".content-wrap").style.height = document.querySelector("main").clientHeight + "px";
+      this.$app.adjustScrollableElement(".content-wrap");
 
       let weekCount = this.$route.query.weekCount;
       this.title = `第${weekCount}周日记`;

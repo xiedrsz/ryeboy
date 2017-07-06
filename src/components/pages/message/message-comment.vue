@@ -66,11 +66,7 @@
     },
     methods: {
       adjustHeight() {
-        document.querySelector(".content-wrap").style.height =
-          (document.querySelector("main").clientHeight -
-            document.querySelector(".tabs").clientHeight -
-            document.querySelector(".reply-container").clientHeight - 1) +
-          "px";
+        this.$app.adjustScrollableElement(".content-wrap", [".tabs", ".reply-container"]);
       },
       async send() {
         if (this.comment) {
@@ -122,42 +118,27 @@
         ], this);
       },
       async getData(userid, last) {
-        try {
-          let lastFetchCommentMessageAt = localStorage[`${this.userid}_lastFetchCommentMessageAt`] || new Date();
-          let res = await this.$app.api.getNotices(userid, "comment", lastFetchCommentMessageAt, last);
-          let items = res.data;
+        let lastFetchCommentMessageAt = localStorage[`${this.userid}_lastFetchCommentMessageAt`] || new Date();
+        let res = await this.$app.api.getNotices(userid, "comment", lastFetchCommentMessageAt, last);
+        let items = res.data;
 
-          if (items.length == 0) {
-            this.loadstate = "empty";
-            return;
-          }
-
-          items.forEach(item => item.userid = item.sender);
-          await this.$store.dispatch("obtainUsers", items);
-          await this.$store.dispatch("updateComments", items);
-          items.forEach(item => this.items.push(item));
-
-          this.nomore = items.length < this.$app.config.pageSize;
-          this.last = _.last(items).createdAt;
-          this.loadstate = "loaded";
-        } catch (error) {
-          this.loadstate = "error";
+        if (items.length == 0) {
+          this.nomore = true;
+          return 0;
         }
+
+        items.forEach(item => item.userid = item.sender);
+        await this.$store.dispatch("obtainUsers", items);
+        await this.$store.dispatch("updateComments", items);
+        items.forEach(item => this.items.push(item));
+
+        this.nomore = items.length < this.$app.config.pageSize;
+        this.last = _.last(items).createdAt;
+
+        return items.length;
       },
-      async infinite(infiniteScroll) {
-        try {
-          await this.getData(this.userid, this.last);
-
-          this.$nextTick(() => {
-            if (this.nomore) {
-              infiniteScroll.$emit("$InfiniteScroll:complete");
-            } else {
-              infiniteScroll.$emit("$InfiniteScroll:loaded");
-            }
-          });
-        } catch (error) {
-          infiniteScroll.$emit("$InfiniteScroll:complete");
-        }
+      async infinite() {
+        await this.getData(this.userid, this.last);
       }
     },
     computed: {
@@ -171,11 +152,14 @@
       "button-icon": require("ui/button-icon.vue"),
     },
     async mounted() {
-      document.querySelector(".content-wrap").style.height =
-        (document.querySelector("main").clientHeight -
-          document.querySelector(".tabs").clientHeight - 1) + "px";
-      this.loadstate = "loading";
-      await this.getData(this.userid);
+      this.adjustHeight();
+
+      try {
+        let count = await this.getData(this.userid);
+        this.loadstate = count == 0 ? "empty" : "loaded";
+      } catch (error) {
+        this.loadstate = "error";
+      }
     }
   };
 </script>

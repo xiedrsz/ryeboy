@@ -26,50 +26,35 @@
     data() {
       return {
         diaries: [],
-        loadstate: "unload",
+        loadstate: "loading",
         nomore: true,
         last: new Date()
       };
     },
     methods: {
       async getData(userid, last, filter) {
-        try {
-          let res = await this.$app.api.getPersonalDiaries(userid, last, filter);
-          let diaries = res.data;
-          if (diaries.length == 0) {
-            this.loadstate = "empty";
-            return;
-          }
-          await this.$store.dispatch("updateDiaries", diaries);
-          this.nomore = diaries.length < this.$app.config.pageSize;
-
-          if (last) {
-            diaries.forEach(item => {
-              this.diaries.push(item);
-            });
-          } else {
-            this.diaries = diaries;
-          }
-          this.last = _.last(diaries).date;
-          this.loadstate = "loaded";
-        } catch (error) {
-          this.loadstate = "error";
+        let res = await this.$app.api.getPersonalDiaries(userid, last, filter);
+        let diaries = res.data;
+        if (diaries.length == 0) {
+          this.nomore = true;
+          return 0;
         }
-      },
-      async infinite(infiniteScroll) {
-        try {
-          await this.getData(this.userid, this.last, "recommend");
+        await this.$store.dispatch("updateDiaries", diaries);
+        this.nomore = diaries.length < this.$app.config.pageSize;
 
-          this.$nextTick(() => {
-            if (this.nomore) {
-              infiniteScroll.$emit("$InfiniteScroll:complete");
-            } else {
-              infiniteScroll.$emit("$InfiniteScroll:loaded");
-            }
+        if (last) {
+          diaries.forEach(item => {
+            this.diaries.push(item);
           });
-        } catch (error) {
-          infiniteScroll.$emit("$InfiniteScroll:complete");
+        } else {
+          this.diaries = diaries;
         }
+        this.last = _.last(diaries).date;
+
+        return diaries.length;
+      },
+      async infinite() {
+        await this.getData(this.userid, this.last, "recommend");
       }
     },
     computed: {
@@ -83,10 +68,14 @@
       "loadable-content": require("ui/loadable-content.vue"),
     },
     async mounted() {
-      document.querySelector(".content-wrap").style.height = (document.querySelector("main").clientHeight -
-        document.querySelector(".tabs").clientHeight - 1) + "px";
-      this.loadstate = "loading";
-      await this.getData(this.userid, undefined, "recommend");
+      this.$app.adjustScrollableElement(".content-wrap", [".tabs"]);
+
+      try {
+        let count = await this.getData(this.userid, undefined, "recommend");
+        this.loadstate = count == 0 ? "empty" : "loaded";
+      } catch (error) {
+        this.loadstate = "error";
+      }
     }
   };
 </script>

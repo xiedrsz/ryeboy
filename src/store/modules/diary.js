@@ -70,22 +70,26 @@ function addUsers(users) {
   });
 }
 
-function updateComments(comments) {
-  comments.forEach(comment => {
-    let user = state.users[comment.userid];
+function updateUserInfo(items) {
+  items.forEach(item => {
+    let user = state.users[item.userid];
     if (user) {
-      comment.username = textHelper.getUserName(user);
-      comment.userlv = textHelper.getUserLevel(user);
-      comment.verified = user.level == "70";
+      item.username = textHelper.getUserName(user);
+      item.userlv = textHelper.getUserLevel(user);
+      item.verified = user.level == "70";
       if (user.portrait) {
-        comment.avatar = `${config.ossAddress}/portraits/${user._id}_${user.portrait}.jpg`;
+        item.avatar = `${config.ossAddress}/portraits/${user._id}_${user.portrait}.jpg`;
       } else {
-        comment.avatar = require("img/default-avatar.png");
+        item.avatar = require("img/default-avatar.png");
       }
     }
+  });
+}
 
-    // 回复的用户
-    user = state.users[comment.reply];
+function updateComments(comments) {
+  updateUserInfo(comments);
+  comments.forEach(comment => {
+    let user = state.users[comment.reply];
     if (user) {
       comment.replied = "回复" + textHelper.getUserName(user) + ":";
     }
@@ -96,19 +100,8 @@ function updateComments(comments) {
 }
 
 function updateDiaries(diaries) {
+  updateUserInfo(diaries);
   diaries.forEach(diary => {
-    let user = state.users[diary.userid];
-    if (user) {
-      diary.username = textHelper.getUserName(user);
-      diary.userlv = textHelper.getUserLevel(user);
-      diary.verified = user.level == "70";
-      if (user.portrait) {
-        diary.avatar = `${config.ossAddress}/portraits/${user._id}_${user.portrait}.jpg`;
-      } else {
-        diary.avatar = require("img/default-avatar.png");
-      }
-    }
-
     let pictures = [];
     if (diary.pictures) {
       diary.pictures.forEach(item => {
@@ -237,6 +230,10 @@ const mutations = {
 };
 
 const actions = {
+  updateUserInfo(context, items) {
+    updateUserInfo(items);
+  },
+
   updateComments(context, comments) {
     updateComments(comments);
   },
@@ -316,40 +313,30 @@ const actions = {
     commit,
     state,
     rootState
-  }, infiniteScroll) {
+  }) {
     let label = state.activedChannel;
     let channelData = state.channelDatas[label];
     let userid = rootState.user._id;
 
-    try {
-      let filter = channelData.activedFilter;
-      let res = await api.getDiaries(label, filter, _.last(channelData.diaries).createdAt, userid);
-      let diaries = res.data;
-      let users = getUnstoredUsers(diaries);
-      if (users.length > 0) {
-        res = await api.getUsers(users);
-        addUsers(res.data);
-      }
-      updateDiaries(diaries);
-
-      let nomore = diaries.length < config.pageSize;
-
-      commit("diary_setChannelData", {
-        label,
-        assign: {
-          nomore
-        },
-        diaries
-      });
-
-      if (nomore) {
-        infiniteScroll.$emit("$InfiniteScroll:complete");
-      } else {
-        infiniteScroll.$emit("$InfiniteScroll:loaded");
-      }
-    } catch (error) {
-      infiniteScroll.$emit("$InfiniteScroll:complete");
+    let filter = channelData.activedFilter;
+    let res = await api.getDiaries(label, filter, _.last(channelData.diaries).createdAt, userid);
+    let diaries = res.data;
+    let users = getUnstoredUsers(diaries);
+    if (users.length > 0) {
+      res = await api.getUsers(users);
+      addUsers(res.data);
     }
+    updateDiaries(diaries);
+
+    let nomore = diaries.length < config.pageSize;
+
+    commit("diary_setChannelData", {
+      label,
+      assign: {
+        nomore
+      },
+      diaries
+    });
   },
 
   async getDiaries({
@@ -414,7 +401,6 @@ const actions = {
     try {
       let res = await api.getDiaries(label, filter, null, userid);
       let diaries = res.data;
-      console.log(diaries);
       let users = getUnstoredUsers(diaries);
       if (users.length > 0) {
         res = await api.getUsers(users);

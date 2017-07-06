@@ -32,7 +32,7 @@
     data() {
       return {
         diaries: [],
-        loadstate: "unload",
+        loadstate: "loading",
         nomore: true
       };
     },
@@ -88,9 +88,7 @@
       }
     },
     async mounted() {
-      document.querySelector(".content-wrap").style.height = (document.querySelector("main").clientHeight -
-        document.querySelector(".tabs").clientHeight - 1) + "px";
-      this.loadstate = "loading";
+      this.$app.adjustScrollableElement(".content-wrap", [".tabs"]);
       await this.getData(this.userid, undefined, "all");
     }
   };

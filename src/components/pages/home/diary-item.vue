@@ -11,6 +11,7 @@
              :src="require('img/v.png')"
              class="diary-v">
         <span>{{ username }}</span>
+        <span class="diary-userlv">{{ userlv }}</span>
       </div>
       <div class="diary-text"
            v-html="text"></div>
@@ -54,7 +55,8 @@
       commentCount: {
         type: Number,
         default: 0
-      }
+      },
+      userlv: [String, Number]
     }
   };
 </script>

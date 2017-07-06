@@ -59,6 +59,7 @@
               </div>
             </div>
             <div class="diary-likes"
+                 @click="$router.push('/pages/diary-like-list?id=' + diary._id)"
                  v-if="diary.likes && diary.likes.length > 0">
               <i class="material-icons md-16">favorite</i>
               <div v-for="(like, index) in diary.likes"
@@ -250,34 +251,18 @@
         await this.$store.dispatch("obtainUsers", users);
         await this.$store.dispatch("updateComments", comments);
       },
-      async infinite(infiniteScroll) {
-        try {
-          let res = await api.getMoreDiaryComments(this.diary._id, this.last);
-          let comments = [];
-          await this.handleComments(res.data, comments);
-          comments.forEach(comment => {
-            this.comments.push(comment);
-          });
-
-          this.$nextTick(() => {
-            let nomore = comments.length < this.$app.config.pageSize;
-            this.last += comments.length;
-
-            if (nomore) {
-              infiniteScroll.$emit("$InfiniteScroll:complete");
-            } else {
-              infiniteScroll.$emit("$InfiniteScroll:loaded");
-            }
-          });
-        } catch (error) {
-          infiniteScroll.$emit("$InfiniteScroll:complete");
-        }
+      async infinite() {
+        let res = await api.getMoreDiaryComments(this.diary._id, this.last);
+        let comments = [];
+        await this.handleComments(res.data, comments);
+        comments.forEach(comment => {
+          this.comments.push(comment);
+        });
+        this.last += comments.length;
+        this.nomore = comments.length < this.$app.config.pageSize;
       },
       adjustHeight() {
-        document.querySelector("#content").style.height =
-          document.querySelector("main").clientHeight -
-          (document.querySelector(".input-section").clientHeight - 1) +
-          "px";
+        this.$app.adjustScrollableElement("#content", [".input-section"]);
       }
     },
     components: {
