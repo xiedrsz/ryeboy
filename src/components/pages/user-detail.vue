@@ -1,6 +1,9 @@
 <template>
   <div class="page"
-       title="消息">
+       title="麦友日记">
+    <div class="user-info">
+      <user-basic-info :user="user"></user-basic-info>
+    </div>
     <div class="tabs">
       <div v-for="(tab, index) in tabs"
            :key="tab.id"
@@ -25,25 +28,36 @@
         tabs: [
           {
             id: 0,
-            text: "评论",
+            text: "每天日记",
             active: true
           },
           {
             id: 1,
-            text: "点赞",
+            text: "每周日记",
             active: false
           },
           {
             id: 2,
-            text: "通知",
+            text: "精品日记",
             active: false
           }
         ],
         tabIndex: 0,
-        viewType: "comment",
+        viewType: "daily",
+        user: {}
       };
     },
+    watch: {
+      viewType() {
+        this.$nextTick(() => {
+          this.adjustHeight();
+        });
+      }
+    },
     methods: {
+      adjustHeight() {
+        this.$app.adjustScrollableElement(".content-wrap", [".tabs", ".user-info"]);
+      },
       switchView(index) {
         this.tabs[this.tabIndex].active = false;
         this.tabs[index].active = true;
@@ -51,28 +65,34 @@
 
         switch (index) {
           case 1:
-            this.viewType = "like";
+            this.viewType = "weekly";
             break;
 
           case 2:
-            this.viewType = "notice";
+            this.viewType = "recommend";
             break;
 
           default:
-            this.viewType = "comment";
+            this.viewType = "daily";
             break;
         }
       }
     },
     computed: {
       userid() {
-        return this.$store.state.user._id;
+        return this.$route.query.id;
       }
     },
     components: {
-      "comment": require("components/pages/message/message-comment.vue"),
-      "like": require("components/pages/message/message-like.vue"),
-      "notice": require("components/pages/message/message-notice.vue"),
+      "user-basic-info": require("components/pages/user/user-basic-info.vue"),
+      "daily": require("components/pages/personal-diary/personal-diary-daily.vue"),
+      "weekly": require("components/pages/personal-diary/personal-diary-weekly.vue"),
+      "recommend": require("components/pages/personal-diary/personal-diary-recommend.vue"),
+    },
+    async mounted() {
+      this.adjustHeight();
+      let user = await this.$app.getUser(this.userid);
+      this.$set(this.$data, "user", user);
     }
   };
 </script>

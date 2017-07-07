@@ -45,7 +45,12 @@
     },
     computed: {
       userid() {
-        return this.$store.state.user._id;
+        let userid = this.$route.query.userid;
+        if (userid) {
+          return userid;
+        } else {
+          return this.$store.state.user._id;
+        }
       }
     },
     components: {

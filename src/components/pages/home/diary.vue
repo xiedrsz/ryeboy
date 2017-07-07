@@ -42,6 +42,7 @@
                 <diary-item v-for="item in diaries(channel.id)"
                             :key="item._id"
                             :id="item._id"
+                            :userid="item.userid"
                             :like="item.like"
                             :likeCount="item.likeCount"
                             :commentCount="item.commentCount"

@@ -43,7 +43,17 @@
         viewType: "daily",
       };
     },
+    watch: {
+      viewType() {
+        this.$nextTick(() => {
+          this.adjustHeight();
+        });
+      }
+    },
     methods: {
+      adjustHeight() {
+        this.$app.adjustScrollableElement(".content-wrap", [".tabs"]);
+      },
       switchView(index) {
         this.tabs[this.tabIndex].active = false;
         this.tabs[index].active = true;
@@ -64,15 +74,13 @@
         }
       }
     },
-    computed: {
-      userid() {
-        return this.$store.state.user._id;
-      }
-    },
     components: {
       "daily": require("components/pages/personal-diary/personal-diary-daily.vue"),
       "weekly": require("components/pages/personal-diary/personal-diary-weekly.vue"),
       "recommend": require("components/pages/personal-diary/personal-diary-recommend.vue"),
+    },
+    mounted() {
+      this.adjustHeight();
     }
   };
 </script>
@@ -80,20 +88,5 @@
 <style lang="scss"
        scoped>
   @import "~scss/main.scss";
-  .tabs {
-    height: 36px;
-    min-height: 36px;
-    @include flex-row;
-    @include flex-vertical-center;
-    border-bottom: 1px solid $color-divider;
-    background-color: $color-hint-block;
-  }
-
-  .tab-link {
-    margin-left: 24px;
-  }
-
-  .tab-link.active {
-    color: $color-blue;
-  }
+  @import "~scss/tabs.scss";
 </style>

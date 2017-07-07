@@ -4,7 +4,8 @@
     <loadable-content id="content"
                       :nomore="nomore"
                       :loadstate="loadstate"
-                      :infinite="infinite">
+                      :infinite="infinite"
+                      v-keep-scroll-position>
       <div class="content-block">
         <div class="author-section">
           <div class="diary-avatar">

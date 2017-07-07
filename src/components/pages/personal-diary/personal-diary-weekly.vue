@@ -41,6 +41,7 @@
         this.$router.push({
           path: "/pages/personal-diary-weekly-list",
           query: {
+            userid: this.userid,
             week: item.week,
             year: item.year,
             weekCount: item.weekCount
@@ -84,11 +85,15 @@
     },
     computed: {
       userid() {
-        return this.$store.state.user._id;
+        let userid = this.$route.query.id;
+        if (userid) {
+          return userid;
+        } else {
+          return this.$store.state.user._id;
+        }
       }
     },
     async mounted() {
-      this.$app.adjustScrollableElement(".content-wrap", [".tabs"]);
       await this.getData(this.userid, undefined, "all");
     }
   };

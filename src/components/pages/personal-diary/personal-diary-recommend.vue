@@ -59,7 +59,12 @@
     },
     computed: {
       userid() {
-        return this.$store.state.user._id;
+        let userid = this.$route.query.id;
+        if (userid) {
+          return userid;
+        } else {
+          return this.$store.state.user._id;
+        }
       }
     },
     components: {
@@ -68,8 +73,6 @@
       "loadable-content": require("ui/loadable-content.vue"),
     },
     async mounted() {
-      this.$app.adjustScrollableElement(".content-wrap", [".tabs"]);
-
       try {
         let count = await this.getData(this.userid, undefined, "recommend");
         this.loadstate = count == 0 ? "empty" : "loaded";

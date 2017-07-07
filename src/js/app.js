@@ -47,11 +47,20 @@ class app {
     store.commit("diary_setChannelChanged");
   }
 
+  async getUser(userid) {
+    let users = [{
+      userid
+    }];
+    await store.dispatch("obtainUsers", users);
+    await store.dispatch("updateUserInfo", users);
+    return users[0];
+  }
+
   adjustScrollableElement(selector, containerList) {
     let height = document.querySelector("main").clientHeight;
     if (containerList) {
       containerList.forEach(item => {
-        height -= document.querySelector(item).clientHeight;
+        height -= document.querySelector(item).offsetHeight;
       });
     }
     document.querySelector(selector).style.height = height + "px";
