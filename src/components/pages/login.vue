@@ -68,12 +68,8 @@
             if (data.error) {
               this.errorText = data.error;
             } else {
-              localStorage.authenticated = true;
-              localStorage.jwt = data.token;
-              this.$app.api.setAuthorization();
-              this.$store.commit("user_setAuth", data.user);
+              await this.$app.afterLogin(data);
               let redirect = this.$route.query.redirect;
-              await this.$store.dispatch("getSubscribedChannels");
               this.$router.replace(redirect ? redirect : "/");
             }
           } catch (err) {

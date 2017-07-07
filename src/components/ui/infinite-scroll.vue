@@ -1,11 +1,16 @@
 <template>
-  <div class="infinite-loading-container">
-    <div v-show="loadstate == 'loading'">
+  <div>
+    <div class="infinite-loading-container"
+         v-show="loadstate == 'loading'">
       <spinner></spinner>
     </div>
     <div class="infinite-status-prompt"
          v-show="loadstate == 'loaded'">
-      <slot name="no-more"></slot>
+      <slot name="nomore"></slot>
+    </div>
+    <div class="infinite-status-prompt"
+         v-show="loadstate == 'error'">
+      <slot name="error"></slot>
     </div>
   </div>
 </template>
@@ -83,6 +88,10 @@
           this.loadstate = "loaded";
           this.scrollParent.removeEventListener("scroll", this.scrollHandler);
         });
+        this.$on("$InfiniteScroll:error", () => {
+          this.loadstate = "error";
+          this.scrollParent.removeEventListener("scroll", this.scrollHandler);
+        });
         this.$on("$InfiniteScroll:reset", () => {
           this.loadstate = "unload";
           this.scrollParent.addEventListener("scroll", this.scrollHandler);
@@ -130,7 +139,7 @@
   .infinite-status-prompt {
     @include flex-row;
     @include flex-center;
-    height: 48px;
+    margin-bottom: 32px;
     color: $color-hint-text;
   }
 </style>

@@ -5,6 +5,20 @@ axios.defaults.baseURL = config.apiAddress;
 axios.defaults.headers["Accept"] = "application/json";
 
 class api {
+  static getLikes(id, last) {
+    return axios.get(`/diary/likes/${id}`, {
+      params: {
+        last
+      }
+    });
+  }
+
+  static setLike(id, userid) {
+    return axios.post(`/diary/like/${id}`, {
+      userid
+    });
+  }
+
   static getNotices(userid, type, lastFetchAt, last) {
     return axios.get("/notices", {
       params: {
@@ -42,8 +56,12 @@ class api {
     return axios.get(`/diary/${id}/comments`);
   }
 
-  static getDiary(id) {
-    return axios.get(`/diary/${id}`);
+  static getDiary(id, userid) {
+    return axios.get(`/diary/${id}`, {
+      params: {
+        userid,
+      }
+    });
   }
 
   static getLesson(userid, date) {
@@ -105,12 +123,13 @@ class api {
     // return axios.post("/logout");
   }
 
-  static getDiaries(label, filter, last) {
+  static getDiaries(label, filter, last, userid) {
     return axios.get("/diaries", {
       params: {
         label,
         filter,
-        last
+        last,
+        userid
       }
     });
   }

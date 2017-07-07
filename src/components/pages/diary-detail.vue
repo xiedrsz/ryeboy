@@ -51,11 +51,22 @@
               <div class="mdl-layout-spacer"></div>
               <div class="diary-counts">
                 <i class="material-icons md-16"
-                   @click="setLike">favorite_border</i>
+                   @click="setLike"
+                   :class="{ 'diary-like': diary.like }">{{ diary.like ? "favorite" : "favorite_border" }}</i>
                 <span style="margin-right: 24px">{{ diary.likeCount }}</span>
                 <i class="material-icons md-16">comment</i>
                 <span>{{ diary.commentCount }}</span>
               </div>
+            </div>
+            <div class="diary-likes"
+                 @click="$router.push('/pages/diary-like-list?id=' + diary._id)"
+                 v-if="diary.likes && diary.likes.length > 0">
+              <i class="material-icons md-16">favorite</i>
+              <div v-for="(like, index) in diary.likes"
+                   :key="index">
+                {{ like.username }}{{ index == diary.likes.length - 1 ? "" : "、" }}
+              </div>
+              <div v-if="diary.likeCount > 3">等{{ diary.likeCount }}人赞过</div>
             </div>
           </div>
         </div>
@@ -121,6 +132,9 @@
       };
     },
     methods: {
+      getUsername() {
+        return this.$app.textHelper.getUserName(this.$app.user);
+      },
       openPicture(index) {
         let list = [];
         this.diary.pictures.forEach(item => {
@@ -133,7 +147,34 @@
         });
         this.$root.$refs.gallery.open(index, list);
       },
-      setLike() {},
+      async setLike() {
+        let user = this.$app.user;
+        let res = await this.$app.api.setLike(this.diary._id, user._id);
+
+        this.diary.like = res.data.like;
+
+        if (res.data.like) {
+          this.diary.likes.unshift({
+            userid: user._id,
+            username: this.getUsername(),
+            createdAt: res.data.createdAt
+          });
+          this.diary.likeCount++;
+        } else {
+          let index = this.diary.likes.findIndex(item => {
+            return item.userid == user._id;
+          });
+          if (index >= 0) {
+            this.diary.likes.splice(index, 1);
+          }
+          this.diary.likeCount--;
+        }
+
+        this.$store.commit("diary_setLike", {
+          id: this.diary._id,
+          like: res.data.like
+        });
+      },
       copyComment() {},
       replyComment() {
         this.reply = this.selectedComment.userid;
@@ -197,11 +238,9 @@
 
         data.forEach(item => {
           comments.push(item);
-          if (item.userid) {
-            users.push({
-              userid: item.userid
-            });
-          }
+          users.push({
+            userid: item.userid
+          });
           if (item.reply) {
             users.push({
               userid: item.reply
@@ -212,34 +251,18 @@
         await this.$store.dispatch("obtainUsers", users);
         await this.$store.dispatch("updateComments", comments);
       },
-      async infinite(infiniteScroll) {
-        try {
-          let res = await api.getMoreDiaryComments(this.diary._id, this.last);
-          let comments = [];
-          await this.handleComments(res.data, comments);
-          comments.forEach(comment => {
-            this.comments.push(comment);
-          });
-
-          this.$nextTick(() => {
-            let nomore = comments.length < this.$app.config.pageSize;
-            this.last += comments.length;
-
-            if (nomore) {
-              infiniteScroll.$emit("$InfiniteScroll:complete");
-            } else {
-              infiniteScroll.$emit("$InfiniteScroll:loaded");
-            }
-          });
-        } catch (error) {
-          infiniteScroll.$emit("$InfiniteScroll:complete");
-        }
+      async infinite() {
+        let res = await api.getMoreDiaryComments(this.diary._id, this.last);
+        let comments = [];
+        await this.handleComments(res.data, comments);
+        comments.forEach(comment => {
+          this.comments.push(comment);
+        });
+        this.last += comments.length;
+        this.nomore = comments.length < this.$app.config.pageSize;
       },
       adjustHeight() {
-        document.querySelector("#content").style.height =
-          document.querySelector("main").clientHeight -
-          (document.querySelector(".input-section").clientHeight - 1) +
-          "px";
+        this.$app.adjustScrollableElement("#content", [".input-section"]);
       }
     },
     components: {
@@ -251,10 +274,12 @@
       authenticated() {
         return this.$store.state.user.authenticated;
       },
+      userid() {
+        return this.authenticated ? this.$store.state.user._id : null;
+      },
       users() {
         return this.$store.getters.getDiaryUsers;
       },
-
     },
     beforeDestroy() {
       window.removeEventListener("resize", this.adjustHeight);
@@ -268,7 +293,7 @@
       try {
         let users = [];
         let comments = [];
-        let res = await api.getDiary(diaryId);
+        let res = await api.getDiary(diaryId, this.userid);
         let diary = res.data;
 
         this.cards = await this.$store.dispatch("lesson_getCards", diary.checkedCards);
@@ -277,9 +302,37 @@
           userid: diary.userid
         });
 
+        diary.likes.forEach(item => {
+          users.push({
+            userid: item.userid
+          });
+        });
+
+        if (diary.like) {
+          let index = diary.likes.findIndex(item => {
+            return item.userid == this.userid;
+          });
+          if (index == -1) {
+            users.push({
+              userid: this.userid
+            });
+          } else {
+            diary.likes.splice(index, 1);
+          }
+          diary.likes.unshift({
+            userid: this.userid
+          });
+        }
+
         res = await api.getDiaryComments(diaryId);
         await this.handleComments(res.data, comments, users);
         await this.$store.dispatch("updateDiaries", [diary]);
+
+        diary.likes.forEach(item => {
+          let user = this.users[item.userid];
+          item.username = this.$app.textHelper.getUserName(user);
+        });
+
         this.$set(this.$data, "diary", diary);
         this.$set(this.$data, "comments", comments);
         this.loadstate = "loaded";
@@ -439,5 +492,21 @@
     @include flex-row;
     @include flex-wrap;
     margin: 12px 0 8px 0;
+  }
+
+  .diary-likes {
+    @include flex-row;
+    @include flex-vertical-center;
+    @include flex-wrap;
+    font-size: 14px;
+    color: $color-secondary-text;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid $color-divider;
+  }
+
+  .diary-likes i {
+    color: $color-red;
+    margin-right: 4px;
   }
 </style>

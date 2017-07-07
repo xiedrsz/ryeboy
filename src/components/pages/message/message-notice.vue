@@ -32,43 +32,28 @@
     },
     methods: {
       async getData(userid, last) {
-        try {
-          let lastFetchCommentMessageAt = localStorage[`${this.userid}_lastFetchCommentMessageAt`] || new Date();
-          let res = await this.$app.api.getNotices(userid, "system", lastFetchCommentMessageAt, last);
-          let items = res.data;
+        let lastFetchCommentMessageAt = localStorage[`${this.userid}_lastFetchCommentMessageAt`] || new Date();
+        let res = await this.$app.api.getNotices(userid, "system", lastFetchCommentMessageAt, last);
+        let items = res.data;
 
-          if (items.length == 0) {
-            this.loadstate = "empty";
-            return;
-          }
-
-          items.forEach(item => {
-            item.time = this.$app.datetime.formatDiaryCreated(item.createdAt);
-            item.escapedText = this.$app.textHelper.escape(item.content);
-            this.items.push(item);
-          });
-
-          this.nomore = items.length < this.$app.config.pageSize;
-          this.last = _.last(items).createdAt;
-          this.loadstate = "loaded";
-        } catch (error) {
-          this.loadstate = "error";
+        if (items.length == 0) {
+          this.nomore = true;
+          return 0;
         }
+
+        items.forEach(item => {
+          item.time = this.$app.datetime.formatDiaryCreated(item.createdAt);
+          item.escapedText = this.$app.textHelper.escape(item.content);
+          this.items.push(item);
+        });
+
+        this.nomore = items.length < this.$app.config.pageSize;
+        this.last = _.last(items).createdAt;
+
+        return items.length;
       },
-      async infinite(infiniteScroll) {
-        try {
-          await this.getData(this.userid, this.last);
-
-          this.$nextTick(() => {
-            if (this.nomore) {
-              infiniteScroll.$emit("$InfiniteScroll:complete");
-            } else {
-              infiniteScroll.$emit("$InfiniteScroll:loaded");
-            }
-          });
-        } catch (error) {
-          infiniteScroll.$emit("$InfiniteScroll:complete");
-        }
+      async infinite() {
+        await this.getData(this.userid, this.last);
       }
     },
     components: {
@@ -76,11 +61,14 @@
       "loadable-content": require("ui/loadable-content.vue"),
     },
     async mounted() {
-      document.querySelector(".content-wrap").style.height =
-        (document.querySelector("main").clientHeight -
-          document.querySelector(".tabs").clientHeight - 1) + "px";
-      this.loadstate = "loading";
-      await this.getData(this.userid);
+      this.$app.adjustScrollableElement(".content-wrap", [".tabs"]);
+
+      try {
+        let count = await this.getData(this.userid);
+        this.loadstate = count == 0 ? "empty" : "loaded";
+      } catch (error) {
+        this.loadstate = "error";
+      }
     }
   };
 </script>

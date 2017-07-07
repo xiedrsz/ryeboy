@@ -23,7 +23,8 @@
                      :key="channel.id">
           <div class="slide-content pulltorefresh"
                v-keep-scroll-position>
-            <div v-if="loadstate(channel.id) !='unload'" class="channel-filter-container">
+            <div v-if="loadstate(channel.id) !='unload'"
+                 class="channel-filter-container">
               <div v-for="item in filters(channel.id)"
                    :key="item.id"
                    :id="item.id"
@@ -41,6 +42,7 @@
                 <diary-item v-for="item in diaries(channel.id)"
                             :key="item._id"
                             :id="item._id"
+                            :like="item.like"
                             :likeCount="item.likeCount"
                             :commentCount="item.commentCount"
                             :avatar="item.avatar"
@@ -48,6 +50,7 @@
                             :pictures="item.pictures"
                             :verified="item.verified"
                             :text="item.escapedText"
+                            :userlv="item.userlv"
                             :time="item.time"></diary-item>
               </ul>
             </loadable-content>
@@ -143,8 +146,8 @@
         this.$store.commit("diary_setReload");
         this.getDiaries();
       },
-      infinite(infiniteScroll) {
-        this.$store.dispatch("getMoreDiaries", infiniteScroll);
+      async infinite() {
+        await this.$store.dispatch("getMoreDiaries");
       }
     },
     components: {

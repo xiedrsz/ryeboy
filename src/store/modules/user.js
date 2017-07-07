@@ -30,6 +30,7 @@ const mutations = {
     localStorage.user = JSON.stringify(user);
   },
   user_deleteAuth(state) {
+    state._id = null;
     state.authenticated = false;
   }
 };
