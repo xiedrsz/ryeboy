@@ -128,8 +128,8 @@
         }
 
         items.forEach(item => item.userid = item.sender);
-        await this.$store.dispatch("obtainUsers", items);
-        await this.$store.dispatch("updateComments", items);
+        await this.$store.dispatch("diary_ensureUsers", items);
+        await this.$store.dispatch("diary_updateComments", items);
         items.forEach(item => this.items.push(item));
 
         this.nomore = items.length < this.$app.config.pageSize;

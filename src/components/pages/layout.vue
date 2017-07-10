@@ -21,9 +21,7 @@
       </div>
     </header>
     <main class="mdl-layout__content">
-      <keep-alive :include="cached">
-        <router-view v-keep-scroll-position></router-view>
-      </keep-alive>
+      <router-view></router-view>
     </main>
   </div>
 </template>
@@ -55,9 +53,6 @@
       },
       toolbars() {
         return this.$store.state.page.toolbars;
-      },
-      cached() {
-        return this.$store.state.page.cached + "";
       }
     },
     beforeMount() {

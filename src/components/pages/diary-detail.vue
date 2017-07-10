@@ -78,6 +78,7 @@
                :key="comment.createdAt">
             <div class="comment-avatar">
               <img :data-src="comment.avatar"
+                   @click.stop="$router.push('/pages/user-detail?id=' + comment.userid)"
                    class="avatar lazyload">
             </div>
             <div class="comment-main">
@@ -213,8 +214,8 @@
           try {
             let res = await api.addDiaryComment(this.diary._id, comment);
             comment.createdAt = res.data.createdAt;
-            await this.$store.dispatch("obtainUsers", comments);
-            await this.$store.dispatch("updateComments", comments);
+            await this.$store.dispatch("diary_ensureUsers", comments);
+            await this.$store.dispatch("diary_updateComments", comments);
             this.comments.unshift(comments[0]);
 
             this.comment = "";
@@ -249,8 +250,8 @@
           }
         });
         users = _.uniqBy(users, "userid");
-        await this.$store.dispatch("obtainUsers", users);
-        await this.$store.dispatch("updateComments", comments);
+        await this.$store.dispatch("diary_ensureUsers", users);
+        await this.$store.dispatch("diary_updateComments", comments);
       },
       async infinite() {
         let res = await api.getMoreDiaryComments(this.diary._id, this.last);
@@ -327,7 +328,7 @@
 
         res = await api.getDiaryComments(diaryId);
         await this.handleComments(res.data, comments, users);
-        await this.$store.dispatch("updateDiaries", [diary]);
+        await this.$store.dispatch("diary_updateData", [diary]);
 
         diary.likes.forEach(item => {
           let user = this.users[item.userid];

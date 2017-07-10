@@ -122,7 +122,7 @@
         this.authRoute("/pages/channel-manage");
       },
       getDiaries() {
-        this.$store.dispatch("getDiaries");
+        this.$store.dispatch("diary_getData");
       },
       switchChannel(id) {
         let index = _.findIndex(this.channels, ["id", id]);
@@ -148,7 +148,7 @@
         this.getDiaries();
       },
       async infinite() {
-        await this.$store.dispatch("getMoreDiaries");
+        await this.$store.dispatch("diary_getMoreData");
       }
     },
     components: {

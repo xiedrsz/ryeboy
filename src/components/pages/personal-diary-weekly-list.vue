@@ -38,7 +38,7 @@
           this.loadstate = "empty";
           return;
         }
-        await this.$store.dispatch("updateDiaries", diaries);
+        await this.$store.dispatch("diary_updateData", diaries);
         this.diaries = diaries;
         this.loadstate = "loaded";
       },

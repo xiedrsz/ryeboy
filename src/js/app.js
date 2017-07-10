@@ -22,7 +22,6 @@ class app {
   }
 
   back() {
-    store.commit("page_removeCache");
     history.go(-1);
   }
 
@@ -35,7 +34,7 @@ class app {
 
     store.commit("user_setAuth", data.user);
     store.commit("diary_setChannelChanged");
-    await store.dispatch("getSubscribedChannels");
+    await store.dispatch("diary_getSubscribedChannels");
   }
 
   //注销之后的一些处理
@@ -51,8 +50,8 @@ class app {
     let users = [{
       userid
     }];
-    await store.dispatch("obtainUsers", users);
-    await store.dispatch("updateUserInfo", users);
+    await store.dispatch("diary_ensureUsers", users);
+    await store.dispatch("diary_updateUserInfo", users);
     return users[0];
   }
 
@@ -98,7 +97,7 @@ class app {
     if (localStorage.authenticated) {
       api.setAuthorization();
       store.commit("user_assignAuth", JSON.parse(localStorage.user));
-      store.dispatch("initSubscribedChannels");
+      store.dispatch("diary_initSubscribedChannels");
       store.dispatch("lesson_loadSettings");
     } else {
       store.commit("diary_setDefaultChannels");

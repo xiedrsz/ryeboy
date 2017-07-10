@@ -41,10 +41,13 @@ const state = {
   // 当前选择的频道
   activedChannel: null,
 
+  // 日记数据映射表
+  contentMap: {},
+
   // 每个频道的数据，包括状态、日记列表等
   channelDatas: {},
 
-  // 日记用户表
+  // 日记用户映射表
   users: {},
 
   // 日记频道修改标志
@@ -52,7 +55,7 @@ const state = {
 };
 
 
-function getUnstoredUsers(data) {
+function getUnmappedUsers(data) {
   let result = [];
   data.forEach(item => {
     if (item.userid) {
@@ -99,7 +102,7 @@ function updateComments(comments) {
   });
 }
 
-function updateDiaries(diaries) {
+function updateData(diaries) {
   updateUserInfo(diaries);
   diaries.forEach(diary => {
     let pictures = [];
@@ -230,27 +233,27 @@ const mutations = {
 };
 
 const actions = {
-  updateUserInfo(context, items) {
+  diary_updateUserInfo(context, items) {
     updateUserInfo(items);
   },
 
-  updateComments(context, comments) {
+  diary_updateComments(context, comments) {
     updateComments(comments);
   },
 
-  updateDiaries(context, diaries) {
-    updateDiaries(diaries);
+  diary_updateData(context, diaries) {
+    updateData(diaries);
   },
 
-  async obtainUsers(context, data) {
-    let users = getUnstoredUsers(data);
+  async diary_ensureUsers(context, data) {
+    let users = getUnmappedUsers(data);
     if (users.length > 0) {
       let res = await api.getUsers(users);
       addUsers(res.data);
     }
   },
 
-  async setSubscribedChannels({
+  async diary_setSubscribedChannels({
     commit,
     rootState
   }, channels) {
@@ -269,7 +272,7 @@ const actions = {
     }
   },
 
-  async initSubscribedChannels({
+  async diary_initSubscribedChannels({
     commit,
     rootState
   }) {
@@ -285,7 +288,7 @@ const actions = {
     }
   },
 
-  async getSubscribedChannels({
+  async diary_getSubscribedChannels({
     commit,
     state,
     rootState
@@ -309,7 +312,7 @@ const actions = {
     }
   },
 
-  async getMoreDiaries({
+  async diary_getMoreData({
     commit,
     state,
     rootState
@@ -321,12 +324,12 @@ const actions = {
     let filter = channelData.activedFilter;
     let res = await api.getDiaries(label, filter, _.last(channelData.diaries).createdAt, userid);
     let diaries = res.data;
-    let users = getUnstoredUsers(diaries);
+    let users = getUnmappedUsers(diaries);
     if (users.length > 0) {
       res = await api.getUsers(users);
       addUsers(res.data);
     }
-    updateDiaries(diaries);
+    updateData(diaries);
 
     let nomore = diaries.length < config.pageSize;
 
@@ -339,7 +342,7 @@ const actions = {
     });
   },
 
-  async getDiaries({
+  async diary_getData({
     commit,
     state,
     rootState
@@ -401,12 +404,12 @@ const actions = {
     try {
       let res = await api.getDiaries(label, filter, null, userid);
       let diaries = res.data;
-      let users = getUnstoredUsers(diaries);
+      let users = getUnmappedUsers(diaries);
       if (users.length > 0) {
         res = await api.getUsers(users);
         addUsers(res.data);
       }
-      updateDiaries(diaries);
+      updateData(diaries);
 
       commit("diary_setChannelData", {
         label,

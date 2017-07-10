@@ -39,7 +39,7 @@
           this.nomore = true;
           return 0;
         }
-        await this.$store.dispatch("updateDiaries", diaries);
+        await this.$store.dispatch("diary_updateData", diaries);
         this.nomore = diaries.length < this.$app.config.pageSize;
 
         if (last) {

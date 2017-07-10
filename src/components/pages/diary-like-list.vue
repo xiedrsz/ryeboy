@@ -52,8 +52,8 @@
           return 0;
         }
 
-        await this.$store.dispatch("obtainUsers", items);
-        await this.$store.dispatch("updateUserInfo", items);
+        await this.$store.dispatch("diary_ensureUsers", items);
+        await this.$store.dispatch("diary_updateUserInfo", items);
         this.last += items.length;
         this.nomore = items.length < this.$app.config.pageSize;
 
