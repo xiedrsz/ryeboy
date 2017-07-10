@@ -78,6 +78,13 @@
         "infinite-scroll": require("ui/infinite-scroll.vue")
       },
       activated() {
+        this.$store.commit("save_loading", {
+          no: false,
+          err: false,
+          none: false,
+          icon: false
+        });
+        
         !this.dynamic[0] && this.getDynamic();
       },
       mounted() {

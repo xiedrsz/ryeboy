@@ -2,8 +2,7 @@ import Vue from 'vue'
 
 const datetime = require("js/utils/datetime.js");
 /**
- * @Function format 格式化日期
- * @Param formatStr String 格式 [YYYY,MM,DD,hh,mm,ss]
+ * @Function time 格式化日期
  */
 Vue.filter('time', (value) => {
   if (value == 'undefined' || value === "") {
@@ -11,8 +10,22 @@ Vue.filter('time', (value) => {
   }
   let result = datetime.formatDiaryCreated(value)
   return result;
-})
+});
 
+/**
+ * @Function ago 多久之前
+ */
+Vue.filter('ago', (value) => {
+  if (value == 'undefined' || value === "") {
+    return ""
+  }
+  let result = datetime.createdFromNow(value)
+  return result;
+});
+
+/**
+ * @Function msgNum 消息数量
+ */
 Vue.filter('msgNum', (value) => {
   if (value == 'undefined' || value === "") {
     return ""
@@ -22,4 +35,4 @@ Vue.filter('msgNum', (value) => {
     return '...'
 
   return value
-})
+});

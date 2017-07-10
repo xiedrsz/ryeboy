@@ -74,8 +74,8 @@ const mutations = {
    * @Param obj [eg:{cons: 50, fans: 50}]
    */
   concern_setOverview(state, obj) {
-      state.overview[1].name = "关注" + obj.cons;
-      state.overview[2].name = "粉丝" + obj.fans;
+      state.overview[1].name = "关注" + obj.followeeCount;
+      state.overview[2].name = "粉丝" + obj.followerCount;
     },
     /**
      * @Description 添加 动态
@@ -94,6 +94,14 @@ const mutations = {
       /*list.forEach((item) => {
         state.concern.push(item)
       });*/
+    },
+    /**
+     * @Function 清除暂留关注人
+     */
+    concern_filterConcern(state, list) {
+      state.concern = _.filter(state.concern, (item) => {
+        return item.note === "取消";
+      });
     },
     /**
      * @Function 添加关注人
@@ -247,6 +255,11 @@ const actions = {
         });
       });
 
+      _.map(list, (item) => {
+        item.note = "取消";
+        return item;
+      });
+
       commit("concern_addConcern", list);
 
       if (!state.concern[0]) {
@@ -300,27 +313,37 @@ const actions = {
     }) {
       let res = await api.getNewConcern(),
         list = res.data;
+
+      _.map(list, (item) => {
+        item.note = "关注";
+        return item;
+      });
+
       commit("concern_initNewConcern", list);
     },
 
     // 取消关注, 基本完成
     async cancelConcern({
+      dispatch,
       commit
     }, option) {
       // 关注人的ID
       let userId = option.userId;
       await api.cancelConcern(userId);
       commit('concern_cancel', option);
+      dispatch("getOverview");
     },
 
     // 添加关注, 基本完成
     async addConcern({
+      dispatch,
       commit
     }, option) {
       // 关注人的ID
       let userId = option.userId;
       await api.concern(userId);
       commit('concern_add', option);
+      dispatch("getOverview");
     }
 };
 

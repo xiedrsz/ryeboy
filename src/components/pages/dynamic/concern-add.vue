@@ -6,7 +6,7 @@
 
           <list>
             <list-item v-for="(item, index) in newconcern" :text="item.username" lIcon="/img/default-avatar.png">
-              <span slot="note" class="mdl-list__item-note" @click="cancelAdd(index, item.note, item._id)">{{item.note}}</span>
+              <span slot="note" class="mdl-list__item-note" @click="cancelAdd(index, item.note, item.id)">{{item.note}}</span>
             </list-item>
           </list>
 

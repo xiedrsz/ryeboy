@@ -4,13 +4,19 @@
       <swipe-slide>
         <div class="slide-content">
           <list>
-            <list-item v-for="item in fans" :text="item.username" lIcon="/img/default-avatar.png" />
+            <div v-for="item in fans" class="member-item">
+              <user-item :id="item.id" class="flex">
+                <template scope="props">
+                  <list-item :text="props.user.username" lIcon="/img/default-avatar.png" />
+                </template>
+              </user-item>
+            </div>
           </list>
           <unusual-loading :option.syn="loading" @dateReloader="getFans"></unusual-loading>
 
-          <infinite-scroll v-if="false" :onInfinite="infinite">
+          <!--<infinite-scroll v-if="false" :onInfinite="infinite">
             <div slot="no-more">没有更多内容了</div>
-          </infinite-scroll>
+          </infinite-scroll>-->
         </div>
       </swipe-slide>
     </swipe>
@@ -45,6 +51,13 @@
           }
       },
       activated() {
+        this.$store.commit("save_loading", {
+          no: false,
+          err: false,
+          none: false,
+          icon: false
+        });
+
         !this.fans[0] && this.getFans();
       },
       mounted() {
@@ -61,7 +74,8 @@
         "dynamic-item": require("components/pages/dynamic/concern/dynamic-item.vue"),
         "infinite-scroll": require("ui/infinite-scroll.vue"),
         "list": require("ui/list.vue"),
-        "list-item": require("ui/list-item.vue")
+        "list-item": require("ui/list-item.vue"),
+        "user-item": require("ui/user-item.vue")
       },
       beforeRouteLeave(to, from, next) {
         //保存滚动的位置

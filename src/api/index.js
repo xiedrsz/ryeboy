@@ -69,7 +69,7 @@ class api {
 
   // 获取 关注、粉丝 数目, T
   static getFansNum() {
-    return axios.get("/getFansNum");
+    return axios.get("/relation-status");
   }
 
   //动态日记接口, T
@@ -89,7 +89,7 @@ class api {
 
   // 获取新关注人/换一批, T
   static getNewConcern() {
-    return axios.get("/getNewConcern")
+    return axios.get("/recommended-users")
   }
 
   // 关注, T
@@ -114,7 +114,7 @@ class api {
 
   // 获取订阅列表
   static getSubscribles() {
-    return axios.get("/getSubscribles")
+    return axios.get("/labels")
   }
 
   // 获取订阅频道内容

@@ -1,4 +1,7 @@
 const moment = require("moment");
+
+moment.locale('zh-cn');
+
 class datetime {
   formatDiaryCreated(createdAt) {
     let current = moment(createdAt);
@@ -44,6 +47,11 @@ class datetime {
       }
     }
     return current.format(format);
+  }
+
+  createdFromNow(createdAt) {
+    let current = moment(createdAt);
+    return current.fromNow();
   }
 }
 

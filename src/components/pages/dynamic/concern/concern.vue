@@ -3,11 +3,16 @@
     <swipe ref="swipe">
       <swipe-slide>
         <div class="slide-content">
-
           <list>
-            <list-item v-for="(item, index) in concern" :text="item.username" lIcon="/img/default-avatar.png">
-              <span slot="note" @click="cancelAdd(index, item.note, item._id)" class="mdl-list__item-note">{{item.note}}</span>
-            </list-item>
+            <div v-for="(item, index) in concern" class="member-item">
+              <user-item :id="item.id" class="flex">
+                <template scope="props">
+                  <list-item :text="props.user.username" lIcon="/img/default-avatar.png">
+                    <span slot="note" @click="cancelAdd(index, item.note, item.id)" class="mdl-list__item-note">{{item.note}}</span>
+                  </list-item>
+                </template>
+              </user-item>
+            </div>
           </list>
 
           <unusual-loading :option.syn="loading" @dateReloader="getConcern"></unusual-loading>
@@ -60,7 +65,17 @@
           }
       },
       activated() {
+        this.$store.commit("save_loading", {
+          no: false,
+          err: false,
+          none: false,
+          icon: false
+        });
+
         !this.concern[0] && this.getConcern();
+      },
+      deactivated() {
+        this.$store.commit("concern_filterConcern");
       },
       mounted() {
         // 调整动态列表高度
@@ -75,7 +90,8 @@
         "dynamic-item": require("components/pages/dynamic/concern/dynamic-item.vue"),
         "infinite-scroll": require("ui/infinite-scroll.vue"),
         "list": require("ui/list.vue"),
-        "list-item": require("ui/list-item.vue")
+        "list-item": require("ui/list-item.vue"),
+        "user-item": require("ui/user-item.vue")
       },
       beforeRouteLeave(to, from, next) {
         //保存滚动的位置

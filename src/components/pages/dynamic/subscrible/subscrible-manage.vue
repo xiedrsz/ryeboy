@@ -13,20 +13,22 @@
         <swipe-slide v-for="channel in channels" :id="channel.id">
           <div class="slide-content">
             <ul class="manage-list">
-		        <li class="manage-item">
-		          <img src="/img/default-avatar.png" class="lazyload" width="48" height="48" />
-		          <div class="manage-info">
-		            <div class="manage-info-top">
-		              <span class="manage-name">症状</span>
-		            </div>
-		            <div class="manage-info-bottom">
-		              <span class="group-fans">5万人关注</span>
-		              <span class="group-diaries">10万日记</span>
-		            </div>
-		          </div>
-		          <span class="manage-follow" @click="followIt">订阅</span>
-		        </li>
-		      </ul>
+
+              <li class="manage-item" v-for="(item, index) in labels[channel.id]">
+                <img src="/img/default-avatar.png" class="lazyload" width="48" height="48" />
+                <div class="manage-info">
+                  <div class="manage-info-top">
+                    <span class="manage-name">症状</span>
+                  </div>
+                  <div class="manage-info-bottom">
+                    <span class="group-fans">5万人关注</span>
+                    <span class="group-diaries">10万日记</span>
+                  </div>
+                </div>
+                <span class="manage-follow" @click="followIt">订阅</span>
+              </li>
+
+            </ul>
           </div>
         </swipe-slide>
       </swipe>
@@ -50,18 +52,18 @@
         "infinite-scroll": require("ui/infinite-scroll.vue"),
       },
       created() {
-        this.getDiary();
+//        this.$store.dispatch("getSubscribles");
       },
       computed: {
         channels() {
             return this.$store.state.subscrible.channels;
           },
-          diaries() {            
-            return this.$store.getters.getGroupNews;
+          labels() {
+            return this.$store.getters.getLabels;
           }
       },
       mounted() {
-        
+
       },
       methods: {
         // 侧滑
@@ -74,13 +76,9 @@
             let index = _.findIndex(this.channels, ["id", id]);
             this.$refs.swipe.slideTo(index);
           },
-          // 获取日记
-          getDiary() {
-            this.$store.dispatch("getGroupNews", "123");
-          },
           //订阅日记
-          followIt(){
-          	console.log('订阅')
+          followIt() {
+            console.log('订阅')
           }
       }
   };
@@ -174,7 +172,8 @@
   .mdl-list li {
     margin-bottom: 32px;
   }
-.manage-item {
+  
+  .manage-item {
     @include flex-row;
     @include flex-vertical-center;
     padding: 5px 15px;

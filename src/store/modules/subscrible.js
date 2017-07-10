@@ -8,6 +8,7 @@ const channels = [{
   name: "",
   list: []
 }];
+
 // 默认小组列表分类
 let spallationChannels = [
   {
@@ -33,23 +34,24 @@ let spallationChannels = [
 ]
 
 let manageChannels = [
-    {
-      id: "support",
-      name: "推举"      
+  {
+    id: "support",
+    name: "推荐"
     },
-    {
-      id: "bodyState",
-      name: "身体状态"      
+  {
+    id: "bodyState",
+    name: "身体状态"
     },
-    {
-      id: "mentalState",
-      name: "心理状态"      
+  {
+    id: "mentalState",
+    name: "心理状态"
     },
-    {
-      id: "commonState",
-      name: "常见状态"      
+  {
+    id: "commonState",
+    name: "常见状态"
     }
 ]
+
 const state = {
   // 订阅列表
   subscribles: spallationChannels,
@@ -57,11 +59,37 @@ const state = {
   // 频道内容，结构可能还要复杂（比如分级）
   subChannels: [],
 
-  // 频道管理
-  channels: manageChannels
+  // 频道分类
+  channels: manageChannels,
+
+  // 频道列表
+  labels: [{}, {}]
 };
 
-const getters = {};
+const getters = {
+  /**
+   * @Description 获取频道
+   * @Param label String 标签，比如: [推荐、...], 暂未分类
+   */
+  getLabels(state) {
+    let result = {},
+      label = "",
+      labels = state.labels,
+      channels = state.channels;
+
+    // 暂时屏蔽分类
+    /*_.forEach(channels, (item) => {
+      label = item.id;
+      result[label] = _.filter(labels, (tmp) => {
+        return tmp.classify.indexOf(label) > -1
+      });
+    });*/
+
+    result.support = labels;
+
+    return result
+  }
+};
 
 const mutations = {
   /**

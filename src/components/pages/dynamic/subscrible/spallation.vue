@@ -48,23 +48,18 @@
         channels() {
             return this.$store.state.group.channels;
           },
-          diaries() {            
+          diaries() {
             return this.$store.getters.getGroupNews;
           }
       },
-	    mounted(){
-	      this.$on("unsubscrible",() => {
-/*	      	this.$store.commit("page_showDialog", {
-	          show: true,
-	          title: "提示",
-	          type: "alert",
-	          content: "确定退出吗？"
-	        });*/
-          this.$promp("确定退出吗",() =>{
+      mounted() {
+        this.$on("unsubscrible", () => {
+
+          this.$promp("确定退出吗", () => {
             console.log('tuiding')
-          },true)	      	
-	      })
-	    },
+          }, true)
+        })
+      },
       methods: {
         // 侧滑
         slideChanged(index) {
