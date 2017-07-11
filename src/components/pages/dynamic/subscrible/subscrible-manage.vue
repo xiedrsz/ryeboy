@@ -18,14 +18,14 @@
                 <img src="/img/default-avatar.png" class="lazyload" width="48" height="48" />
                 <div class="manage-info">
                   <div class="manage-info-top">
-                    <span class="manage-name">症状</span>
+                    <span class="manage-name">{{item.name}}</span>
                   </div>
                   <div class="manage-info-bottom">
                     <span class="group-fans">5万人关注</span>
                     <span class="group-diaries">10万日记</span>
                   </div>
                 </div>
-                <span class="manage-follow" @click="followIt">订阅</span>
+                <span class="manage-follow" @click="subscribleOrNot('5963323f3292f5bc985acd07',item.note)">{{item.note}}</span>
               </li>
 
             </ul>
@@ -52,7 +52,7 @@
         "infinite-scroll": require("ui/infinite-scroll.vue"),
       },
       created() {
-//        this.$store.dispatch("getSubscribles");
+        !this.labels[0] && this.getSubscribles();
       },
       computed: {
         channels() {
@@ -76,9 +76,21 @@
             let index = _.findIndex(this.channels, ["id", id]);
             this.$refs.swipe.slideTo(index);
           },
+          // 获取频道列表
+          getSubscribles() {
+            this.$store.dispatch("getLabels");
+          },
           //订阅日记
-          followIt() {
-            console.log('订阅')
+          subscribleOrNot(id, note) {
+            if (note === "订阅") {
+              this.$store.dispatch("subscrible", {
+                id
+              });
+            } else {
+              this.$store.dispatch("unsubscribe", {
+                id
+              });
+            }
           }
       }
   };

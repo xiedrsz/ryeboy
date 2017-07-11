@@ -1,12 +1,12 @@
 import axios from "axios";
 import config from "js/config";
 // 引入 mocks
-import "../../mocks"
+//import "../../mocks"
 
 axios.defaults.baseURL = config.apiAddress;
 
 axios.defaults.headers = {
-  'Authorization': 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5Mzg5ZTNkOWM0ZDAyMjhkNzMxM2IxOSIsImlhdCI6MTQ5NzkyNTA5NX0.Sp7dhmB2Hyo0zJCgLrOggX8gQUKRYe3YmxEcEo3Z1Ic',
+  'Authorization': 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5NjQyM2I5MGMwMzdjMGZjYzkzZmE1YyIsImlhdCI6MTQ5OTc0MTQxNX0.MnvVwdCktpy3vKGmXMnQvUBIgJe4IJZvkmW58uoBwOY',
   Accept: 'application/json'
 };
 
@@ -73,8 +73,13 @@ class api {
   }
 
   //动态日记接口, T
-  static getDynamicDiaries() {
-    return axios.get("/getDynamicDiaries");
+  static getDynamicDiaries(last = 0) {
+    return axios.get("/user-diaries", {
+      params: {
+        followed: 1,
+        last
+      }
+    });
   }
 
   // 获取关注人, T
@@ -126,17 +131,22 @@ class api {
 
   // 退订
   // 可一次退订多个
-  static unsubscribe(channel_ids) {
+  static unsubscribe(id) {
     return axios.post("/unsubscribe", {
-      channel_ids: channel_ids
+      ids: [id]
     })
   }
 
-  // 添加订阅频道
-  static addSubscrible(channel_ids) {
-    return axios.post("/subscribe", {
-      channel_ids: channel_ids
+  // 订阅
+  static subscrible(id) {
+    return axios.post("/subscrible", {
+      id: id
     })
+  }
+
+  // 获取频道列表
+  static getLabels() {
+    return axios.get("/labels")
   }
 
   // 获取小组列表, T

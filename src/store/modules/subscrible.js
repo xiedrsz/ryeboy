@@ -1,16 +1,9 @@
 import Vue from "vue";
 import api from "api";
-// 暂不会用
-// import _ from "lodash";
+import _ from "lodash";
 
-// 频道管理
-const channels = [{
-  name: "",
-  list: []
-}];
-
-// 默认小组列表分类
-let spallationChannels = [
+// 蜕变史分类
+let spallationType = [
   {
     id: "essence",
     name: "精品"
@@ -33,7 +26,8 @@ let spallationChannels = [
   }
 ]
 
-let manageChannels = [
+// 频道分类
+let labelTyoe = [
   {
     id: "support",
     name: "推荐"
@@ -53,17 +47,23 @@ let manageChannels = [
 ]
 
 const state = {
-  // 订阅列表
-  subscribles: spallationChannels,
-
-  // 频道内容，结构可能还要复杂（比如分级）
-  subChannels: [],
-
   // 频道分类
-  channels: manageChannels,
+  channels: labelTyoe,
 
-  // 频道列表
-  labels: [{}, {}]
+  // 频道列表(未订阅的)
+  labels: [],
+
+  // 订阅列表
+  subscribles: [{}],
+
+  // 当前阅读的订阅频道
+  reading: {},
+
+  // 蜕变史分类
+  spallationType: spallationType,
+
+  // 频道内容(蜕变史)
+  subChannels: [{}, {}]
 };
 
 const getters = {
@@ -72,23 +72,35 @@ const getters = {
    * @Param label String 标签，比如: [推荐、...], 暂未分类
    */
   getLabels(state) {
-    let result = {},
-      label = "",
-      labels = state.labels,
-      channels = state.channels;
+      let result = {},
+        label = "",
+        labels = state.labels,
+        channels = state.channels;
 
-    // 暂时屏蔽分类
-    /*_.forEach(channels, (item) => {
-      label = item.id;
-      result[label] = _.filter(labels, (tmp) => {
-        return tmp.classify.indexOf(label) > -1
-      });
-    });*/
+      // 暂时屏蔽分类
+      /*_.forEach(channels, (item) => {
+        label = item.id;
+        result[label] = _.filter(labels, (tmp) => {
+          return tmp.classify.indexOf(label) > -1
+        });
+      });*/
 
-    result.support = labels;
+      result.support = labels;
 
-    return result
-  }
+      return result
+    },
+
+    /**
+     * @Description 获取频道内容, 暂未分类
+     */
+    getSubChannels(state) {
+      let result = {},
+        subChannels = state.subChannels;
+
+      result.essence = subChannels;
+
+      return result
+    },
 };
 
 const mutations = {
@@ -121,6 +133,14 @@ const mutations = {
      */
     subs_initChannels(state, list) {
       state.channels.push.apply(state.channels, list);
+    },
+
+    /**
+     * @Description 初始化未订阅的频道列表
+     * @Param list Array 新频道列表
+     */
+    subs_initLabels(state, list) {
+      state.labels = list;
     }
 };
 
@@ -141,25 +161,35 @@ const actions = {
       commit("subs_addSubChannels", res, type);
     },
 
+    // 获取未订阅的频道列表
+    async getLabels({
+      commit
+    }) {
+      let res = await api.getLabels(),
+        list = res.data;
+
+      _.map(list, (item) => {
+        item.note = "订阅";
+        return;
+      });
+
+      commit("subs_initLabels", res.data);
+    },
+
     // 退订
     async unsubscribe({
       commit
-    }) {
-      let res = await api.unsubscribe();
+    }, option) {
+      let id = option.id,
+        res = await api.unsubscribe(id);
     },
 
-    // 添加订阅频道
-    async addSubscrible({
-      commit
-    }) {
-      let res = await api.addSubscrible();
-    },
-
-    // 订阅
+    // 订阅, Todo(频道id尚未返回)
     async subscrible({
       commit
-    }) {
-      let res = await api.subscrible();
+    }, option) {
+      let id = option.id,
+        res = await api.subscrible(id);
     }
 };
 

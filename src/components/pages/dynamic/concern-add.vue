@@ -10,7 +10,7 @@
             </list-item>
           </list>
 
-          <unusual-loading @dateReloader="getNewConcern"></unusual-loading>
+          <unusual-loading :option.syn="loading" @reload="getNewConcern"></unusual-loading>
           <!--<infinite-scroll v-if="true" :onInfinite="infinite">
             <div slot="no-more">没有更多内容了</div>
           </infinite-scroll>-->
@@ -24,8 +24,11 @@
   export default {
     computed: {
       newconcern() {
-        return this.$store.state.concern.newconcern;
-      }
+          return this.$store.state.concern.newconcern;
+        },
+        loading() {
+          return this.$store.state.concern.loading;
+        }
     },
     methods: {
       getNewConcern() {
@@ -54,6 +57,12 @@
       "infinite-scroll": require("ui/infinite-scroll.vue"),
     },
     created() {
+      this.$store.commit("save_loading", {
+        no: false,
+        err: false,
+        none: false,
+        icon: false
+      });
       this.getNewConcern();
     },
     mounted() {

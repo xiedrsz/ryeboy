@@ -2,26 +2,24 @@
   <div class="page" title="蜕变史" actions='[{"text":"退订","clickHandler":"unsubscrible"}]'>
     <div class="channel-container-wrap">
       <div class="channel-container">
-        <div v-for="item in channels" @click="switchChannel(item.id)" :id="item.id" :class="{ active: item.id == channelSelected }" class="channel">
+        <div v-for="item in spallationType" @click="switchChannel(item.id)" :id="item.id" :class="{ active: item.id == channelSelected }" class="channel">
           {{ item.name }}
         </div>
       </div>
     </div>
-
     <div class="page-main">
       <swipe ref="swipe" @slidechanged="slideChanged">
-        <swipe-slide v-for="channel in channels" :id="channel.id">
+        <swipe-slide v-for="channel in spallationType" :id="channel.id">
           <div class="slide-content">
             <ul class="mdl-list">
-              <dynamic-item v-for="(item, index) in diaries[channel.id]" :likeCount="item.likeCount" :commentCount="item.commentCount" :avatar="item.avatar" :username="item.username" :text="item.escapedText" :time="item.time" :overflow="item.overflow" :likeIt="item.likeIt"
-              :index="index" />
+              
+              <dynamic-item v-for="item in subChannels[channel.id]" />
+              
             </ul>
           </div>
         </swipe-slide>
       </swipe>
     </div>
-
-
   </div>
 </template>
 <script>
@@ -42,37 +40,50 @@
         "infinite-scroll": require("ui/infinite-scroll.vue"),
       },
       created() {
-        this.getDiary();
+        //this.getDiary();
       },
       computed: {
-        channels() {
-            return this.$store.state.group.channels;
+        // 蜕变史分类
+        spallationType() {
+            return this.$store.state.subscrible.spallationType;
           },
           diaries() {
             return this.$store.getters.getGroupNews;
+          },
+          // 当前月度频道
+          reading() {
+            return this.$store.state.subscrible.reading;
+          },
+          // 蜕变史
+          subChannels() {
+            return this.$store.getters.getSubChannels;
           }
       },
       mounted() {
+        // 退订
         this.$on("unsubscrible", () => {
-
-          this.$promp("确定退出吗", () => {
+          let id = this.reading.id;
+          this.$store.dispatch("unsubscribe", {
+            id
+          });
+          /*this.$promp("确定退出吗", () => {
             console.log('tuiding')
-          }, true)
+          }, true)*/
         })
       },
       methods: {
         // 侧滑
         slideChanged(index) {
-            this.channelSelected = this.channels[index].id;
+            this.channelSelected = this.spallationType[index].id;
           },
           // 切换频道
           switchChannel(id) {
             this.channelSelected = id;
-            let index = _.findIndex(this.channels, ["id", id]);
+            let index = _.findIndex(this.spallationType, ["id", id]);
             this.$refs.swipe.slideTo(index);
           },
-          // 获取日记
-          getDiary() {
+          // 获取蜕变史列表
+          getSubChannels() {
             this.$store.dispatch("getGroupNews", "123");
           }
       }

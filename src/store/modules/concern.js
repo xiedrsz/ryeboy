@@ -4,6 +4,9 @@ import _ from "lodash";
 
 const datetime = require("js/utils/datetime.js");
 
+// 关注动态初始位置
+let last = 0;
+
 const state = {
   // 关注 概述
   overview: [
@@ -185,7 +188,7 @@ const actions = {
     async getDynamic({
       commit,
       state
-    }) {
+    }, infiniteScroll) {
       commit("save_loading", {
         no: false,
         err: false,
@@ -193,17 +196,26 @@ const actions = {
         icon: true
       });
 
-      let list = [];
+      let list = [],
+        len;
 
-      await api.getDynamicDiaries().then((res) => {
+      await api.getDynamicDiaries(last).then((res) => {
         !!res && (list = res.data);
       }).catch(() => {
         commit("save_loading", {
           err: true
         });
+        !!infiniteScroll && infiniteScroll.$emit("$InfiniteScroll:complete");
       });
 
       commit("concern_addDynamic", list);
+      len = list.length;
+      last += len;
+      if (len < 20) {
+        !!infiniteScroll && infiniteScroll.$emit("$InfiniteScroll:complete");
+      } else {
+        !!infiniteScroll && infiniteScroll.$emit("$InfiniteScroll:loaded");
+      }
 
       if (!state.dynamic[0]) {
         commit("save_loading", {
@@ -309,10 +321,25 @@ const actions = {
 
     // 获取新关注人列表, 基本完成
     async getNewConcern({
-      commit
+      commit,
+      state
     }) {
-      let res = await api.getNewConcern(),
-        list = res.data;
+      commit("save_loading", {
+        no: false,
+        err: false,
+        none: false,
+        icon: true
+      });
+
+      let list = [];
+
+      await api.getNewConcern().then((res) => {
+        !!res && (list = res.data);
+      }).catch(() => {
+        commit("save_loading", {
+          err: true
+        });
+      });
 
       _.map(list, (item) => {
         item.note = "关注";
@@ -320,6 +347,16 @@ const actions = {
       });
 
       commit("concern_initNewConcern", list);
+
+      if (!state.newconcern[0]) {
+        commit("save_loading", {
+          none: true
+        });
+      }
+
+      commit("save_loading", {
+        icon: false
+      });
     },
 
     // 取消关注, 基本完成

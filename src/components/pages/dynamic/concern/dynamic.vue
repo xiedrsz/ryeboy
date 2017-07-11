@@ -11,7 +11,7 @@
 
           <unusual-loading :option.syn="loading" @reload="getDynamic"></unusual-loading>
 
-          <infinite-scroll v-if="false" :onInfinite="infinite">
+          <infinite-scroll v-if="true" :onInfinite="infinite">
             <div slot="no-more">没有更多内容了</div>
           </infinite-scroll>
         </div>
@@ -51,8 +51,7 @@
             this.$store.dispatch("getDynamic");
           },
           infinite(infiniteScroll) {
-            this.$store.dispatch("getMoreDiaries", infiniteScroll);
-            // this.getDynamic();
+            this.$store.dispatch("getDynamic", infiniteScroll);
           },
           // 点赞
           like(id) {
@@ -84,7 +83,7 @@
           none: false,
           icon: false
         });
-        
+
         !this.dynamic[0] && this.getDynamic();
       },
       mounted() {
