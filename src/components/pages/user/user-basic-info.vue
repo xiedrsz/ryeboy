@@ -1,6 +1,6 @@
 <template>
   <div class="info-container">
-    <div class="avatar">
+    <div class="avatar-wrap">
       <img :data-src="user.avatar"
            v-if="user.avatar"
            class="avatar lazyload">
@@ -21,6 +21,12 @@
   export default {
     props: {
       user: Object
+    },
+    activated() {
+      let el = this.$el.querySelector(".avatar");
+      if (el) {
+        lazySizes.loader.unveil(el);
+      }
     }
   };
 </script>
@@ -34,7 +40,7 @@
     box-sizing: border-box;
   }
 
-  .avatar {
+  .avatar-wrap {
     background: white;
     width: 40px;
     height: 40px;
@@ -42,7 +48,7 @@
     border-radius: 50%;
   }
 
-  .avatar img {
+  .avatar {
     width: 40px;
     height: 40px;
     object-fit: cover;

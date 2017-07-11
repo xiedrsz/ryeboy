@@ -6,12 +6,13 @@
         <i class="material-icons">arrow_back</i>
       </button>
       <div class="mdl-layout__header-row">
-        <span class="mdl-layout-title">{{ title }}</span>
+        <span class="mdl-layout-title">{{ $store.state.page.title }}</span>
         <div class="mdl-layout-spacer"></div>
         <nav class="mdl-navigation"
              v-if="toolbars && toolbars.length > 0">
           <div class="mdl-navigation__link"
                v-for="item in toolbars"
+               :key="item.text || item.icon"
                @click="item.click">
             <i class="material-icons"
                v-if="item.icon">{{ item.icon }}</i>
@@ -21,7 +22,9 @@
       </div>
     </header>
     <main class="mdl-layout__content">
-      <router-view></router-view>
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
     </main>
   </div>
 </template>
@@ -48,9 +51,6 @@
       }
     },
     computed: {
-      title() {
-        return this.$store.state.page.title;
-      },
       toolbars() {
         return this.$store.state.page.toolbars;
       }

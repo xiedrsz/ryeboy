@@ -49,11 +49,7 @@ routes.forEach(item => {
       item.children.push({
         path: childrenPath,
         name: childrenPath,
-        component,
-        beforeEnter: (to, from, next) => {
-          store.commit("page_addCache", to);
-          next();
-        }
+        component 
       });
     });
   }

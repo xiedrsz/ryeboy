@@ -30,9 +30,10 @@ class api {
     });
   }
 
-  static getPersonalDiaries(userid, last, filter, data) {
+  static getPersonalDiaries(id, userid, last, filter, data) {
     return axios.get("/diary/personal", {
       params: {
+        id,
         userid,
         last,
         filter,

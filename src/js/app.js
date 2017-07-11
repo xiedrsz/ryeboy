@@ -96,7 +96,9 @@ class app {
 
     if (localStorage.authenticated) {
       api.setAuthorization();
-      store.commit("user_assignAuth", JSON.parse(localStorage.user));
+      let user = JSON.parse(localStorage.user);
+      this.userid = user._id;
+      store.commit("user_assignAuth", user);
       store.dispatch("diary_initSubscribedChannels");
       store.dispatch("lesson_loadSettings");
     } else {

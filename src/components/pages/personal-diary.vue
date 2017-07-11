@@ -11,8 +11,7 @@
       </div>
     </div>
     <keep-alive>
-      <component :is="viewType"
-                 v-keep-scroll-position>
+      <component :is="viewType">
       </component>
     </keep-alive>
   </div>

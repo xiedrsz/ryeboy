@@ -1,15 +1,15 @@
 <template>
   <div class="page"
-       :title="title">
+       :title="`第${$route.query.weekCount}周日记`">
     <loadable-content class="content-wrap"
                       :nomore="true"
-                      :loadstate="loadstate"
-                      v-keep-scroll-position>
+                      :loadstate="context.loadstate">
       <ul class="mdl-list">
-        <diary-item v-for="item in diaries"
+        <diary-item v-for="item in context.diaries"
                     :key="item._id"
                     :id="item._id"
                     :likeCount="item.likeCount"
+                    :like="item.like"
                     :commentCount="item.commentCount"
                     :pictures="item.pictures"
                     :text="item.escapedText"
@@ -25,31 +25,39 @@
   export default {
     data() {
       return {
-        diaries: [],
-        title: "",
-        loadstate: "loading"
+        userid: String,
+        context: {}
       };
     },
     methods: {
-      async getData(userid) {
-        let res = await this.$app.api.getPersonalDiaries(userid, undefined, "week", this.$route.query);
+      async getData() {
+        let res = await this.$app.api.getPersonalDiaries(this.userid, this.$app.userid, undefined, "week", this.$route.query);
         let diaries = res.data;
         if (diaries.length == 0) {
-          this.loadstate = "empty";
-          return;
+          return 0;
         }
         await this.$store.dispatch("diary_updateData", diaries);
-        this.diaries = diaries;
-        this.loadstate = "loaded";
+        diaries = await this.$store.dispatch("diary_addMap", diaries);
+        diaries.forEach(item => {
+          this.context.diaries.push(item);
+        });
+        return diaries.length;
       },
-    },
-    computed: {
-      userid() {
-        let userid = this.$route.query.userid;
-        if (userid) {
-          return userid;
-        } else {
-          return this.$store.state.user._id;
+      async load() {
+        this.context = await this.$store.dispatch("diary_getUserData", {
+          userid: this.userid,
+          label: `week_${this.$route.query.weekCount}`
+        });
+
+        if (["loaded", "empty"].indexOf(this.context.loadstate) != -1) {
+          return;
+        }
+
+        try {
+          let count = await this.getData();
+          this.context.loadstate = count == 0 ? "empty" : "loaded";
+        } catch (error) {
+          this.context.loadstate = "error";
         }
       }
     },
@@ -57,13 +65,12 @@
       "diary-item": require("components/pages/personal-diary/personal-diary-item.vue"),
       "loadable-content": require("ui/loadable-content.vue"),
     },
-    async mounted() {
+    async activated() {
+      this.userid = this.$route.query.userid || this.$app.userid;
+      await this.load();
+    },
+    mounted() {
       this.$app.adjustScrollableElement(".content-wrap");
-
-      let weekCount = this.$route.query.weekCount;
-      this.title = `第${weekCount}周日记`;
-
-      await this.getData(this.userid);
     }
   };
 </script>

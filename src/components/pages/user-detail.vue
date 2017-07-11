@@ -14,14 +14,19 @@
       </div>
     </div>
     <keep-alive>
-      <component :is="viewType"
-                 v-keep-scroll-position>
+      <component :is="context.viewType">
       </component>
     </keep-alive>
   </div>
 </template>
 
 <script>
+  const viewTypes = {
+    0: "daily",
+    1: "weekly",
+    2: "recommend"
+  };
+
   export default {
     data() {
       return {
@@ -43,16 +48,11 @@
           }
         ],
         tabIndex: 0,
-        viewType: "daily",
+        context: {
+          viewType: "daily"
+        },
         user: {}
       };
-    },
-    watch: {
-      viewType() {
-        this.$nextTick(() => {
-          this.adjustHeight();
-        });
-      }
     },
     methods: {
       adjustHeight() {
@@ -63,24 +63,12 @@
         this.tabs[index].active = true;
         this.tabIndex = index;
 
-        switch (index) {
-          case 1:
-            this.viewType = "weekly";
-            break;
+        this.context.index = index;
+        this.context.viewType = viewTypes[index];
 
-          case 2:
-            this.viewType = "recommend";
-            break;
-
-          default:
-            this.viewType = "daily";
-            break;
-        }
-      }
-    },
-    computed: {
-      userid() {
-        return this.$route.query.id;
+        this.$nextTick(() => {
+          this.adjustHeight();
+        });
       }
     },
     components: {
@@ -89,9 +77,15 @@
       "weekly": require("components/pages/personal-diary/personal-diary-weekly.vue"),
       "recommend": require("components/pages/personal-diary/personal-diary-recommend.vue"),
     },
-    async mounted() {
-      this.adjustHeight();
-      let user = await this.$app.getUser(this.userid);
+    async activated() {
+      let userid = this.$route.query.id;
+
+      this.context = await this.$store.dispatch("diary_getUserData", {
+        userid
+      });
+
+      this.switchView(this.context.index);
+      let user = await this.$app.getUser(userid);
       this.$set(this.$data, "user", user);
     }
   };
