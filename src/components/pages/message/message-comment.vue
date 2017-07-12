@@ -49,7 +49,7 @@
       return {
         items: [],
         selectedItem: {},
-        loadstate: "unload",
+        loadstate: "loading",
         nomore: true,
         enableReply: false,
         comment: "",

@@ -24,7 +24,7 @@
     data() {
       return {
         items: [],
-        loadstate: "unload",
+        loadstate: "loading",
         nomore: true,
         last: new Date()
       };

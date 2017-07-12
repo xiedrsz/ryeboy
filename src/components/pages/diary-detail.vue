@@ -147,6 +147,11 @@
         this.$root.$refs.gallery.open(index, list);
       },
       async setLike() {
+        if (!this.authenticated) {
+          this.$app.dialog.text("你还没有登录。");
+          return;
+        }
+
         let user = this.$app.user;
         let res = await this.$app.api.setLike(this.diary._id, user._id);
 
