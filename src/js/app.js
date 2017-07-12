@@ -65,6 +65,39 @@ class app {
     document.querySelector(selector).style.height = height + "px";
   }
 
+  savePosition(el, id) {
+    let attributeName = "data-scroll-position";
+    if (id) {
+      attributeName += "-" + id;
+    }
+    el.querySelectorAll(".keep-scroll-position").forEach(item => {
+      item.setAttribute(attributeName, item.scrollLeft + "," + item.scrollTop);
+    });
+  }
+
+  restorePosition(el, id) {
+    let attributeName = "data-scroll-position";
+    if (id) {
+      attributeName += "-" + id;
+    }
+    if (el.hasAttribute(attributeName)) {
+      let data = el.getAttribute(attributeName);
+      if (data) {
+        let position = data.split(",");
+        el.scrollLeft = position[0];
+        el.scrollTop = position[1];
+      }
+    }
+    el.querySelectorAll(".keep-scroll-position").forEach(item => {
+      let data = item.getAttribute(attributeName);
+      if (data) {
+        let position = data.split(",");
+        item.scrollLeft = position[0];
+        item.scrollTop = position[1];
+      }
+    });
+  }
+
   show(vue) {
     this.vue = vue;
     this.user = vue.$store.state.user;

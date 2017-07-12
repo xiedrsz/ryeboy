@@ -1,8 +1,7 @@
 <template>
   <div class="page-layout">
     <div class="channel-container-wrap">
-      <div class="channel-container"
-           v-keep-scroll-position>
+      <div class="channel-container keep-scroll-position">
         <div v-for="item in channels"
              @click="switchChannel(item.id)"
              :key="item.id"
@@ -21,8 +20,7 @@
              ref="swipe">
         <swipe-slide v-for="channel in channels"
                      :key="channel.id">
-          <div class="slide-content pulltorefresh"
-               v-keep-scroll-position>
+          <div class="slide-content pulltorefresh keep-scroll-position">
             <div v-if="loadstate(channel.id) !='unload'"
                  class="channel-filter-container">
               <div v-for="item in filters(channel.id)"
@@ -167,6 +165,8 @@
           this.slideChanged(0);
         }, 0);
       }
+
+      this.__restorePosition();
     },
     mounted() {
       // 调整日记列表高度

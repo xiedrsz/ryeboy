@@ -1,10 +1,9 @@
 <template>
   <div>
-    <loadable-content class="content-wrap"
+    <loadable-content class="content-wrap keep-scroll-position"
                       :nomore="nomore"
                       :loadstate="loadstate"
-                      :infinite="infinite"
-                      v-keep-scroll-position>
+                      :infinite="infinite">
       <ul class="mdl-list">
         <li class="notice-container"
             v-for="item in items"
@@ -59,6 +58,11 @@
     components: {
       "infinite-scroll": require("ui/infinite-scroll.vue"),
       "loadable-content": require("ui/loadable-content.vue"),
+    },
+    async activated() {
+      this.$nextTick(() => {
+        this.$app.restorePosition(this.$el);
+      });
     },
     async mounted() {
       this.$app.adjustScrollableElement(".content-wrap", [".tabs"]);

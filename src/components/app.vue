@@ -2,7 +2,7 @@
   <div id="app"
        class="mdl-layout__container">
     <keep-alive :include="'home'">
-      <router-view v-keep-scroll-position></router-view>
+      <router-view></router-view>
     </keep-alive>
 
     <!-- 全屏组件 -->

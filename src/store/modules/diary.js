@@ -53,6 +53,9 @@ const state = {
   // 每个用户的日记数据
   userDatas: {},
 
+  // 点赞数据
+  likeDatas: {},
+
   // 日记频道修改标志
   channelChanged: false,
 };
@@ -264,6 +267,21 @@ const actions = {
     } else {
       return data;
     }
+  },
+
+  diary_getLikeData({
+    state
+  }, id) {
+    let likeDatas = state.likeDatas;
+    if (!likeDatas[id]) {
+      Vue.set(likeDatas, id, {
+        items: [],
+        loadstate: "loading",
+        nomore: true,
+        last: 0
+      });
+    }
+    return likeDatas[id];
   },
 
   diary_getDataById({

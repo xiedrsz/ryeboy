@@ -2,6 +2,7 @@
   <div class="page"
        title="查看日记">
     <loadable-content id="content"
+                      class="keep-scroll-position"
                       :nomore="diary.nomore"
                       :loadstate="loadstate"
                       :infinite="infinite">
@@ -315,7 +316,6 @@
             diary.nomore = comments.length >= diary.commentCount;
             diary.last = this.$app.config.pageSize;
             this.diary = (await this.$store.dispatch("diary_addMap", [diary]))[0];
-            console.log(this.diary);
           } catch (error) {
             console.log(error);
             this.loadstate = "error";
@@ -363,8 +363,9 @@
     },
     async activated() {
       await this.load();
+      this.__restorePosition();
     },
-    async mounted() {
+    mounted() {
       window.addEventListener("resize", this.adjustHeight);
     }
   };

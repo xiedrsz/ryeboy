@@ -1,5 +1,5 @@
 <template>
-  <div class="content-wrap">
+  <div class="content-wrap keep-scroll-position">
     <loadable-content :nomore="context.nomore"
                       :loadstate="context.loadstate"
                       :infinite="infinite">
@@ -78,6 +78,9 @@
     async activated() {
       this.userid = this.$route.query.id || this.$app.userid;
       await this.load();
+      this.$nextTick(() => {
+        this.$app.restorePosition(this.$el, this.$route.query.id);
+      });
     }
   };
 </script>

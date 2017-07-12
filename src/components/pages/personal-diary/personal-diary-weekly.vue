@@ -1,5 +1,5 @@
 <template>
-  <div class="content-wrap">
+  <div class="content-wrap keep-scroll-position">
     <loadable-content :nomore="context.nomore"
                       :loadstate="context.loadstate">
       <div v-for="group in context.diaries"
@@ -40,6 +40,7 @@
         this.$router.push({
           path: "/pages/personal-diary-weekly-list",
           query: {
+            id: `${this.userid}-${item.weekCount}`,
             userid: this.userid,
             week: item.week,
             year: item.year,
@@ -97,6 +98,9 @@
     async activated() {
       this.userid = this.$route.query.id || this.$store.state.user._id;
       await this.load();
+      this.$nextTick(() => {
+        this.$app.restorePosition(this.$el, this.$route.query.id);
+      });
     }
   };
 </script>

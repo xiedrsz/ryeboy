@@ -1,7 +1,7 @@
 <template>
   <div class="page"
        :title="`第${$route.query.weekCount}周日记`">
-    <loadable-content class="content-wrap"
+    <loadable-content class="content-wrap keep-scroll-position"
                       :nomore="true"
                       :loadstate="context.loadstate">
       <ul class="mdl-list">
@@ -68,6 +68,7 @@
     async activated() {
       this.userid = this.$route.query.userid || this.$app.userid;
       await this.load();
+      this.__restorePosition();
     },
     mounted() {
       this.$app.adjustScrollableElement(".content-wrap");

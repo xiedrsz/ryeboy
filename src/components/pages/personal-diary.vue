@@ -5,19 +5,25 @@
       <div v-for="(tab, index) in tabs"
            :key="tab.id"
            class="tab-link"
-           @click="switchView(index)"
+           @click="readySwitchView(index)"
            :class="{ active: tab.active }">
         {{ tab.text }}
       </div>
     </div>
     <keep-alive>
-      <component :is="viewType">
+      <component :is="context.viewType">
       </component>
     </keep-alive>
   </div>
 </template>
 
 <script>
+  const viewTypes = {
+    0: "daily",
+    1: "weekly",
+    2: "recommend"
+  };
+
   export default {
     data() {
       return {
@@ -39,47 +45,45 @@
           }
         ],
         tabIndex: 0,
-        viewType: "daily",
+        context: {
+          viewType: "daily"
+        }
       };
-    },
-    watch: {
-      viewType() {
-        this.$nextTick(() => {
-          this.adjustHeight();
-        });
-      }
     },
     methods: {
       adjustHeight() {
         this.$app.adjustScrollableElement(".content-wrap", [".tabs"]);
+      },
+      readySwitchView(index) {
+        if (this.tabIndex == index) {
+          return;
+        }
+        this.$app.savePosition(this.$el);
+        this.switchView(index);
       },
       switchView(index) {
         this.tabs[this.tabIndex].active = false;
         this.tabs[index].active = true;
         this.tabIndex = index;
 
-        switch (index) {
-          case 1:
-            this.viewType = "weekly";
-            break;
+        this.context.index = index;
+        this.context.viewType = viewTypes[index];
 
-          case 2:
-            this.viewType = "recommend";
-            break;
-
-          default:
-            this.viewType = "daily";
-            break;
-        }
+        this.$nextTick(() => {
+          this.adjustHeight();
+        });
       }
+    },
+    async activated() {
+      this.context = await this.$store.dispatch("diary_getUserData", {
+        userid: this.$app.userid
+      });
+      this.switchView(this.context.index);
     },
     components: {
       "daily": require("components/pages/personal-diary/personal-diary-daily.vue"),
       "weekly": require("components/pages/personal-diary/personal-diary-weekly.vue"),
       "recommend": require("components/pages/personal-diary/personal-diary-recommend.vue"),
-    },
-    mounted() {
-      this.adjustHeight();
     }
   };
 </script>
