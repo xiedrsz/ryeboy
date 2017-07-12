@@ -1,5 +1,5 @@
 const debug = true;
-const useLocalApi = true;
+const useLocalApi = false;
 
 const config = {
   debug,
