@@ -22,7 +22,7 @@ class api {
   static getNotices(userid, type, lastFetchAt, last) {
     return axios.get("/notices", {
       params: {
-        userid: "57158aedd7baf14a7069f8bf",
+        userid,
         type,
         last,
         lastFetchAt: new Date("2017-5-20"),
