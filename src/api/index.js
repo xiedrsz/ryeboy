@@ -22,7 +22,7 @@ class api {
   static getNotices(userid, type, lastFetchAt, last) {
     return axios.get("/notices", {
       params: {
-        userid: "57158aedd7baf14a7069f8bf",
+        userid,
         type,
         last,
         lastFetchAt: new Date("2017-5-20"),
@@ -30,9 +30,10 @@ class api {
     });
   }
 
-  static getPersonalDiaries(userid, last, filter, data) {
+  static getPersonalDiaries(id, userid, last, filter, data) {
     return axios.get("/diary/personal", {
       params: {
+        id,
         userid,
         last,
         filter,

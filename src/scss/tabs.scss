@@ -1,0 +1,17 @@
+@import "main";
+.tabs {
+  height: 36px;
+  min-height: 36px;
+  @include flex-row;
+  @include flex-vertical-center;
+  border-bottom: 1px solid $color-divider;
+  background-color: $color-hint-block;
+}
+
+.tab-link {
+  margin-left: 24px;
+}
+
+.tab-link.active {
+  color: $color-blue;
+}

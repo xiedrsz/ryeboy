@@ -7,3 +7,4 @@ node_modules/
 memo
 *.cmd
 /src/dist/
+src/js/config.json

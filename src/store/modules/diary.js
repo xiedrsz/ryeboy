@@ -35,6 +35,12 @@ const defaultSubscribedChannels = [
 ];
 
 const state = {
+  // 日记用户映射表
+  users: {},
+
+  // 日记数据映射表
+  map: {},
+
   // 日记频道列表
   channels: [],
 
@@ -44,15 +50,18 @@ const state = {
   // 每个频道的数据，包括状态、日记列表等
   channelDatas: {},
 
-  // 日记用户表
-  users: {},
+  // 每个用户的日记数据
+  userDatas: {},
+
+  // 点赞数据
+  likeDatas: {},
 
   // 日记频道修改标志
   channelChanged: false,
 };
 
 
-function getUnstoredUsers(data) {
+function getUnmappedUsers(data) {
   let result = [];
   data.forEach(item => {
     if (item.userid) {
@@ -68,6 +77,29 @@ function addUsers(users) {
   users.forEach(user => {
     state.users[user._id] = user;
   });
+}
+
+function addMap(diaries) {
+  let result = [];
+
+  diaries.forEach(diary => {
+    let mapped = state.map[diary._id];
+    if (mapped) {
+      Object.keys(diary).forEach(prop => {
+        if (!mapped.hasOwnProperty(prop)) {
+          Vue.set(mapped, prop, diary[prop]);
+          delete diary[prop];
+        }
+      });
+      Object.assign(mapped, diary);
+    } else {
+      Vue.set(state.map, diary._id, diary);
+    }
+
+    result.push(state.map[diary._id]);
+  });
+
+  return result;
 }
 
 function updateUserInfo(items) {
@@ -99,7 +131,7 @@ function updateComments(comments) {
   });
 }
 
-function updateDiaries(diaries) {
+function updateData(diaries) {
   updateUserInfo(diaries);
   diaries.forEach(diary => {
     let pictures = [];
@@ -118,38 +150,12 @@ function updateDiaries(diaries) {
 }
 
 const getters = {
-  getDiaryUsers(state) {
+  diary_users(state) {
     return state.users;
-  },
-
-  getChannelLoadstate(state) {
-    let result;
-    try {
-      let channelData = state.channelDatas[state.activedChannel];
-      result = channelData.loadstate;
-    } catch (error) {
-      result = "unload";
-    }
-    return result;
   }
 };
 
 const mutations = {
-  diary_setLike(state, data) {
-    _.each(state.channelDatas, channel => {
-      channel.diaries.forEach(diary => {
-        if (diary._id == data.id) {
-          diary.like = data.like;
-          if (data.like) {
-            diary.likeCount++;
-          } else {
-            diary.likeCount--;
-          }
-        }
-      });
-    });
-  },
-
   diary_setChannelChanged(state, changed) {
     state.channelChanged = changed === undefined ? true : changed;
   },
@@ -222,7 +228,8 @@ const mutations = {
       }
       if (data.diaries) {
         data.diaries.forEach(item => {
-          channelData.diaries.push(item);
+          let diary = state.map[item._id];
+          channelData.diaries.push(diary);
         });
       }
     }
@@ -230,27 +237,84 @@ const mutations = {
 };
 
 const actions = {
-  updateUserInfo(context, items) {
+  diary_getUserData({
+    state
+  }, {
+    userid,
+    label
+  }) {
+    let userDatas = state.userDatas;
+    let data;
+
+    if (!userDatas[userid]) {
+      Vue.set(userDatas, userid, {
+        index: 0,
+        viewType: "daily"
+      });
+    }
+    data = userDatas[userid];
+
+    if (label) {
+      if (!data[label]) {
+        Vue.set(data, label, {
+          diaries: [],
+          loadstate: "loading",
+          nomore: true,
+          last: Date
+        });
+      }
+      return data[label];
+    } else {
+      return data;
+    }
+  },
+
+  diary_getLikeData({
+    state
+  }, id) {
+    let likeDatas = state.likeDatas;
+    if (!likeDatas[id]) {
+      Vue.set(likeDatas, id, {
+        items: [],
+        loadstate: "loading",
+        nomore: true,
+        last: 0
+      });
+    }
+    return likeDatas[id];
+  },
+
+  diary_getDataById({
+    state
+  }, id) {
+    return state.map[id];
+  },
+
+  diary_updateUserInfo(context, items) {
     updateUserInfo(items);
   },
 
-  updateComments(context, comments) {
+  diary_updateComments(context, comments) {
     updateComments(comments);
   },
 
-  updateDiaries(context, diaries) {
-    updateDiaries(diaries);
+  diary_updateData(context, diaries) {
+    updateData(diaries);
   },
 
-  async obtainUsers(context, data) {
-    let users = getUnstoredUsers(data);
+  diary_addMap(context, diaries) {
+    return addMap(diaries);
+  },
+
+  async diary_ensureUsers(context, data) {
+    let users = getUnmappedUsers(data);
     if (users.length > 0) {
       let res = await api.getUsers(users);
       addUsers(res.data);
     }
   },
 
-  async setSubscribedChannels({
+  async diary_setSubscribedChannels({
     commit,
     rootState
   }, channels) {
@@ -269,7 +333,7 @@ const actions = {
     }
   },
 
-  async initSubscribedChannels({
+  async diary_initSubscribedChannels({
     commit,
     rootState
   }) {
@@ -285,7 +349,7 @@ const actions = {
     }
   },
 
-  async getSubscribedChannels({
+  async diary_getSubscribedChannels({
     commit,
     state,
     rootState
@@ -309,7 +373,7 @@ const actions = {
     }
   },
 
-  async getMoreDiaries({
+  async diary_getMoreData({
     commit,
     state,
     rootState
@@ -321,12 +385,13 @@ const actions = {
     let filter = channelData.activedFilter;
     let res = await api.getDiaries(label, filter, _.last(channelData.diaries).createdAt, userid);
     let diaries = res.data;
-    let users = getUnstoredUsers(diaries);
+    let users = getUnmappedUsers(diaries);
     if (users.length > 0) {
       res = await api.getUsers(users);
       addUsers(res.data);
     }
-    updateDiaries(diaries);
+    updateData(diaries);
+    addMap(diaries);
 
     let nomore = diaries.length < config.pageSize;
 
@@ -339,7 +404,7 @@ const actions = {
     });
   },
 
-  async getDiaries({
+  async diary_getData({
     commit,
     state,
     rootState
@@ -401,12 +466,14 @@ const actions = {
     try {
       let res = await api.getDiaries(label, filter, null, userid);
       let diaries = res.data;
-      let users = getUnstoredUsers(diaries);
+      let users = getUnmappedUsers(diaries);
       if (users.length > 0) {
         res = await api.getUsers(users);
         addUsers(res.data);
       }
-      updateDiaries(diaries);
+
+      updateData(diaries);
+      addMap(diaries);
 
       commit("diary_setChannelData", {
         label,

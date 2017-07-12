@@ -22,7 +22,6 @@ class app {
   }
 
   back() {
-    store.commit("page_removeCache");
     history.go(-1);
   }
 
@@ -35,7 +34,7 @@ class app {
 
     store.commit("user_setAuth", data.user);
     store.commit("diary_setChannelChanged");
-    await store.dispatch("getSubscribedChannels");
+    await store.dispatch("diary_getSubscribedChannels");
   }
 
   //注销之后的一些处理
@@ -47,14 +46,56 @@ class app {
     store.commit("diary_setChannelChanged");
   }
 
+  async getUser(userid) {
+    let users = [{
+      userid
+    }];
+    await store.dispatch("diary_ensureUsers", users);
+    await store.dispatch("diary_updateUserInfo", users);
+    return users[0];
+  }
+
   adjustScrollableElement(selector, containerList) {
     let height = document.querySelector("main").clientHeight;
     if (containerList) {
       containerList.forEach(item => {
-        height -= document.querySelector(item).clientHeight;
+        height -= document.querySelector(item).offsetHeight;
       });
     }
     document.querySelector(selector).style.height = height + "px";
+  }
+
+  savePosition(el, id) {
+    let attributeName = "data-scroll-position";
+    if (id) {
+      attributeName += "-" + id;
+    }
+    el.querySelectorAll(".keep-scroll-position").forEach(item => {
+      item.setAttribute(attributeName, item.scrollLeft + "," + item.scrollTop);
+    });
+  }
+
+  restorePosition(el, id) {
+    let attributeName = "data-scroll-position";
+    if (id) {
+      attributeName += "-" + id;
+    }
+    if (el.hasAttribute(attributeName)) {
+      let data = el.getAttribute(attributeName);
+      if (data) {
+        let position = data.split(",");
+        el.scrollLeft = position[0];
+        el.scrollTop = position[1];
+      }
+    }
+    el.querySelectorAll(".keep-scroll-position").forEach(item => {
+      let data = item.getAttribute(attributeName);
+      if (data) {
+        let position = data.split(",");
+        item.scrollLeft = position[0];
+        item.scrollTop = position[1];
+      }
+    });
   }
 
   show(vue) {
@@ -88,8 +129,10 @@ class app {
 
     if (localStorage.authenticated) {
       api.setAuthorization();
-      store.commit("user_assignAuth", JSON.parse(localStorage.user));
-      store.dispatch("initSubscribedChannels");
+      let user = JSON.parse(localStorage.user);
+      this.userid = user._id;
+      store.commit("user_assignAuth", user);
+      store.dispatch("diary_initSubscribedChannels");
       store.dispatch("lesson_loadSettings");
     } else {
       store.commit("diary_setDefaultChannels");

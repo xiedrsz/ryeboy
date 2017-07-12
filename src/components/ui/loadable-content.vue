@@ -40,7 +40,10 @@
         type: Boolean,
         default: true
       },
-      loadstate: String,
+      loadstate: {
+        type: String,
+        default: "loading"
+      },
       infinite: Function,
       pulltorefresh: Function
     },

@@ -10,16 +10,18 @@
            v-html="text"></div>
       <div class="picture-block"
            v-if="pictures.length > 0">
-        <div v-for="picture in pictures">
+        <div v-for="picture in pictures"
+             :key="picture">
           <img :data-src="picture"
                class="picture lazyload">
         </div>
       </div>
       <div class="comment">
         <div>{{ time }}</div>
-        <div class="mdl-layout-spacer" />
+        <div class="mdl-layout-spacer"></div>
         <div class="counts">
-          <i class="material-icons md-16">favorite_border</i>
+          <i class="material-icons md-16"
+             :class="{ 'like': like }">{{ like ? "favorite" : "favorite_border" }}</i>
           <span style="margin-right: 24px">{{ likeCount }}</span>
           <i class="material-icons md-16">comment</i>
           <span>{{ commentCount }}</span>
@@ -41,6 +43,7 @@
       date: String,
       week: String,
       verified: Boolean,
+      like: Boolean,
       likeCount: {
         type: Number,
         default: 0
@@ -133,5 +136,9 @@
     @include flex-row;
     @include flex-wrap;
     margin: 12px 0 8px 0;
+  }
+
+  .like {
+    color: $color-red;
   }
 </style>

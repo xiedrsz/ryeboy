@@ -1,6 +1,9 @@
 <template>
   <div class="page"
-       title="我的日记">
+       title="麦友日记">
+    <div class="user-info">
+      <user-basic-info :user="user"></user-basic-info>
+    </div>
     <div class="tabs">
       <div v-for="(tab, index) in tabs"
            :key="tab.id"
@@ -47,18 +50,19 @@
         tabIndex: 0,
         context: {
           viewType: "daily"
-        }
+        },
+        user: {}
       };
     },
     methods: {
       adjustHeight() {
-        this.$app.adjustScrollableElement(".content-wrap", [".tabs"]);
+        this.$app.adjustScrollableElement(".content-wrap", [".tabs", ".user-info"]);
       },
       readySwitchView(index) {
         if (this.tabIndex == index) {
           return;
         }
-        this.$app.savePosition(this.$el);
+        this.$app.savePosition(this.$el, this.$route.query.id);
         this.switchView(index);
       },
       switchView(index) {
@@ -74,16 +78,22 @@
         });
       }
     },
-    async activated() {
-      this.context = await this.$store.dispatch("diary_getUserData", {
-        userid: this.$app.userid
-      });
-      this.switchView(this.context.index);
-    },
     components: {
+      "user-basic-info": require("components/pages/user/user-basic-info.vue"),
       "daily": require("components/pages/personal-diary/personal-diary-daily.vue"),
       "weekly": require("components/pages/personal-diary/personal-diary-weekly.vue"),
       "recommend": require("components/pages/personal-diary/personal-diary-recommend.vue"),
+    },
+    async activated() {
+      let userid = this.$route.query.id;
+
+      this.context = await this.$store.dispatch("diary_getUserData", {
+        userid
+      });
+
+      this.switchView(this.context.index);
+      let user = await this.$app.getUser(userid);
+      this.$set(this.$data, "user", user);
     }
   };
 </script>

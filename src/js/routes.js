@@ -7,7 +7,7 @@ const home = [
 const pages = [
   "login", "settings", "channel-manage", "lesson-manage", "change-password",
   "lesson-detail", "lesson-diary", "lesson-publish", "diary-detail",
-  "personal-diary", "personal-diary-weekly-list", "message", "diary-like-list"
+  "personal-diary", "personal-diary-weekly-list", "message", "diary-like-list", "user-detail"
 ];
 
 const routes = [{
@@ -21,6 +21,25 @@ const routes = [{
   redirect: "/home/diary"
 }];
 
+const mixin = {
+  beforeRouteLeave(to, from, next) {
+    this.$app.savePosition(this.$el, this.$route.query.id);
+    next();
+  },
+  methods: {
+    __restorePosition() {
+      this.$nextTick(() => {
+        this.$app.restorePosition(this.$el, this.$route.query.id);
+      });
+    }
+  }
+  // activated() {
+  //   this.$nextTick(() => {
+  //     this.$app.restorePosition(this.$el, this.$route.query.id);
+  //   });
+  // }
+};
+
 routes.forEach(item => {
   if (item.path == "*") {
     return;
@@ -31,6 +50,7 @@ routes.forEach(item => {
     item.children = [];
     home.forEach(childrenPath => {
       let component = require(`components/pages/home/${childrenPath}.vue`);
+      component.mixins = [mixin];
       component.name = childrenPath;
       item.children.push({
         path: childrenPath,
@@ -45,15 +65,12 @@ routes.forEach(item => {
     item.children = [];
     pages.forEach(childrenPath => {
       let component = require(`components/pages/${childrenPath}.vue`);
+      component.mixins = [mixin];
       component.name = childrenPath;
       item.children.push({
         path: childrenPath,
         name: childrenPath,
-        component,
-        beforeEnter: (to, from, next) => {
-          store.commit("page_addCache", to);
-          next();
-        }
+        component
       });
     });
   }

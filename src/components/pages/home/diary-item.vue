@@ -3,6 +3,7 @@
       @click="$router.push('/pages/diary-detail?id=' + id)">
     <div class="diary-avatar">
       <img :data-src="avatar"
+           @click.stop="$router.push('/pages/user-detail?id=' + userid)"
            class="lazyload">
     </div>
     <div class="diary-main">
@@ -27,7 +28,8 @@
         <div>{{ time }}</div>
         <div class="mdl-layout-spacer"></div>
         <div class="diary-counts">
-          <i class="material-icons md-16" :class="{ 'diary-like': like }">{{ like ? "favorite" : "favorite_border" }}</i>
+          <i class="material-icons md-16"
+             :class="{ 'diary-like': like }">{{ like ? "favorite" : "favorite_border" }}</i>
           <span style="margin-right: 24px">{{ likeCount }}</span>
           <i class="material-icons md-16">comment</i>
           <span>{{ commentCount }}</span>
@@ -41,6 +43,7 @@
   export default {
     props: {
       id: String,
+      userid: String,
       username: String,
       avatar: String,
       text: String,
@@ -57,6 +60,11 @@
         default: 0
       },
       userlv: [String, Number]
+    },
+    methods: {
+      showUserDetail() {
+        console.log("showUserDetail");
+      }
     }
   };
 </script>

@@ -3,7 +3,6 @@ import _ from "lodash";
 
 const state = {
   title: "",
-  cached: [],
   toolbars: [],
   loading: false,
   popup: null, // 页面弹出内容，可能是对话框、操作列表、日期选择器等
@@ -22,16 +21,6 @@ const state = {
 };
 
 const mutations = {
-  page_removeCache(state) {
-    state.cached.pop();
-  },
-  page_addCache(state, route) {
-    let last = _.last(state.cached);
-    if (last && last == route.name) {
-      return;
-    }
-    state.cached.push(route.name);
-  },
   page_setTitle(state, title) {
     state.title = title;
   },

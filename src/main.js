@@ -10,7 +10,6 @@ Vue.use({
     Vue.prototype.$app = app;
   }
 });
-Vue.use(require("js/plugins/keepScrollPosition.js"));
 
 const router = new VueRouter({
   mode: "hash",

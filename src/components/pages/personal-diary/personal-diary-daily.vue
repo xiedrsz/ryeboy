@@ -1,13 +1,14 @@
 <template>
-  <div class="content-wrap">
-    <loadable-content :nomore="nomore"
-                      :loadstate="loadstate"
+  <div class="content-wrap keep-scroll-position">
+    <loadable-content :nomore="context.nomore"
+                      :loadstate="context.loadstate"
                       :infinite="infinite">
       <ul class="mdl-list">
-        <diary-item v-for="item in diaries"
+        <diary-item v-for="item in context.diaries"
                     :key="item._id"
                     :id="item._id"
                     :likeCount="item.likeCount"
+                    :like="item.like"
                     :commentCount="item.commentCount"
                     :pictures="item.pictures"
                     :text="item.escapedText"
@@ -25,41 +26,48 @@
   export default {
     data() {
       return {
-        diaries: [],
-        loadstate: "loading",
-        nomore: true,
-        last: new Date()
+        userid: String,
+        context: {}
       };
     },
     methods: {
-      async getData(userid, last, filter) {
-        let res = await this.$app.api.getPersonalDiaries(userid, last, filter);
+      async getData(last) {
+        let res = await this.$app.api.getPersonalDiaries(this.userid, this.$app.userid, last);
         let diaries = res.data;
         if (diaries.length == 0) {
-          this.nomore = true;
+          this.context.nomore = true;
           return 0;
         }
-        await this.$store.dispatch("updateDiaries", diaries);
-        this.nomore = diaries.length < this.$app.config.pageSize;
+        await this.$store.dispatch("diary_updateData", diaries);
+        diaries = await this.$store.dispatch("diary_addMap", diaries);
+        this.context.nomore = diaries.length < this.$app.config.pageSize;
 
-        if (last) {
-          diaries.forEach(item => {
-            this.diaries.push(item);
-          });
-        } else {
-          this.diaries = diaries;
-        }
-        this.last = _.last(diaries).date;
+        diaries.forEach(item => {
+          this.context.diaries.push(item);
+        });
+        this.context.last = _.last(diaries).date;
 
         return diaries.length;
       },
       async infinite() {
-        await this.getData(this.userid, this.last);
-      }
-    },
-    computed: {
-      userid() {
-        return this.$store.state.user._id;
+        await this.getData(this.context.last);
+      },
+      async load() {
+        this.context = await this.$store.dispatch("diary_getUserData", {
+          userid: this.userid,
+          label: "daily"
+        });
+
+        if (["loaded", "empty"].indexOf(this.context.loadstate) != -1) {
+          return;
+        }
+
+        try {
+          let count = await this.getData();
+          this.context.loadstate = count == 0 ? "empty" : "loaded";
+        } catch (error) {
+          this.context.loadstate = "error";
+        }
       }
     },
     components: {
@@ -67,15 +75,12 @@
       "diary-item": require("components/pages/personal-diary/personal-diary-item.vue"),
       "loadable-content": require("ui/loadable-content.vue"),
     },
-    async mounted() {
-      this.$app.adjustScrollableElement(".content-wrap", [".tabs"]);
-
-      try {
-        let count = await this.getData(this.userid);
-        this.loadstate = count == 0 ? "empty" : "loaded";
-      } catch (error) {
-        this.loadstate = "error";
-      }
+    async activated() {
+      this.userid = this.$route.query.id || this.$app.userid;
+      await this.load();
+      this.$nextTick(() => {
+        this.$app.restorePosition(this.$el, this.$route.query.id);
+      });
     }
   };
 </script>

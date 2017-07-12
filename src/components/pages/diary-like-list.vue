@@ -1,13 +1,12 @@
 <template>
   <div class="page"
        title="点赞">
-    <loadable-content class="content-wrap"
-                      :nomore="nomore"
-                      :loadstate="loadstate"
-                      :infinite="infinite"
-                      v-keep-scroll-position>
+    <loadable-content class="content-wrap keep-scroll-position"
+                      :nomore="context.nomore"
+                      :loadstate="context.loadstate"
+                      :infinite="infinite">
       <ul class="mdl-list">
-        <li v-for="item in items"
+        <li v-for="item in context.items"
             :key="item.userid"
             class="item-container">
           <div class="diary-avatar">
@@ -33,10 +32,13 @@
   export default {
     data() {
       return {
-        items: [],
-        nomore: true,
-        loadstate: "loading",
-        last: 0
+        context: {
+          id: String,
+          items: [],
+          nomore: true,
+          loadstate: "loading",
+          last: 0
+        }
       };
     },
     methods: {
@@ -44,38 +46,49 @@
         await this.getData();
       },
       async getData() {
-        let res = await this.$app.api.getLikes(this.$route.query.id, this.last);
+        let res = await this.$app.api.getLikes(this.$route.query.id, this.context.last);
         let items = res.data;
 
         if (items.length == 0) {
-          this.nomore = true;
+          this.context.nomore = true;
           return 0;
         }
 
-        await this.$store.dispatch("obtainUsers", items);
-        await this.$store.dispatch("updateUserInfo", items);
-        this.last += items.length;
-        this.nomore = items.length < this.$app.config.pageSize;
+        await this.$store.dispatch("diary_ensureUsers", items);
+        await this.$store.dispatch("diary_updateUserInfo", items);
+        this.context.last += items.length;
+        this.context.nomore = items.length < this.$app.config.pageSize;
 
         items.forEach(item => {
-          this.items.push(item);
+          this.context.items.push(item);
         });
 
         return items.length;
       },
+      async load() {
+        let id = this.$route.query.id;
+        this.context = await this.$store.dispatch("diary_getLikeData", id);
+        if (["loaded", "empty"].indexOf(this.context.loadstate) != -1) {
+          return;
+        }
+
+        try {
+          let count = await this.getData();
+          this.context.loadstate = count == 0 ? "empty" : "loaded";
+        } catch (error) {
+          this.context.loadstate = "error";
+        }
+      }
     },
     components: {
       "loadable-content": require("ui/loadable-content.vue"),
     },
-    async mounted() {
+    async activated() {
+      await this.load();
+      this.__restorePosition();
+    },
+    mounted() {
       this.$app.adjustScrollableElement(".content-wrap");
-
-      try {
-        let count = await this.getData();
-        this.loadstate = count == 0 ? "empty" : "loaded";
-      } catch (error) {
-        this.loadstate = "error";
-      }
     }
   };
 </script>

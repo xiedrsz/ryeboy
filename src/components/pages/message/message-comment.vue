@@ -1,10 +1,9 @@
 <template>
   <div>
-    <loadable-content class="content-wrap"
+    <loadable-content class="content-wrap keep-scroll-position"
                       :nomore="nomore"
                       :loadstate="loadstate"
-                      :infinite="infinite"
-                      v-keep-scroll-position>
+                      :infinite="infinite">
       <ul class="mdl-list">
         <li class="comment-container"
             v-for="item in items"
@@ -50,7 +49,7 @@
       return {
         items: [],
         selectedItem: {},
-        loadstate: "unload",
+        loadstate: "loading",
         nomore: true,
         enableReply: false,
         comment: "",
@@ -75,8 +74,6 @@
             content: this.comment,
             reply: this.selectedItem.userid
           };
-
-          console.log(comment);
 
           try {
             await this.$app.api.addDiaryComment(this.selectedItem.info.id, comment);
@@ -128,8 +125,8 @@
         }
 
         items.forEach(item => item.userid = item.sender);
-        await this.$store.dispatch("obtainUsers", items);
-        await this.$store.dispatch("updateComments", items);
+        await this.$store.dispatch("diary_ensureUsers", items);
+        await this.$store.dispatch("diary_updateComments", items);
         items.forEach(item => this.items.push(item));
 
         this.nomore = items.length < this.$app.config.pageSize;
@@ -150,6 +147,11 @@
       "infinite-scroll": require("ui/infinite-scroll.vue"),
       "loadable-content": require("ui/loadable-content.vue"),
       "button-icon": require("ui/button-icon.vue"),
+    },
+    async activated() {
+      this.$nextTick(() => {
+        this.$app.restorePosition(this.$el);
+      });
     },
     async mounted() {
       this.adjustHeight();

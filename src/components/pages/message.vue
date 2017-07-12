@@ -11,14 +11,19 @@
       </div>
     </div>
     <keep-alive>
-      <component :is="viewType"
-                 v-keep-scroll-position>
+      <component :is="viewType">
       </component>
     </keep-alive>
   </div>
 </template>
 
 <script>
+  const viewTypes = {
+    0: "comment",
+    1: "like",
+    2: "notice"
+  };
+
   export default {
     data() {
       return {
@@ -40,7 +45,7 @@
           }
         ],
         tabIndex: 0,
-        viewType: "comment",
+        viewType: "comment"
       };
     },
     methods: {
@@ -48,25 +53,7 @@
         this.tabs[this.tabIndex].active = false;
         this.tabs[index].active = true;
         this.tabIndex = index;
-
-        switch (index) {
-          case 1:
-            this.viewType = "like";
-            break;
-
-          case 2:
-            this.viewType = "notice";
-            break;
-
-          default:
-            this.viewType = "comment";
-            break;
-        }
-      }
-    },
-    computed: {
-      userid() {
-        return this.$store.state.user._id;
+        this.viewType = viewTypes[index];
       }
     },
     components: {
@@ -80,20 +67,5 @@
 <style lang="scss"
        scoped>
   @import "~scss/main.scss";
-  .tabs {
-    height: 36px;
-    min-height: 36px;
-    @include flex-row;
-    @include flex-vertical-center;
-    border-bottom: 1px solid $color-divider;
-    background-color: $color-hint-block;
-  }
-
-  .tab-link {
-    margin-left: 24px;
-  }
-
-  .tab-link.active {
-    color: $color-blue;
-  }
+  @import "~scss/tabs.scss";
 </style>

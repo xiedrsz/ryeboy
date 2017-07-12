@@ -1,8 +1,7 @@
 <template>
   <div class="page-layout">
     <div class="channel-container-wrap">
-      <div class="channel-container"
-           v-keep-scroll-position>
+      <div class="channel-container keep-scroll-position">
         <div v-for="item in channels"
              @click="switchChannel(item.id)"
              :key="item.id"
@@ -21,8 +20,7 @@
              ref="swipe">
         <swipe-slide v-for="channel in channels"
                      :key="channel.id">
-          <div class="slide-content pulltorefresh"
-               v-keep-scroll-position>
+          <div class="slide-content pulltorefresh keep-scroll-position">
             <div v-if="loadstate(channel.id) !='unload'"
                  class="channel-filter-container">
               <div v-for="item in filters(channel.id)"
@@ -42,6 +40,7 @@
                 <diary-item v-for="item in diaries(channel.id)"
                             :key="item._id"
                             :id="item._id"
+                            :userid="item.userid"
                             :like="item.like"
                             :likeCount="item.likeCount"
                             :commentCount="item.commentCount"
@@ -121,7 +120,7 @@
         this.authRoute("/pages/channel-manage");
       },
       getDiaries() {
-        this.$store.dispatch("getDiaries");
+        this.$store.dispatch("diary_getData");
       },
       switchChannel(id) {
         let index = _.findIndex(this.channels, ["id", id]);
@@ -147,7 +146,7 @@
         this.getDiaries();
       },
       async infinite() {
-        await this.$store.dispatch("getMoreDiaries");
+        await this.$store.dispatch("diary_getMoreData");
       }
     },
     components: {
@@ -166,6 +165,8 @@
           this.slideChanged(0);
         }, 0);
       }
+
+      this.__restorePosition();
     },
     mounted() {
       // 调整日记列表高度
