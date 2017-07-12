@@ -15,7 +15,7 @@ module.exports = {
       loader: "vue-loader",
       options: {
         loaders: {
-          "scss": "vue-style-loader!css-loader!sass-loader", 
+          "scss": "vue-style-loader!css-loader!sass-loader",
           "sass": "vue-style-loader!css-loader!sass-loader?indentedSyntax"
         }
       }
@@ -26,7 +26,11 @@ module.exports = {
       exclude: /node_modules/
     }, {
       test: /\.scss$/,
-      loaders: ["style-loader", "css-loader", "sass-loader"] 
+      loaders: ["style-loader", "css-loader", "sass-loader"]
+    },
+    {
+      test: /\.json$/,
+      use: "json-loader"
     },
     {
       test: /\.(png|jpg|gif|svg)$/,
