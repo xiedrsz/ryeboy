@@ -1,9 +1,19 @@
 const moment = require("moment");
+moment.locale("zh-CN");
 
 moment.locale('zh-cn');
 
 class datetime {
-  formatDiaryCreated(createdAt) {
+  static utcDate(time) {
+    let offset = moment(time).utcOffset();
+    return this.date(moment.utc(time).add(offset, "m")).toDate();
+  }
+
+  static date(date) {
+    return moment(date).hours(0).minutes(0).seconds(0).millisecond(0);
+  }
+
+  static formatDiaryCreated(createdAt) {
     let current = moment(createdAt);
     let now = moment();
     let format = "H:mm";
@@ -22,7 +32,19 @@ class datetime {
     return current.format(format);
   }
 
-  formatDiaryDate(date) {
+  static formatDiaryWeek(date) {
+    let current = moment(date);
+    let format = "[周]dd";
+    return current.format(format);
+  }
+
+  static formatDiaryDateWithoutYear(date) {
+    let current = moment(date);
+    let format = "M[月]D[日]";
+    return current.format(format);
+  }
+
+  static formatDiaryDate(date) {
     let current = moment(date);
     let now = moment();
     let format = "M[月]D[日]";
@@ -32,7 +54,7 @@ class datetime {
     return current.format(format);
   }
 
-  formatCreated(createdAt) {
+  static formatCreated(createdAt) {
     let current = moment(createdAt);
     let now = moment();
     let format = "H:mm";
@@ -49,10 +71,10 @@ class datetime {
     return current.format(format);
   }
 
-  createdFromNow(createdAt) {
+  static createdFromNow(createdAt) {
     let current = moment(createdAt);
     return current.fromNow();
   }
 }
 
-module.exports = new datetime();
+module.exports = datetime;

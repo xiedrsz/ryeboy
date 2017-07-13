@@ -13,7 +13,10 @@
   "globals": {
     "componentHandler": false,
     "axios": false,
-    "Swipe": false
+    "Swipe": false,
+    "lazySizes": false,
+    "Camera": false,
+    "FileTransfer": false
   },
   "rules": {
     "indent": [

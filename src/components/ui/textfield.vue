@@ -1,7 +1,13 @@
 <template>
-  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-    <input class="mdl-textfield__input" :type="type" :value="value" :id="id" @input="fireInputEvent">
-    <label class="mdl-textfield__label" :for="id">{{ label }}</label>
+  <div class="mdl-textfield mdl-js-textfield"
+       :class="{ 'mdl-textfield--floating-label': floating }">
+    <input class="mdl-textfield__input"
+           :type="type"
+           :value="value"
+           :id="id"
+           @input="fireInputEvent">
+    <label class="mdl-textfield__label"
+           :for="id">{{ label }}</label>
   </div>
 </template>
 
@@ -10,6 +16,10 @@
     props: {
       id: String,
       label: String,
+      floating: {
+        type: Boolean,
+        default: false
+      },
       value: {
         required: false
       },
@@ -22,10 +32,9 @@
       componentHandler.upgradeElement(this.$el);
     },
     methods: {
-      fireInputEvent: function (event) {
+      fireInputEvent: function(event) {
         this.$emit("input", event.target.value);
       }
     }
   };
-
 </script>

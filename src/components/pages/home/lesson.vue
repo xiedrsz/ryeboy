@@ -1,71 +1,129 @@
 <template>
-  <div class="page-layout">
-    <div class="action-container">
-      <div class="action">2月6日</div>
-      <div class="mdl-layout-spacer"></div>
-      <div class="action"
-           @click="$router.push('/pages/lesson-manage')">管理</div>
-      <div class="action">保存</div>
-      <div class="action">发布</div>
-    </div>
-    <div class="card-container">
-      <div v-for="weight in cards"
-           class="weight-container">
-        <div class="weight-block">
-          <div class="weight-text">{{ weight.name }}</div>
-          <div class="mdl-layout-spacer"></div>
-          <div>
-            <checkbox :id="weight.value"
-                      text="全选"
-                      :changed="selectAllCards"></checkbox>
-          </div>
+  <div>
+    <div class="page-layout"
+         v-if="authenticated">
+      <div class="action-container">
+        <div class="action date-selector"
+             @click="selectDate">
+          <span>{{ selectedDateText}}</span>
+          <i class="material-icons md-20"
+             style="margin-left: 8px"
+             @click="selectDate">expand_more</i>
         </div>
-        <div class="card-list">
-          <div v-for="card in weight.cards"
-               class="card">
-            <img class="card-icon"
-                 @click="cardDetail(card.id)"
-                 :src="'../../img/card-' + card.id + '.png'">
-            <div class="card-name">{{ card.name }}</div>
-            <checkbox :id="card.id"
-                      v-model="card.selected"></checkbox>
+        <div class="mdl-layout-spacer"></div>
+        <div class="action"
+             @click="$router.push('/pages/lesson-manage')">管理</div>
+        <div class="action"
+             @click="save">保存</div>
+        <div class="action"
+             :class="{ published: published }"
+             @click="publish">{{ published ? "已发布": "发布" }}</div>
+      </div>
+      <div class="card-container">
+        <div v-for="weight in cards"
+             :key="weight.name"
+             v-show="weight.cards.length > 0"
+             class="weight-container">
+          <div class="weight-block">
+            <div class="weight-text">{{ weight.name }}</div>
+            <div class="mdl-layout-spacer"></div>
+            <div>
+              <checkbox :id="weight.value"
+                        v-model="record.selectedWeights[weight.value - 1]"
+                        :disabled="published"
+                        text="全选"
+                        :changed="selectAllCards"></checkbox>
+            </div>
+          </div>
+          <div class="card-list">
+            <div v-for="card in weight.cards"
+                 :key="card.id"
+                 class="card">
+              <img class="card-icon"
+                   @click="cardDetail(card.id)"
+                   :src="require('img/card-' + card.id + '.png')">
+              <div class="card-name">{{ card.name }}</div>
+              <checkbox :id="card.id"
+                        :disabled="published"
+                        :changed="selectCard"
+                        v-model="record.selectedCards[card.id]"></checkbox>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <div class="page-layout unauthenticated"
+         v-if="!authenticated">
+      (你还没有登录)</div>
   </div>
 </template>
 
 <script>
-  function getSelected(cards) {
-    let selected = [];
-    cards.forEach(weight => {
-      weight.cards.forEach(card => {
-        if (card.selected === true) {
-          selected.push(card.id);
-        }
-      });
-    });
-    return selected;
-  }
-
-  function setSelected(cards, selected) {
-    cards.forEach(weight => {
-      weight.cards.forEach(card => {
-        if (selected.indexOf(card.id) >= 0) {
-          card.selected = true;
-        }
-      });
-    });
-  }
+  const flatpickr = require("flatpickr");
+  const moment = require("moment");
 
   export default {
     data() {
       return {
-        cards: []
+        record: {},
+        initialized: false
       };
     },
     methods: {
+      init() {
+        document.querySelector(".card-container").style.height = (document.querySelector("main").clientHeight - document.querySelector(".action-container").clientHeight - 1) + "px";
+        let self = this;
+
+        this.flatpickr = new flatpickr(document.querySelector(".date-selector"), {
+          clickOpens: false,
+          disableMobile: true,
+          defaultDate: this.selectedDate,
+          locale: require("flatpickr/dist/l10n/zh.js").zh,
+          disable: [
+            function(date) {
+              return self.$app.datetime.date(date).isAfter(self.$app.datetime.date(moment()));
+            }
+          ],
+          onChange(selectedDates) {
+            self.$store.dispatch("lesson_selectDate", selectedDates[0]).then(res => {
+              self.record = res;
+            });
+          },
+          onClose() {
+            self.$store.commit("page_setPopup");
+          }
+        });
+
+        this.$on("closePopup", () => {
+          self.flatpickr.close();
+        });
+
+        this.initialized = true;
+      },
+      assignRecord() {
+        this.$store.dispatch("lesson_assignRecord").then(res => {
+          this.record = res;
+        });
+      },
+      save() {
+        if (this.published) {
+          return;
+        }
+        this.$store.dispatch("lesson_save");
+        let dateText = moment(this.selectedDate).format("M[月]D[日]");
+
+        this.$app.dialog.text(`${dateText}的功课已保存在本地`);
+      },
+      publish() {
+        if (this.published) {
+          return;
+        }
+        this.$router.push("/pages/lesson-publish");
+      },
+      selectDate() {
+        this.$store.commit("page_setPopup", this.flatpickr);
+        this.flatpickr.open();
+      },
       cardDetail(cardId) {
         if (cardId == 100) {
           this.$router.push("/pages/lesson-diary");
@@ -76,29 +134,73 @@
       cardVisibled(card) {
         return this.userlv >= card.unlock;
       },
+      selectCard(data) {
+        this.$store.commit("lesson_selectCard", data);
+      },
       selectAllCards(data) {
-        this.cards.forEach(weight => {
-          if (weight.value == data.id) {
-            weight.cards.forEach(card => {
-              card.selected = data.checked;
-            });
-          }
-        });
+        this.$store.commit("lesson_selectAllCards", data);
+      }
+    },
+    computed: {
+      selectedDateText() {
+        let date = moment(this.selectedDate);
+        let suffix = "";
+        let diffDays = date.diff(this.$app.datetime.date(moment()), "days");
+        if (diffDays == -1) {
+          suffix = "昨天";
+        } else if (diffDays == 0) {
+          suffix = "今天";
+        } else
+        if (diffDays == -2) {
+          suffix = "前天";
+        }
+        return date.format("M[月]D[日]" + suffix);
+      },
+      selectedDate() {
+        return this.$store.state.lesson.selectedDate;
+      },
+      published() {
+        return this.record.published;
+      },
+      authenticated() {
+        return this.$store.state.user.authenticated;
+      },
+      cards() {
+        return this.record.weightedCards;
       }
     },
     mounted() {
-      document.querySelector(".card-container").style.height = (document.querySelector("main").clientHeight - document.querySelector(".action-container").clientHeight - 1) + "px";
+      if (this.authenticated) {
+        this.init();
+      }
+    },
+    beforeDestroy() {
+      this.$off("closePopup");
+    },
+    destroyed() {
+      if (this.flatpickr) {
+        this.flatpickr.destroy();
+        delete this.flatpickr;
+      }
     },
     activated() {
-      let selected = getSelected(this.cards);
-      this.cards = this.$store.getters.lesson_getAvailableCards;
-      setSelected(this.cards, selected);
+      if (!this.authenticated) {
+        return;
+      }
+
+      if (!this.initialized) {
+        this.init();
+      }
+
+      this.assignRecord();
     },
     components: {
       "checkbox": require("ui/checkbox.vue"),
     }
   };
 </script>
+
+<style src="flatpickr/dist/themes/material_blue.css"></style>
 
 <style lang="scss"
        scoped>
@@ -158,6 +260,10 @@
     flex-wrap: wrap;
   }
 
+  .published {
+    color: $color-blue;
+  }
+
   .card {
     @include flex-column;
     width: 64px;
@@ -168,11 +274,23 @@
   .card-icon {
     width: 48px;
     height: 48px;
+    border: 1px solid $color-disable;
     border-radius: 8px 4px 4px 4px;
-    background-color: $color-disable;
+    background-color: $color-divider;
   }
 
   .card-name {
     font-size: 12px;
+  }
+
+  .date-selector {
+    @include flex-row;
+    @include flex-vertical-center;
+  }
+
+  .unauthenticated {
+    @include flex-row;
+    @include flex-center;
+    height: 128px;
   }
 </style>

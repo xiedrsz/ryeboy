@@ -24,6 +24,13 @@
       changed: Function
     },
     watch: {
+      disabled(newVal) {
+        if (newVal) {
+          this.$el.MaterialCheckbox.disable();
+        } else {
+          this.$el.MaterialCheckbox.enable();
+        }
+      },
       checked(newVal) {
         if (newVal) {
           this.$el.MaterialCheckbox.check();

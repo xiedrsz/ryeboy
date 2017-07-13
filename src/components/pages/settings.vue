@@ -4,25 +4,23 @@
     <list>
       <list-item text="修改密码"
                  @click.native="$router.push('/pages/change-password')"
-                 v-if="authenticated" />
-      <list-item text="设置隐私密码"
-                 v-if="authenticated" />
+                 v-if="authenticated"></list-item>
+      <list-item text="应用锁"></list-item>
+      <list-item text="分享应用"></list-item>
       <list-item text="清除本地缓存"
-                 @click.native="clearLocalStorage" />
+                 @click.native="clearLocalStorage"></list-item>
       <list-item text="检查版本"
-                 :divider="false" />
+                 :divider="false"></list-item>
     </list>
     <div v-if="authenticated"
          style="margin-top: 64px; text-align: center">
       <button-flat text="退出登录"
-                   @click.native="logout" />
+                   @click.native="logout"></button-flat>
     </div>
   </div>
 </template>
 
 <script>
-  import api from "api";
-
   export default {
     components: {
       "button-flat": require("components/ui/button-flat.vue"),
@@ -31,20 +29,12 @@
     },
     methods: {
       logout() {
-        api.logout();
-
-        localStorage.removeItem("authenticated");
-        localStorage.removeItem("user");
-        this.$store.commit("user_deleteAuth");
+        this.$app.afterLogout();
         this.$router.replace("/");
       },
       clearLocalStorage() {
         localStorage.clear();
-        this.$store.commit("page_showDialog", {
-          show: true,
-          type: "alert",
-          content: "本地缓存已经清除"
-        });
+        this.$app.dialog.text("本地缓存已经清除");
       }
     },
     computed: {

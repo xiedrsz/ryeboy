@@ -1,13 +1,18 @@
+import config from "js/config";
 const _ = require("lodash");
 
 class textHelper {
-  escape(text) {
+  static getPictureUrl(name) {
+    return `${config.apiAddress}/upload/${name}`;
+  }
+
+  static escape(text) {
     text = _.escape(text);
     text = text.split("\n").join("<br>");
     return text;
   }
 
-  getDiaryText(diary) {
+  static getDiaryText(diary) {
     var text = diary.text === undefined ? "" : diary.text;
     if (text.length == 0) {
       text = "我在默默地坚持种麦子，请为我加油鼓励吧！";
@@ -15,7 +20,15 @@ class textHelper {
     return text;
   }
 
-  getUserName(user) {
+  static getUserLevel(user) {
+    let result = 1;
+    if (user && user.grade) {
+      result = user.grade.lv;
+    }
+    return `LV${result}`;
+  }
+
+  static getUserName(user) {
     let text = "";
     if (user) {
       text = user.username;
@@ -26,7 +39,18 @@ class textHelper {
     return text;
   }
 
-  getLessonGroupName(group) {
+  static getLessonWeightName(weight) {
+    switch (weight) {
+    case 1:
+      return "最重要功课";
+    case 2:
+      return "重要功课";
+    case 3:
+      return "次重要功课";
+    }
+  }
+
+  static getLessonGroupName(group) {
     switch (group) {
     case 304:
       return "麦式运动";
@@ -40,4 +64,4 @@ class textHelper {
   }
 }
 
-module.exports = new textHelper();
+module.exports = textHelper;

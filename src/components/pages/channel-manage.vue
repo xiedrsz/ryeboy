@@ -148,7 +148,7 @@ export default {
     edit() {
       if (this.enableEdit && this.modified) {
         this.$store.commit("diary_setChannelChanged");
-        this.$store.dispatch("setSubscribedChannels", this.subscribedChannels);
+        this.$store.dispatch("diary_setSubscribedChannels", this.subscribedChannels);
       }
       this.enableEdit = !this.enableEdit;
       if (this.enableEdit) {

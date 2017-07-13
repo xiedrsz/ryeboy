@@ -1,10 +1,10 @@
 <template>
   <div class="page-layout">
     <div class="channel-container-wrap">
-      <div class="channel-container">
+      <div class="channel-container keep-scroll-position">
         <div v-for="item in channels"
-             @click="switchChannel"
-             :id="item.id"
+             @click="switchChannel(item.id)"
+             :key="item.id"
              :class="{ active: item.active }"
              class="channel">
           {{ item.name }}
@@ -19,51 +19,40 @@
       <swipe @slidechanged="slideChanged"
              ref="swipe">
         <swipe-slide v-for="channel in channels"
-                     :id="channel.id">
-          <div class="slide-content">
-            <pull-to-refresh :disabled="disableRefresh"
-                             @pulltorefresh="pulltorefresh" />
-            <div v-if="channelDatas[channel.id]"
+                     :key="channel.id">
+          <div class="slide-content pulltorefresh keep-scroll-position">
+            <div v-if="loadstate(channel.id) !='unload'"
                  class="channel-filter-container">
-              <div v-for="item in channelDatas[channel.id].filters"
-                   @click="switchFilter"
+              <div v-for="item in filters(channel.id)"
+                   :key="item.id"
                    :id="item.id"
+                   @click="switchFilter(item.id)"
                    :class="{ active: item.active }"
                    class="channel-filter">
                 {{ item.name }}
               </div>
             </div>
-            <div v-if="!channelDatas[channel.id]"
-                 class="unload">
-              (未加载)
-            </div>
-            <div v-else-if="channelDatas[channel.id].loadstate == 'error'"
-                 class="loadstate">
-              (加载错误)
-            </div>
-            <div v-else-if="channelDatas[channel.id].loadstate == 'empty'"
-                 class="loadstate">
-              (无内容)
-            </div>
-            <div v-else-if="channelDatas[channel.id].loadstate == 'loading'"
-                 class="loadstate">
-              <spinner />
-            </div>
-            <div v-else="channelDatas[channel.id].loadstate == 'ok'">
+            <loadable-content :nomore="nomore(channel.id)"
+                              :loadstate="loadstate(channel.id)"
+                              :infinite="infinite"
+                              :pulltorefresh="pulltorefresh">
               <ul class="mdl-list">
-                <diary-item v-for="item in channelDatas[channel.id].diaries"
+                <diary-item v-for="item in diaries(channel.id)"
+                            :key="item._id"
+                            :id="item._id"
+                            :userid="item.userid"
+                            :like="item.like"
                             :likeCount="item.likeCount"
                             :commentCount="item.commentCount"
                             :avatar="item.avatar"
                             :username="item.username"
+                            :pictures="item.pictures"
+                            :verified="item.verified"
                             :text="item.escapedText"
-                            :time="item.time" />
+                            :userlv="item.userlv"
+                            :time="item.time"></diary-item>
               </ul>
-              <infinite-scroll v-if="enableInfiniteScroll && channelDatas[channel.id].nomore == false"
-                               :onInfinite="infinite">
-                <div slot="no-more">没有更多内容了</div>
-              </infinite-scroll>
-            </div>
+            </loadable-content>
           </div>
         </swipe-slide>
       </swipe>
@@ -75,10 +64,11 @@
   import _ from "lodash";
 
   export default {
+    name: "diary",
     data() {
       return {
+        slideContentPosition: 0,
         slideContentHeight: 0,
-        enableInfiniteScroll: false
       };
     },
     computed: {
@@ -91,15 +81,23 @@
       channelDatas() {
         return this.$store.state.diary.channelDatas;
       },
-      disableRefresh() {
-        let state = this.$store.getters.getChannelLoadstate;
-        return !(state == "ok" || state == "error" || state == "empty");
-      },
       channelChanged() {
         return this.$store.state.diary.channelChanged;
       }
     },
     methods: {
+      diaries(id) {
+        return this.channelDatas[id] ? this.channelDatas[id].diaries : [];
+      },
+      filters(id) {
+        return this.channelDatas[id] ? this.channelDatas[id].filters : [];
+      },
+      nomore(id) {
+        return this.channelDatas[id] ? this.channelDatas[id].nomore : true;
+      },
+      loadstate(id) {
+        return this.channelDatas[id] ? this.channelDatas[id].loadstate : "unload";
+      },
       // 如果已经登录，跳转到目标页面，否则跳转到登录页面
       authRoute(to) {
         if (this.authenticated) {
@@ -122,15 +120,14 @@
         this.authRoute("/pages/channel-manage");
       },
       getDiaries() {
-        this.$store.dispatch("getDiaries");
+        this.$store.dispatch("diary_getData");
       },
-      switchChannel(event) {
-        let label = event.target.id;
-        let index = _.findIndex(this.channels, ["id", label]);
+      switchChannel(id) {
+        let index = _.findIndex(this.channels, ["id", id]);
         this.$refs.swipe.slideTo(index);
       },
-      switchFilter(event) {
-        let filter = event.target.id;
+      switchFilter(id) {
+        let filter = id;
         this.$store.commit("diary_switchFilter", {
           filter,
           reload: true
@@ -148,24 +145,17 @@
         this.$store.commit("diary_setReload");
         this.getDiaries();
       },
-      infinite(infiniteScroll) {
-        this.$store.dispatch("getMoreDiaries", infiniteScroll);
+      async infinite() {
+        await this.$store.dispatch("diary_getMoreData");
       }
     },
     components: {
       "diary-item": require("components/pages/home/diary-item.vue"),
-      "spinner": require("ui/spinner.vue"),
       "swipe": require("ui/swipe.vue"),
       "swipe-slide": require("ui/swipe-slide.vue"),
-      "pull-to-refresh": require("ui/pull-to-refresh.vue"),
-      "infinite-scroll": require("ui/infinite-scroll.vue"),
-    },
-    deactivated() {
-      this.enableInfiniteScroll = false;
+      "loadable-content": require("ui/loadable-content.vue"),
     },
     activated() {
-      this.enableInfiniteScroll = true;
-
       if (this.channelChanged) {
         this.setSlideContentHeight();
         this.$store.commit("diary_setChannelChanged", false);
@@ -175,6 +165,8 @@
           this.slideChanged(0);
         }, 0);
       }
+
+      this.__restorePosition();
     },
     mounted() {
       // 调整日记列表高度
@@ -267,19 +259,6 @@
 
   .channel-filter.active {
     color: $color-text;
-  }
-
-  .loadstate {
-    @include flex-row;
-    @include flex-center;
-    height: 128px;
-  }
-
-  .unload {
-    @include flex-row;
-    @include flex-center;
-    height: 256px;
-    color: $color-hint-text;
   }
 
   .mdl-list {

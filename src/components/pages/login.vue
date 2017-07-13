@@ -3,28 +3,33 @@
        title="登录">
     <div class="mdl-grid"
          style="padding-top: 32px">
-      <div class="mdl-cell mdl-cell--2-col-tablet mdl-cell--1-col-phone" />
+      <div class="mdl-cell mdl-cell--2-col-tablet mdl-cell--1-col-phone"></div>
       <div class="mdl-cell mdl-cell--4-col-tablet mdl-cell--2-col-phone">
         <textfield label="帐号"
+                   :floating="true"
                    v-model="account"
-                   class="full-width" />
+                   class="full-width">
+        </textfield>
         <textfield label="密码"
+                   :floating="true"
                    type="password"
                    class="full-width"
-                   v-model="password" />
+                   v-model="password">
+        </textfield>
         <button-colored class="full-width mt-32"
                         text="登录"
-                        @click.native="submit" />
+                        @click.native="submit">
+        </button-colored>
+
         <p v-if="errorText"
            class="mdl-color-text--red mt-32">{{ errorText }}</p>
       </div>
     </div>
+
   </div>
 </template>
 
 <script>
-  import api from "api";
-
   export default {
     data: function() {
       return {
@@ -43,29 +48,34 @@
       }
       next();
     },
+    watch: {
+      errorText(newValue) {
+        if (newValue) {
+          this.$app.dialog.hideLoading();
+        }
+      }
+    },
     methods: {
-      submit() {
+      async submit() {
         if (this.account && this.password) {
           this.errorText = "";
-          this.$store.commit("page_showLoading", true);
-          api.login(this.account, this.password).then(res => {
+
+          try {
+            this.$el.focus();
+            let res = await this.$app.api.login(this.account, this.password);
             let data = res.data;
+
             if (data.error) {
-              this.errorText = "无效的帐号或密码。";
+              this.errorText = data.error;
             } else {
-              localStorage.authenticated = true;
-              this.$store.commit("user_setAuth", data.user);
+              await this.$app.afterLogin(data);
               let redirect = this.$route.query.redirect;
-              this.$store.dispatch("getSubscribedChannels").then(() => {
-                this.$router.replace(redirect ? redirect : "/");
-              });
+              this.$router.replace(redirect ? redirect : "/");
             }
-            this.$store.commit("page_showLoading", false);
-          }).catch((err) => {
+          } catch (err) {
+            this.$app.dialog.text("帐号或密码不正确。");
             console.log(err);
-            this.errorText = "网络出错。";
-            this.$store.commit("page_showLoading", false);
-          });
+          }
         } else {
           this.errorText = "请填写帐号密码。";
         }

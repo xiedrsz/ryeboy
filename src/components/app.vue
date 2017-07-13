@@ -1,37 +1,69 @@
 <template>
   <div id="app"
        class="mdl-layout__container">
-    <keep-alive>
-      <router-view v-if="$route.meta.keepAlive"></router-view>
+    <keep-alive :include="'home'">
+      <router-view></router-view>
     </keep-alive>
-    <router-view v-if="!$route.meta.keepAlive"></router-view>
-    <modal-loading v-show="loading" />
+
+    <!-- 全屏组件 -->
+    <modal-loading v-show="loading"></modal-loading>
     <modal-dialog v-show="dialog.show"
                   :type="dialog.type"
                   :content="dialog.content"
-                  :title="dialog.title" />
+
+                  :title="dialog.title"
+                  @ok="dialogOkCallback"
+                  @cancel="dialogCancelCallback"></modal-dialog>
+    
     <modal-popue v-show="popue.show"/>
+    
+    <action-sheet v-show="actionSheet.show"
+                  :actions="actionSheet.actions"></action-sheet>
+    <gallery ref="gallery"></gallery>
+    <toast ref="toast"></toast>
   </div>
 </template>
 
 <script>
-export default {
-  computed: {
-    loading() {
-      return this.$store.state.page.loading;
+  export default {
+    methods: {
+      dialogOkCallback() {
+        if (this.dialog.okCallback) {
+          this.dialog.okCallback();
+          this.dialog.okCallback = null;
+        }
+      },
+      dialogCancelCallback() {
+        if (this.dialog.cancelCallback) {
+          this.dialog.cancelCallback();
+          this.dialog.cancelCallback = null;
+        }
+      },
     },
-    dialog() {
-      return this.$store.state.page.dialog;
+    computed: {
+      loading() {
+        return this.$store.state.page.loading;
+      },
+      dialog() {
+        return this.$store.state.page.dialog;
+      },
+      actionSheet() {
+        return this.$store.state.page.actionSheet;
+      },
+      dialog() {
+        return this.$store.state.page.dialog;
+      },
+      popue() {
+        return this.$store.state.page.popue;
+      }
     },
-    popue() {
-      return this.$store.state.page.popue;
+    components: {
+      "modal-loading": require("components/ui/modal-loading.vue"),
+      "modal-dialog": require("components/ui/modal-dialog.vue"),
+      "modal-popue": require("components/ui/modal-popue.vue"),
+      "action-sheet": require("components/ui/action-sheet.vue"),
+      "gallery": require("ui/gallery.vue"),
+      "toast": require("ui/toast.vue"),
     }
-  },
-  components: {
-    "modal-loading": require("components/ui/modal-loading.vue"),
-    "modal-dialog": require("components/ui/modal-dialog.vue"),
-    "modal-popue": require("components/ui/modal-popue.vue"),
-  }
-};
-
+  };
 </script>

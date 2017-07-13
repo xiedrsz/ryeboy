@@ -1,97 +1,56 @@
+import Vue from "vue";
 import _ from "lodash";
+import api from "api";
+import datetime from "js/utils/datetime";
+import textHelper from "js/utils/textHelper";
+import collectionHelper from "js/utils/collectionHelper";
 const cards = require("store/cards.json");
+const moment = require("moment");
 
-function getWeightName(weight) {
-  switch (weight) {
-  case 1:
-    return "最重要功课";
-  case 2:
-    return "重要功课";
-  case 3:
-    return "次重要功课";
-  }
+function getDateKey(state) {
+  return moment(state.selectedDate).format("YYYY-MM-DD");
 }
 
 const state = {
   settingsLoaded: false,
+  selectedDate: datetime.date(moment()).subtract(1, "days").toDate(),
   cards,
   deselects: [],
   difficulties: {
     "304": 304,
     "401": 401,
     "411": 411
-  }
+  },
+  records: {}
 };
 
 const getters = {
-  lesson_getAvailableCards(state, getters, rootState) {
-    let collated = [];
-
-    cards.forEach(card => {
-      let cardset = collated[card.weight - 1];
-      if (cardset === undefined) {
-        cardset = {
-          value: card.weight,
-          name: getWeightName(card.weight),
-          cards: []
-        };
-        collated[card.weight - 1] = cardset;
-      }
-
-      if (card.group) {
-        if (state.difficulties[card.group] != card.id) {
-          return;
-        }
-      }
-
-      if (rootState.user.grade.lv < card.unlock) {
-        return;
-      }
-
-      if (_.indexOf(state.deselects, card.id) != -1) {
-        return;
-      }
-
-      cardset.cards.push(Object.assign({
-        selected: false
-      }, card));
-    });
-
-    let result = [];
-    collated.forEach(cardset => {
-      if (cardset.cards.length > 0) {
-        result.push(cardset);
-      }
-    });
-
-    return result;
+  lesson_getDateKey(state) {
+    return getDateKey(state);
   },
   lesson_getDifficultCards() {
-    let collated = {};
+    let result = [];
+    let group;
 
     cards.forEach(card => {
       if (card.group) {
-        if (!collated[card.group]) {
-          collated[card.group] = {
+        if (group === undefined || group.id != card.group) {
+          group = {
             id: card.group,
             options: []
           };
+          result.push(group);
         }
-        let option = {
+        group.options.push({
           value: card.id,
           text: card.name
-        };
-        collated[card.group].options.push(option);
+        });
       }
     });
 
-    let result = [];
-    _.each(collated, item => {
-      result.push(item);
-    });
     return result;
   },
-  lesson_getOptionalCards(state) {
+  lesson_getManagedCards(state) {
     let result = [];
 
     cards.forEach(card => {
@@ -99,16 +58,14 @@ const getters = {
       if (cardset === undefined) {
         cardset = {
           value: card.weight,
-          name: getWeightName(card.weight),
+          name: textHelper.getLessonWeightName(card.weight),
           cards: []
         };
-        result[card.weight - 1] = cardset;
+        result.push(cardset);
       }
 
-      if (card.group) {
-        if (state.difficulties[card.group] != card.id) {
-          return;
-        }
+      if (card.group && card.group != card.id) {
+        return;
       }
 
       cardset.cards.push(Object.assign({
@@ -117,16 +74,47 @@ const getters = {
     });
 
     return result;
-  }
+  },
 };
 
 const mutations = {
+  lesson_selectAllCards(state, data) {
+    let record = state.records[getDateKey(state)];
+    Vue.set(record.selectedWeights, data.id.toString(), data.checked);
+    record.weightedCards.find(weight => weight.value == data.id).cards.forEach(card => {
+      Vue.set(record.selectedCards, card.id.toString(), data.checked);
+    });
+  },
+  lesson_selectCard(state, data) {
+    let record = state.records[getDateKey(state)];
+    Vue.set(record.selectedCards, data.id.toString(), data.checked);
+  },
+  lesson_setPictureUrl(state, data) {
+    let dateKey = getDateKey(state);
+    let record = state.records[dateKey];
+    let picture = _.find(record.diary.pictures, item => {
+      return item.id == data.id;
+    });
+    picture.url = data.url;
+  },
+  lesson_setDiary(state, data) {
+    let dateKey = getDateKey(state);
+    let record = state.records[dateKey];
+    let card = record.weightedCards[0].cards.find(card => {
+      return card.id == 100;
+    });
+    if (data.text) {
+      record.diary.text = data.text;
+      Vue.set(record.selectedCards, card.id.toString(), true);
+    } else {
+      record.diary.text = "";
+      Vue.set(record.selectedCards, card.id.toString(), false);
+    }
+    record.diary.pictures = data.pictures;
+  },
   lesson_setDeselect(state, data) {
     if (data.checked) {
-      let index = _.indexOf(state.deselects, data.id);
-      if (index >= 0) {
-        state.deselects.splice(index, 1);
-      }
+      collectionHelper.remove(state.deselects, data.id);
     } else {
       state.deselects.push(data.id);
     }
@@ -143,6 +131,176 @@ const mutations = {
 };
 
 const actions = {
+  lesson_getCards({
+    state
+  }, cardIdArray) {
+    let mapCardIdArray = _.keyBy(cardIdArray, id => {
+      return id;
+    });
+    let cards = [];
+    state.cards.forEach(card => {
+      if (mapCardIdArray[card.id]) {
+        cards.push(card);
+      }
+    });
+    return cards;
+  },
+  lesson_selectDate({
+    state,
+    dispatch
+  }, date) {
+    state.selectedDate = date;
+    return dispatch("lesson_assignRecord");
+  },
+  async lesson_assignRecord({
+    state,
+    rootState
+  }) {
+    let dateKey = getDateKey(state);
+    let record = state.records[dateKey];
+
+    if (record === undefined) {
+      record = {
+        diary: {
+          text: "",
+          pictures: []
+        },
+        published: false,
+        weightedCards: [],
+        selectedWeights: {},
+        selectedCards: {}
+      };
+      Vue.set(state.records, getDateKey(state), record);
+
+      let userid = rootState.user._id;
+      let storagedItem = localStorage[`${userid}_lesson_${dateKey}`];
+      if (storagedItem) {
+        let data = JSON.parse(storagedItem);
+        Object.assign(record, data);
+
+        record.checkedCards.forEach(cardId => {
+          Vue.set(record.selectedCards, cardId.toString(), true);
+        });
+        delete record.checkedCards;
+      } else {
+        let date = datetime.utcDate(state.selectedDate);
+        try {
+          let res = await api.getLesson(userid, date);
+          if (res.status == 200) {
+            record.published = true;
+            record.diary.text = res.data.text;
+            if (res.data.pictures) {
+              res.data.pictures.forEach(item => {
+                record.diary.pictures.push({
+                  url: textHelper.getPictureUrl(item)
+                });
+              });
+            }
+            res.data.checkedCards.forEach(cardId => {
+              Vue.set(record.selectedCards, cardId.toString(), true);
+            });
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+
+    let weightedCards = record.weightedCards;
+    weightedCards.splice(0, weightedCards.length);
+
+    cards.forEach(card => {
+      let cardset = weightedCards[card.weight - 1];
+      if (cardset === undefined) {
+        cardset = {
+          value: card.weight,
+          name: textHelper.getLessonWeightName(card.weight),
+          cards: []
+        };
+        weightedCards.push(cardset);
+      }
+      if (rootState.user.grade.lv < card.unlock) {
+        return;
+      }
+
+      if (card.group) {
+        if (state.difficulties[card.group] != card.id) {
+          return;
+        }
+        if (_.indexOf(state.deselects, card.group) != -1) {
+          return;
+        }
+      } else {
+        if (_.indexOf(state.deselects, card.id) != -1) {
+          return;
+        }
+      }
+
+      cardset.cards.push(Object.assign({}, card));
+    });
+
+    return record;
+  },
+  lesson_getPublishData({
+    state,
+    rootState
+  }) {
+    let record = state.records[getDateKey(state)];
+
+    // 得到勾选的功课
+    let checkedCards = [];
+    _.each(record.selectedCards, (checked, card) => {
+      if (checked) {
+        checkedCards.push(card);
+      }
+    });
+
+    let userid = rootState.user._id;
+
+    let data = {
+      checkedCards,
+      userid,
+      time: state.selectedDate,
+      text: record.diary.text,
+      pictures: record.diary.pictures,
+      expectedExp: 0
+    };
+
+    return data;
+  },
+  lesson_publish({
+    state,
+    dispatch
+  }) {
+    let record = state.records[getDateKey(state)];
+    record.published = true;
+    return dispatch("lesson_save");
+  },
+  async lesson_save({
+    state,
+    rootState
+  }) {
+    let userid = rootState.user._id;
+    let record = state.records[getDateKey(state)];
+
+    // 得到勾选的功课
+    let checkedCards = [];
+    _.each(record.selectedCards, (checked, card) => {
+      if (checked) {
+        checkedCards.push(card);
+      }
+    });
+
+    // 本地存储的数据
+    let data = {
+      diary: record.diary,
+      published: record.published,
+      checkedCards
+    };
+
+    let date = getDateKey(state);
+    localStorage[`${userid}_lesson_${date}`] = JSON.stringify(data);
+  },
   lesson_loadSettings({
     commit,
     rootState

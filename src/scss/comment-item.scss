@@ -1,0 +1,65 @@
+@import "main";
+.comment-container {
+  @include flex-row;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid $color-divider;
+}
+
+.comment-container:last-child {
+  border-bottom: none;
+}
+
+.comment-avatar {
+  background: white;
+  width: 40px;
+  height: 40px;
+  border: 1px solid $color-divider;
+  border-radius: 50%;
+}
+
+.comment-avatar img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.comment-main {
+  margin-left: 16px;
+  font-size: 16px;
+  width: 100%;
+}
+
+.comment-text {
+  color: $color-text;
+  margin-top: 8px;
+}
+
+.comment-username {
+  color: $color-blue;
+  @include flex-row;
+  @include flex-vertical-center;
+}
+
+.comment-username span {
+  margin-right: 8px;
+}
+
+.comment-v {
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+}
+
+.comment-time,
+.comment-replied {
+  color: $color-hint-text;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.comment-userlv {
+  font-size: 12px;
+  color: $color-hint-text;
+}

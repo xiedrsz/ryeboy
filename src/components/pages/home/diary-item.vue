@@ -1,19 +1,38 @@
 <template>
-  <li class="item-container">
-    <div class="item-avatar">
+  <li class="item-container"
+      @click="$router.push('/pages/diary-detail?id=' + id)">
+    <div class="diary-avatar">
       <img :data-src="avatar"
-           class="lazyload" />
+           @click.stop="$router.push('/pages/user-detail?id=' + userid)"
+           class="lazyload">
     </div>
-    <div class="item-content">
-      <div>{{ username }}</div>
-      <div class="text"
-           v-html="text">{{ text }}</div>
-      <div class="comment">
+    <div class="diary-main">
+      <div class="diary-username">
+        <img v-if="verified"
+             :src="require('img/v.png')"
+             class="diary-v">
+        <span>{{ username }}</span>
+        <span class="diary-userlv">{{ userlv }}</span>
+      </div>
+      <div class="diary-text"
+           v-html="text"></div>
+      <div class="diary-picture-container"
+           v-if="pictures && pictures.length > 0">
+        <div v-for="picture in pictures"
+             :key="picture">
+          <img :data-src="picture"
+               class="diary-picture lazyload">
+        </div>
+      </div>
+      <div class="diary-footer">
         <div>{{ time }}</div>
-        <div class="mdl-layout-spacer" />
-        <div class="counts">
-          <i class="material-icons md-16">favorite_border</i><span style="margin-right: 24px">{{ likeCount }}</span>
-          <i class="material-icons md-16">comment</i><span>{{ commentCount }}</span>
+        <div class="mdl-layout-spacer"></div>
+        <div class="diary-counts">
+          <i class="material-icons md-16"
+             :class="{ 'diary-like': like }">{{ like ? "favorite" : "favorite_border" }}</i>
+          <span style="margin-right: 24px">{{ likeCount }}</span>
+          <i class="material-icons md-16">comment</i>
+          <span>{{ commentCount }}</span>
         </div>
       </div>
     </div>
@@ -21,94 +40,57 @@
 </template>
 
 <script>
-export default {
-  props: {
-    username: String,
-    avatar: String,
-    text: String,
-    time: String,
-    likeCount: {
-      type: Number,
-      default: 0
+  export default {
+    props: {
+      id: String,
+      userid: String,
+      username: String,
+      avatar: String,
+      text: String,
+      pictures: Array,
+      time: String,
+      verified: Boolean,
+      like: Boolean,
+      likeCount: {
+        type: Number,
+        default: 0
+      },
+      commentCount: {
+        type: Number,
+        default: 0
+      },
+      userlv: [String, Number]
     },
-    commentCount: {
-      type: Number,
-      default: 0
+    methods: {
+      showUserDetail() {
+        console.log("showUserDetail");
+      }
     }
-  }
-};
-
+  };
 </script>
 
-<style lang="scss" scoped>
-@import "~scss/main.scss";
-.item-container {
-  @include flex-row;
-}
+<style lang="scss"
+       scoped>
+  @import "~scss/main.scss";
+  @import "~scss/diary-item.scss";
+  .item-container {
+    @include flex-row;
+  }
 
-.item-avatar {
-  background: white;
-  width: 40px;
-  height: 40px;
-  border: 1px solid $color-divider;
-  border-radius: 50%;
-}
+  .right {
+    text-align: right;
+  }
 
-.item-avatar img {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.item-content {
-  margin-left: 16px;
-  font-size: 16px;
-  width: 100%;
-}
-
-.text {
-  color: $color-secondary-text;
-  margin-top: 8px;
-  line-height: 20px;
-  position: relative;
-  overflow: hidden;
-  max-height: 60px;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  display: -webkit-box;
-}
-
-.comment {
-  @include flex-row;
-  margin-top: 8px;
-  font-size: 12px;
-  color: $color-hint-text;
-}
-
-.right {
-  text-align: right;
-}
-
-.counts {
-  @include flex-row;
-  -webkit-align-items: center;
-  -ms-flex-align: center;
-  align-items: center;
-}
-
-.counts span {
-  margin-left: 4px;
-}
-
-.lazyload,
-.lazyloading {
-  opacity: 0;
-}
-
-.lazyloaded {
-  opacity: 1;
-  transition: opacity 300ms;
-}
+  .diary-text {
+    color: $color-secondary-text;
+    margin-top: 8px;
+    line-height: 20px;
+    position: relative;
+    overflow: hidden;
+    max-height: 60px;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+  }
 </style>

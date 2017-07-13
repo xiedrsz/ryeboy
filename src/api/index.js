@@ -4,6 +4,7 @@ import config from "js/config";
 //import "../../mocks"
 
 axios.defaults.baseURL = config.apiAddress;
+axios.defaults.headers["Accept"] = "application/json";
 
 axios.defaults.headers = {
   'Authorization': 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5NjQyM2I5MGMwMzdjMGZjYzkzZmE1YyIsImlhdCI6MTQ5OTc0MTQxNX0.MnvVwdCktpy3vKGmXMnQvUBIgJe4IJZvkmW58uoBwOY',
@@ -11,8 +12,81 @@ axios.defaults.headers = {
 };
 
 class api {
+  static getLikes(id, last) {
+    return axios.get(`/diary/likes/${id}`, {
+      params: {
+        last
+      }
+    });
+  }
+
+  static setLike(id, userid) {
+    return axios.post(`/diary/like/${id}`, {
+      userid
+    });
+  }
+
+  static getNotices(userid, type, lastFetchAt, last) {
+    return axios.get("/notices", {
+      params: {
+        userid,
+        type,
+        last,
+        lastFetchAt: new Date("2017-5-20"),
+      }
+    });
+  }
+
+  static getPersonalDiaries(id, userid, last, filter, data) {
+    return axios.get("/diary/personal", {
+      params: {
+        id,
+        userid,
+        last,
+        filter,
+        data
+      }
+    });
+  }
+
+  static addDiaryComment(id, comment) {
+    return axios.post("/diary/addComment", {
+      id,
+      comment
+    });
+  }
+
+  static getMoreDiaryComments(id, last) {
+    return axios.get(`/diary/${id}/more-comments/${last}`);
+  }
+
+  static getDiaryComments(id) {
+    return axios.get(`/diary/${id}/comments`);
+  }
+
+  static getDiary(id, userid) {
+    return axios.get(`/diary/${id}`, {
+      params: {
+        userid,
+      }
+    });
+  }
+
+  static getLesson(userid, date) {
+    return axios.get("/diary/getLesson", {
+      params: {
+        userid,
+        date
+      }
+    });
+  }
+
+  static publishLesson(data) {
+    return axios.post("/diary/publishLesson", data);
+  }
+
   static getLessonDetail(id) {
-    return axios.get("/getLessonDetail", {
+    return axios.get("/diary/getLessonDetail", {
       params: {
         id
       }
@@ -43,27 +117,44 @@ class api {
   }
 
   static login(account, password) {
-    return axios.post("/login", {
+    return axios.post("/authenticate", {
       account,
       password
     });
   }
 
   static logout() {
-    return axios.post("/logout");
+    // return axios.post("/logout");
   }
 
-  static getDiaries(label, filter, last) {
-    return axios.post("/getDiaries", {
-      label,
-      filter,
-      last
+  static getDiaries(label, filter, last, userid) {
+    return axios.get("/diaries", {
+      params: {
+        label,
+        filter,
+        last,
+        userid
+      }
     });
   }
 
   static getUsers(users) {
-    return axios.post("/getUsers", {
-      users
+    return axios.get("/users/many", {
+      params: {
+        users
+      }
+    });
+  }
+
+  static setAuthorization() {
+    axios.defaults.headers.common["Authorization"] = `JWT ${localStorage.jwt}`;
+  }
+
+  static delay(timeout) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve();
+      }, timeout);
     });
   }
 
