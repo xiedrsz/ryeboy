@@ -5,6 +5,15 @@ axios.defaults.baseURL = config.apiAddress;
 axios.defaults.headers["Accept"] = "application/json";
 
 class api {
+  static getFavorites(userid, last) {
+    return axios.get("/favorites", {
+      params: {
+        userid,
+        last
+      }
+    });
+  }
+
   static getLikes(id, last) {
     return axios.get(`/diary/likes/${id}`, {
       params: {

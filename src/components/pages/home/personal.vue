@@ -31,7 +31,8 @@
       <list-item text="消息"
                  v-on:click.native="$router.push('/pages/message')">
       </list-item>
-      <list-item text="收藏">
+      <list-item text="收藏"
+                 v-on:click.native="$router.push('/pages/favorite')">
       </list-item>
     </list>
     <list>

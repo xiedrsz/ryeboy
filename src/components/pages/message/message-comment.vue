@@ -144,7 +144,6 @@
       }
     },
     components: {
-      "infinite-scroll": require("ui/infinite-scroll.vue"),
       "loadable-content": require("ui/loadable-content.vue"),
       "button-icon": require("ui/button-icon.vue"),
     },

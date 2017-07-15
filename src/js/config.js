@@ -4,7 +4,6 @@ const useLocalApi = true;
 var configFile, apiAddress;
 try {
   configFile = require("./config.json");
-  console.log(configFile);
   apiAddress = `https://${configFile.api_host}:${configFile.api_port}`;
 } catch (error) {
   apiAddress = "https://127.0.0.1:2443";
