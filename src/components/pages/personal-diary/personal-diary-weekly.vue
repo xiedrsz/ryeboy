@@ -54,6 +54,11 @@
         if (diaries.length == 0) {
           return 0;
         }
+
+        diaries = _.uniqBy(diaries, item => {
+          return item.year + "," + item.week;
+        });
+
         let index = diaries.length;
         diaries.forEach(item => {
           item.weekCount = index;

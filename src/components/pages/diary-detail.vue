@@ -277,6 +277,7 @@
             let users = [];
             let comments = [];
             let res = await api.getDiary(diaryId, this.userid);
+            await this.$app.delay(2000);
             let diary = res.data;
 
             diary.cards = await this.$store.dispatch("lesson_getCards", diary.checkedCards);
@@ -331,7 +332,6 @@
         this.$nextTick(() => {
           try {
             let el = document.querySelector(".lesson-list");
-            console.log(el.clientHeight);
             this.diary.showAllLessons = el.scrollHeight > el.clientHeight || el.clientHeight > 60;
             this.adjustHeight();
 
