@@ -277,7 +277,6 @@
             let users = [];
             let comments = [];
             let res = await api.getDiary(diaryId, this.userid);
-            await this.$app.delay(2000);
             let diary = res.data;
 
             diary.cards = await this.$store.dispatch("lesson_getCards", diary.checkedCards);

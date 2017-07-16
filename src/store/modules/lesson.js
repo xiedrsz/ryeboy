@@ -80,7 +80,6 @@ const getters = {
 const mutations = {
   lesson_selectAllCards(state, data) {
     let record = state.records[getDateKey(state)];
-    Vue.set(record.selectedWeights, data.id.toString(), data.checked);
     record.weightedCards.find(weight => weight.value == data.id).cards.forEach(card => {
       Vue.set(record.selectedCards, card.id.toString(), data.checked);
     });

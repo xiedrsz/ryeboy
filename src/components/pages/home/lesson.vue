@@ -87,6 +87,7 @@
           onChange(selectedDates) {
             self.$store.dispatch("lesson_selectDate", selectedDates[0]).then(res => {
               self.record = res;
+              console.log(self.record);
             });
           },
           onClose() {
@@ -112,7 +113,7 @@
         this.$store.dispatch("lesson_save");
         let dateText = moment(this.selectedDate).format("M[月]D[日]");
 
-        this.$app.dialog.text(`${dateText}的功课已保存在本地`);
+        this.$app.dialog.text(`提醒：${dateText}的功课记录已保存在本地，未发布前可以进行多次编辑。`);
       },
       publish() {
         if (this.published) {
