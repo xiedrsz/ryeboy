@@ -20,6 +20,9 @@
              :class="{ published: published || publishExpire }"
              @click="publish">{{ publishExpire ? "发布过期" :published ? "已发布": "发布" }}</div>
       </div>
+      <div class="info-container">
+        <div>已完成{{ record.selectedCount }}/{{ this.$store.state.lesson.cards.length }}项</div>
+      </div>
       <div class="card-container">
         <div v-for="weight in cards"
              :key="weight.name"
@@ -74,7 +77,7 @@
     },
     methods: {
       init() {
-        document.querySelector(".card-container").style.height = (document.querySelector("main").clientHeight - document.querySelector(".action-container").clientHeight - 1) + "px";
+        this.$app.adjustScrollableElement(".card-container", [".action-container", ".info-container"]);
         let self = this;
 
         this.flatpickr = new flatpickr(document.querySelector(".date-selector"), {
@@ -246,6 +249,14 @@
     padding-right: 8px;
     text-align: left;
     line-height: 36px;
+  }
+
+  .info-container {
+    @include flex-row;
+    padding: 4px 16px;
+    font-size: 12px;
+    color: $color-secondary-text;
+    border-bottom: 1px solid $color-divider;
   }
 
   .card-container {

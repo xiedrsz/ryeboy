@@ -77,16 +77,29 @@ const getters = {
   },
 };
 
+function getSelectedCount(record) {
+  let result = 0;
+  _.each(record.selectedCards, item => {
+    if (item) {
+      result++;
+    }
+  });
+  return result;
+}
+
 const mutations = {
   lesson_selectAllCards(state, data) {
     let record = state.records[getDateKey(state)];
     record.weightedCards.find(weight => weight.value == data.id).cards.forEach(card => {
       Vue.set(record.selectedCards, card.id.toString(), data.checked);
     });
+    record.selectedCount = getSelectedCount(record);
   },
   lesson_selectCard(state, data) {
     let record = state.records[getDateKey(state)];
     Vue.set(record.selectedCards, data.id.toString(), data.checked);
+
+    record.selectedCount = getSelectedCount(record);
   },
   lesson_setPictureUrl(state, data) {
     let dateKey = getDateKey(state);
@@ -168,7 +181,8 @@ const actions = {
         published: false,
         weightedCards: [],
         selectedWeights: {},
-        selectedCards: {}
+        selectedCards: {},
+        selectedCount: 0,
       };
       Vue.set(state.records, getDateKey(state), record);
 
@@ -181,6 +195,7 @@ const actions = {
         record.checkedCards.forEach(cardId => {
           Vue.set(record.selectedCards, cardId.toString(), true);
         });
+        record.selectedCount = getSelectedCount(record);
         delete record.checkedCards;
       } else {
         let date = datetime.utcDate(state.selectedDate);
@@ -199,7 +214,7 @@ const actions = {
             res.data.checkedCards.forEach(cardId => {
               Vue.set(record.selectedCards, cardId.toString(), true);
             });
-
+            record.selectedCount = getSelectedCount(record);
             if (record.diary.text) {
               Vue.set(record.selectedCards, "100", true);
             }
