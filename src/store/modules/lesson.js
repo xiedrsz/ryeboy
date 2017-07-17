@@ -255,6 +255,17 @@ const actions = {
         }
       }
 
+      // 生成功课等级符号
+      let _card = rootState.user.cards[card.id];
+      if (_card) {
+        let cardlv = _card.lv;
+        if (cardlv > 1) {
+          card.rates = _.fill(Array(cardlv - 1), 0);
+        } else {
+          card.rates = [];
+        }
+      }
+
       cardset.cards.push(Object.assign({}, card));
     });
 

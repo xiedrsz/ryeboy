@@ -43,9 +43,15 @@
             <div v-for="card in weight.cards"
                  :key="card.id"
                  class="card">
-              <img class="card-icon"
-                   @click="cardDetail(card.id)"
-                   :src="require('img/card-' + card.id + '.png')">
+              <div class="card-icon"
+                   @click="cardDetail(card.id)">
+                <img :src="require('img/card-' + card.id + '.png')">
+                <div class="card-lv">
+                  <i v-for="(rate, index) in card.rates"
+                     :key="index"
+                     class="material-icons md-12">grade</i>
+                </div>
+              </div>
               <div class="card-name">{{ card.name }}</div>
               <checkbox :id="card.id"
                         :disabled="published || publishExpire"
@@ -65,7 +71,6 @@
 <script>
   const flatpickr = require("flatpickr");
   const moment = require("moment");
-  const _ = require("lodash");
 
   export default {
     data() {
@@ -201,12 +206,21 @@
       }
 
       if (!this.initialized) {
-        this.record = await this.$store.dispatch("lesson_getRecord");
+        // 获取发布了日记的日期
         let publishedDates = (await this.$app.api.getPublishedDates(this.$app.userid)).data;
         this.publishedDates = [];
         publishedDates.forEach(item => {
           this.publishedDates.push(moment(item.date).format("YYYYMMDD"));
         });
+
+        // 获取用户的功课等级信息
+        if (!this.$app.user.cards) {
+          await this.$store.dispatch("user_getCards");
+        }
+
+        // 获取功课记录
+        this.record = await this.$store.dispatch("lesson_getRecord");
+
         this.loadstate = "loaded";
         this.$nextTick(() => {
           this.init();
@@ -301,11 +315,27 @@
   }
 
   .card-icon {
-    width: 48px;
-    height: 48px;
+    width: 36px;
+    height: 36px;
     border: 1px solid $color-disable;
     border-radius: 8px 4px 4px 4px;
     background-color: $color-divider;
+    text-align: center;
+  }
+
+  .card-icon img {
+    width: 32px;
+    height: 32px;
+    margin-top: 2px;
+  }
+
+  .card-lv {
+    color: $color-orange;
+    margin-top: -7px;
+  }
+
+  .card-lv i{
+    margin-left: -5px;
   }
 
   .card-name {

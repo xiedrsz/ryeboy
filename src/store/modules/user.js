@@ -1,4 +1,6 @@
 import config from "js/config.js";
+import _ from "lodash";
+import api from "api";
 import Vue from "vue";
 
 const state = {
@@ -35,7 +37,17 @@ const mutations = {
   }
 };
 
+const actions = {
+  async user_getCards({
+    state
+  }) {
+    let cards = _.keyBy((await api.getUserCards(state._id)).data, "id");
+    Vue.set(state, "cards", cards);
+  }
+};
+
 export default {
   state,
-  mutations
+  mutations,
+  actions
 };

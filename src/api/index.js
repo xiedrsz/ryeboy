@@ -5,6 +5,14 @@ axios.defaults.baseURL = config.apiAddress;
 axios.defaults.headers["Accept"] = "application/json";
 
 class api {
+  static getUserCards(id) {
+    return axios.get("users/cards", {
+      params: {
+        id
+      }
+    });
+  }
+
   static getPublishedDates(userid) {
     return axios.get("diary/publishedDates", {
       params: {
