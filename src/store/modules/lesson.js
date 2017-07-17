@@ -144,14 +144,15 @@ const actions = {
     });
     return cards;
   },
-  lesson_selectDate({
+  async lesson_selectDate({
     state,
     dispatch
   }, date) {
     state.selectedDate = date;
-    return dispatch("lesson_assignRecord");
+    let record = await dispatch("lesson_getRecord");
+    return record;
   },
-  async lesson_assignRecord({
+  async lesson_getRecord({
     state,
     rootState
   }) {
@@ -198,6 +199,10 @@ const actions = {
             res.data.checkedCards.forEach(cardId => {
               Vue.set(record.selectedCards, cardId.toString(), true);
             });
+
+            if (record.diary.text) {
+              Vue.set(record.selectedCards, "100", true);
+            }
           }
         } catch (error) {
           console.log(error);

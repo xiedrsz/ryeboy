@@ -129,7 +129,7 @@
         click: this.finish
       }]);
 
-      this.$store.dispatch("lesson_assignRecord").then(res => {
+      this.$store.dispatch("lesson_getRecord").then(res => {
         this.record = res;
         this.$el.getElementsByClassName("input-box")[0].value = this.record.diary.text;
         // document.querySelector("textarea").focus();

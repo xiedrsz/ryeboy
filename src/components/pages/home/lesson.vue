@@ -1,7 +1,8 @@
 <template>
   <div>
-    <div class="page-layout"
-         v-if="authenticated">
+    <loadable-content class="page-layout"
+                      v-if="authenticated"
+                      :loadstate="loadstate">
       <div class="action-container">
         <div class="action date-selector"
              @click="selectDate">
@@ -16,8 +17,8 @@
         <div class="action"
              @click="save">保存</div>
         <div class="action"
-             :class="{ published: published }"
-             @click="publish">{{ published ? "已发布": "发布" }}</div>
+             :class="{ published: published || publishExpire }"
+             @click="publish">{{ publishExpire ? "发布过期" :published ? "已发布": "发布" }}</div>
       </div>
       <div class="card-container">
         <div v-for="weight in cards"
@@ -30,7 +31,7 @@
             <div>
               <checkbox :id="weight.value"
                         v-model="record.selectedWeights[weight.value - 1]"
-                        :disabled="published"
+                        :disabled="published || publishExpire"
                         text="全选"
                         :changed="selectAllCards"></checkbox>
             </div>
@@ -44,14 +45,14 @@
                    :src="require('img/card-' + card.id + '.png')">
               <div class="card-name">{{ card.name }}</div>
               <checkbox :id="card.id"
-                        :disabled="published"
+                        :disabled="published || publishExpire"
                         :changed="selectCard"
                         v-model="record.selectedCards[card.id]"></checkbox>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </loadable-content>
     <div class="page-layout unauthenticated"
          v-if="!authenticated">
       (你还没有登录)</div>
@@ -61,10 +62,12 @@
 <script>
   const flatpickr = require("flatpickr");
   const moment = require("moment");
+  const _ = require("lodash");
 
   export default {
     data() {
       return {
+        loadstate: "loading",
         record: {},
         initialized: false
       };
@@ -77,17 +80,25 @@
         this.flatpickr = new flatpickr(document.querySelector(".date-selector"), {
           clickOpens: false,
           disableMobile: true,
+          animate: false,
           defaultDate: this.selectedDate,
           locale: require("flatpickr/dist/l10n/zh.js").zh,
           disable: [
             function(date) {
-              return self.$app.datetime.date(date).isAfter(self.$app.datetime.date(moment()));
+              date = self.$app.datetime.date(date);
+              let today = self.$app.datetime.date(moment());
+              return date.isAfter(today);
             }
           ],
+          mark: function(date) {
+            let d = moment(date).format("YYYYMMDD");
+            return self.publishedDates.indexOf(d) >= 0;
+          },
           onChange(selectedDates) {
+            self.$app.dialog.showLoading();
             self.$store.dispatch("lesson_selectDate", selectedDates[0]).then(res => {
               self.record = res;
-              console.log(self.record);
+              self.$app.dialog.hideLoading();
             });
           },
           onClose() {
@@ -101,13 +112,8 @@
 
         this.initialized = true;
       },
-      assignRecord() {
-        this.$store.dispatch("lesson_assignRecord").then(res => {
-          this.record = res;
-        });
-      },
       save() {
-        if (this.published) {
+        if (this.published || this.publishExpire) {
           return;
         }
         this.$store.dispatch("lesson_save");
@@ -116,7 +122,7 @@
         this.$app.dialog.text(`提醒：${dateText}的功课记录已保存在本地，未发布前可以进行多次编辑。`);
       },
       publish() {
-        if (this.published) {
+        if (this.published || this.publishExpire) {
           return;
         }
         this.$router.push("/pages/lesson-publish");
@@ -127,7 +133,9 @@
       },
       cardDetail(cardId) {
         if (cardId == 100) {
-          this.$router.push("/pages/lesson-diary");
+          if (!this.publishExpire) {
+            this.$router.push("/pages/lesson-diary");
+          }
         } else {
           this.$router.push(`/pages/lesson-detail?id=${cardId}`);
         }
@@ -163,16 +171,16 @@
       published() {
         return this.record.published;
       },
+      publishExpire() {
+        let expire = this.$app.datetime.date(moment().subtract(7, "days"));
+        let date = moment(this.selectedDate);
+        return date.isBefore(expire);
+      },
       authenticated() {
         return this.$store.state.user.authenticated;
       },
       cards() {
         return this.record.weightedCards;
-      }
-    },
-    mounted() {
-      if (this.authenticated) {
-        this.init();
       }
     },
     beforeDestroy() {
@@ -184,24 +192,32 @@
         delete this.flatpickr;
       }
     },
-    activated() {
+    async activated() {
       if (!this.authenticated) {
         return;
       }
 
       if (!this.initialized) {
-        this.init();
+        this.record = await this.$store.dispatch("lesson_getRecord");
+        let publishedDates = (await this.$app.api.getPublishedDates(this.$app.userid)).data;
+        this.publishedDates = [];
+        publishedDates.forEach(item => {
+          this.publishedDates.push(moment(item.date).format("YYYYMMDD"));
+        });
+        this.loadstate = "loaded";
+        this.$nextTick(() => {
+          this.init();
+        });
       }
-
-      this.assignRecord();
     },
     components: {
+      "loadable-content": require("ui/loadable-content.vue"),
       "checkbox": require("ui/checkbox.vue"),
     }
   };
 </script>
 
-<style src="flatpickr/dist/themes/material_blue.css"></style>
+<style src="flatpickr/dist/flatpickr.css"></style>
 
 <style lang="scss"
        scoped>
@@ -262,7 +278,8 @@
   }
 
   .published {
-    color: $color-blue;
+    background-color: $color-disable;
+    color: #fff;
   }
 
   .card {
