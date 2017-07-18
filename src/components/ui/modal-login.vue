@@ -11,7 +11,8 @@
             <img :src="require('img/wechat.png')">微信登录</div>
           <div class="action">
             <img :src="require('img/qq.png')">QQ登录</div>
-          <div class="action" @click="loginUseAccount">
+          <div class="action"
+               @click="accountLogin">
             <i class="material-icons md-32">account_circle</i>帐号登录</div>
         </div>
       </div>
@@ -32,7 +33,13 @@
       };
     },
     methods: {
-      loginUseAccount(){
+      wechatLogin() {
+
+      },
+      qqLogin() {
+
+      },
+      accountLogin() {
         this.close();
         this.$router.push("/pages/login");
       },

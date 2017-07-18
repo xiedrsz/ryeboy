@@ -30,6 +30,7 @@
 </template>
 
 <script>
+  let redirect = "/";
   export default {
     data: function() {
       return {
@@ -43,9 +44,7 @@
       "button-colored": require("components/ui/button-colored.vue"),
     },
     beforeRouteEnter: (to, from, next) => {
-      if (!to.query.redirect) {
-        to.query.redirect = from.path;
-      }
+      redirect = from.fullPath;
       next();
     },
     watch: {
@@ -69,8 +68,8 @@
               this.errorText = data.error;
             } else {
               await this.$app.afterLogin(data);
-              let redirect = this.$route.query.redirect;
-              this.$router.replace(redirect ? redirect : "/");
+              console.log(redirect);
+              this.$router.replace(redirect);
             }
           } catch (err) {
             this.$app.dialog.text("帐号或密码不正确。");

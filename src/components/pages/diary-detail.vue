@@ -192,7 +192,7 @@
       },
       async sendComment() {
         if (!this.authenticated) {
-          this.$app.dialog.text("你还没有登录。");
+          this.$app.login();
           return;
         }
         if (this.comment) {
