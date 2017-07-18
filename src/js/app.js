@@ -109,6 +109,10 @@ class app {
     });
   }
 
+  login() {
+    this.vue.$refs.login.open();
+  }
+
   init() {
     axios.interceptors.request.use(config => {
       if (config.method == "post") {
