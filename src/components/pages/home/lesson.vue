@@ -334,7 +334,7 @@
     margin-top: -7px;
   }
 
-  .card-lv i{
+  .card-lv i {
     margin-left: -5px;
   }
 

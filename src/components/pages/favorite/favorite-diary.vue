@@ -18,6 +18,7 @@
                     :verified="item.verified"
                     :text="item.escapedText"
                     :userlv="item.userlv"
+                    :expectedExp="item.expectedExp"
                     :time="item.time"></diary-item>
       </ul>
     </loadable-content>
