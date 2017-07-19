@@ -25,22 +25,22 @@
     </list>
     <list v-if="authenticated">
       <list-item text="状态"
-                 @click.native="$router.push('/pages/status')">
+                 route="/pages/status">
       </list-item>
       <list-item text="日记"
-                 @click.native="$router.push('/pages/personal-diary')">
+                 route="/pages/personal-diary">
       </list-item>
       <list-item text="消息"
-                 @click.native="$router.push('/pages/message')">
+                 route="/pages/message">
       </list-item>
       <list-item text="收藏"
-                 @click.native="$router.push('/pages/favorite')">
+                 route="/pages/favorite">
       </list-item>
     </list>
     <list>
       <list-item text="设置"
-                 :divider="false"
-                 @click.native="$router.push('/pages/settings')"></list-item>
+                 route="/pages/settings"
+                 :divider="false"></list-item>
     </list>
   </div>
 </template>
