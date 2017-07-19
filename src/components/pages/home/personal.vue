@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="basic"
+         @click="$router.push('/pages/personal-info')"
          v-if="authenticated">
       <img :data-src="avatar"
            class="avatar lazyload">
