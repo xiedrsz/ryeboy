@@ -31,6 +31,7 @@ class app {
     localStorage.jwt = data.token;
 
     this.api.setAuthorization();
+    this.userid = data.user._id;
 
     store.commit("user_setAuth", data.user);
     store.commit("diary_setChannelChanged");

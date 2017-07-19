@@ -68,7 +68,6 @@
               this.errorText = data.error;
             } else {
               await this.$app.afterLogin(data);
-              console.log(redirect);
               this.$router.replace(redirect);
             }
           } catch (err) {
