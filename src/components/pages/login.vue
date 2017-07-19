@@ -79,6 +79,15 @@
           this.errorText = "请填写帐号密码。";
         }
       }
+    },
+    mounted() {
+      let router = this.$router;
+      this.$app.toolbars.create([{
+        text: "注册",
+        click() {
+          router.replace("/pages/register");
+        }
+      }]);
     }
   };
 </script>
