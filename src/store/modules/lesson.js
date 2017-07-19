@@ -183,6 +183,7 @@ const actions = {
         selectedWeights: {},
         selectedCards: {},
         selectedCount: 0,
+        cardCount: 0
       };
       Vue.set(state.records, getDateKey(state), record);
 
@@ -227,6 +228,7 @@ const actions = {
 
     let weightedCards = record.weightedCards;
     weightedCards.splice(0, weightedCards.length);
+    let cardCount = 0;
 
     cards.forEach(card => {
       let cardset = weightedCards[card.weight - 1];
@@ -267,7 +269,10 @@ const actions = {
       }
 
       cardset.cards.push(Object.assign({}, card));
+      cardCount++;
     });
+
+    record.cardCount = cardCount;
 
     return record;
   },

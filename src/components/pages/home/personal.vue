@@ -17,28 +17,29 @@
     </div>
     <list v-if="!authenticated">
       <list-item text="登录"
-                 v-on:click.native="$router.push('/pages/login')">
+                 @click.native="$router.push('/pages/login')">
       </list-item>
-      <list-item text="注册">
+      <list-item text="注册"
+                 @click.native="$router.push('/pages/register')">
       </list-item>
     </list>
     <list v-if="authenticated">
       <list-item text="等级">
       </list-item>
       <list-item text="日记"
-                 v-on:click.native="$router.push('/pages/personal-diary')">
+                 @click.native="$router.push('/pages/personal-diary')">
       </list-item>
       <list-item text="消息"
-                 v-on:click.native="$router.push('/pages/message')">
+                 @click.native="$router.push('/pages/message')">
       </list-item>
       <list-item text="收藏"
-                 v-on:click.native="$router.push('/pages/favorite')">
+                 @click.native="$router.push('/pages/favorite')">
       </list-item>
     </list>
     <list>
       <list-item text="设置"
                  :divider="false"
-                 v-on:click.native="$router.push('/pages/settings')"></list-item>
+                 @click.native="$router.push('/pages/settings')"></list-item>
     </list>
   </div>
 </template>

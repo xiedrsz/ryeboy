@@ -21,7 +21,7 @@
              @click="publish">{{ publishExpire ? "发布过期" :published ? "已发布": "发布" }}</div>
       </div>
       <div class="info-container">
-        <div>已完成{{ record.selectedCount }}/{{ this.$store.state.lesson.cards.length }}项</div>
+        <div>已完成{{ record.selectedCount }}/{{ record.cardCount }}项</div>
       </div>
       <div class="card-container">
         <div v-for="weight in cards"
@@ -205,7 +205,9 @@
         return;
       }
 
-      if (!this.initialized) {
+      if (this.initialized) {
+        this.record = await this.$store.dispatch("lesson_getRecord");
+      } else {
         // 获取发布了日记的日期
         let publishedDates = (await this.$app.api.getPublishedDates(this.$app.userid)).data;
         this.publishedDates = [];

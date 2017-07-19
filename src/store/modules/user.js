@@ -7,7 +7,11 @@ const state = {
   authenticated: false,
   username: "",
   nickname: "",
-  portrait: 0
+  portrait: 0,
+  grade: {
+    lv: 1,
+    exp: 0
+  }
 };
 
 function obtain(user) {
@@ -16,13 +20,11 @@ function obtain(user) {
     // user.level = "70";
   }
 
-  Vue.set(state, "grade", user.grade);
   Object.assign(state, user);
 }
 
 const mutations = {
   user_assignAuth(state, user) {
-    // console.log(user);
     state.authenticated = true;
     obtain(user);
   },

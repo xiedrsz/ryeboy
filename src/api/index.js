@@ -138,6 +138,13 @@ class api {
     });
   }
 
+  static register(account, password) {
+    return axios.post("/register", {
+      account,
+      password
+    });
+  }
+
   static login(account, password) {
     return axios.post("/authenticate", {
       account,
