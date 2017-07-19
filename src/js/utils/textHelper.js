@@ -20,6 +20,14 @@ class textHelper {
     return text;
   }
 
+  static getUserIdent(level) {
+    if (level == "70") {
+      return "麦田学长";
+    } else {
+      return "麦田学员";
+    }
+  }
+
   static getUserLevel(user) {
     let result = 1;
     if (user && user.grade) {

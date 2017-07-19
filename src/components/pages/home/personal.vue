@@ -24,7 +24,8 @@
       </list-item>
     </list>
     <list v-if="authenticated">
-      <list-item text="等级">
+      <list-item text="状态"
+                 @click.native="$router.push('/pages/status')">
       </list-item>
       <list-item text="日记"
                  @click.native="$router.push('/pages/personal-diary')">

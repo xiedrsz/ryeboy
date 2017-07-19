@@ -5,6 +5,14 @@ axios.defaults.baseURL = config.apiAddress;
 axios.defaults.headers["Accept"] = "application/json";
 
 class api {
+  static getUserStatus(id) {
+    return axios.get("users/status", {
+      params: {
+        id
+      }
+    });
+  }
+
   static getUserCards(id) {
     return axios.get("users/cards", {
       params: {
