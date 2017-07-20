@@ -21,6 +21,12 @@ function obtain(user) {
   }
 
   Object.assign(state, user);
+
+  let avatar = require("img/default-avatar.png");
+  if (state.portrait) {
+    avatar = `${config.ossAddress}/portraits/${state._id}_${state.portrait}.jpg`;
+  }
+  Vue.set(state, "avatar", avatar);
 }
 
 const mutations = {
@@ -36,6 +42,19 @@ const mutations = {
   user_deleteAuth(state) {
     state._id = null;
     state.authenticated = false;
+  },
+  user_updateInfo(state, data) {
+    let {
+      name,
+      content
+    } = data;
+    Vue.set(state, name, content);
+
+    if (name == "nickname") {
+      let user = JSON.parse(localStorage.user);
+      user[name] = content;
+      localStorage.user = JSON.stringify(user);
+    }
   }
 };
 

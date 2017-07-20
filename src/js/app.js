@@ -9,6 +9,7 @@ import textHelper from "js/utils/textHelper";
 import collectionHelper from "js/utils/collectionHelper";
 import datetime from "js/utils/datetime";
 import actionSheet from "js/utils/actionSheet";
+import _ from "lodash";
 
 require("lazysizes");
 
@@ -96,6 +97,38 @@ class app {
         item.scrollLeft = position[0];
         item.scrollTop = position[1];
       }
+    });
+  }
+
+  selectPicture() {
+    return new Promise((resolve, reject) => {
+      navigator.camera.getPicture(imageUri => {
+        resolve(imageUri);
+      }, error => {
+        reject("Unable to obtain picture: " + error, "app");
+      }, {
+        destinationType: Camera.DestinationType.FILE_URI,
+        sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+        mediaType: Camera.MediaType.PICTURE,
+        targetWidth: 512,
+        targetHeight: 512,
+        quality: 75,
+      });
+    });
+  }
+
+  uploadPicture(filePath) {
+    if (!this.fileTransfer) {
+      this.fileTransfer = new FileTransfer();
+    }
+    return new Promise((resolve, reject) => {
+      this.fileTransfer.upload(filePath, encodeURI(`${this.config.apiAddress}/diary/uploadPictures`), res => {
+        resolve(res);
+      }, error => {
+        reject(error);
+      }, {
+        fileName: `${_.now()}.jpg`,
+      }, true);
     });
   }
 

@@ -5,6 +5,22 @@ axios.defaults.baseURL = config.apiAddress;
 axios.defaults.headers["Accept"] = "application/json";
 
 class api {
+  static upateUserInfo(id, name, content) {
+    return axios.post("users/updateInfo", {
+      id,
+      name,
+      content
+    });
+  }
+
+  static getUserInfo(id) {
+    return axios.get("users/info", {
+      params: {
+        id
+      }
+    });
+  }
+
   static getUserStatus(id) {
     return axios.get("users/status", {
       params: {

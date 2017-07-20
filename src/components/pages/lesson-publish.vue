@@ -59,17 +59,6 @@
       };
     },
     methods: {
-      upload(fileURL, ft) {
-        return new Promise((resolve, reject) => {
-          ft.upload(fileURL, encodeURI(`${this.$app.config.apiAddress}/diary/uploadPictures`), res => {
-            resolve(res);
-          }, error => {
-            reject(error);
-          }, {
-            fileName: `${_.now()}.jpg`,
-          }, true);
-        });
-      },
       async publish() {
         let getUploadedName = function(res) {
           return JSON.parse(res.response).url;
@@ -83,10 +72,9 @@
           let length = data.pictures ? data.pictures.length : 0;
 
           if (length > 0) {
-            let ft = new FileTransfer();
             for (var index = 0; index < length; index++) {
               var picture = data.pictures[index];
-              let res = await this.upload(picture.path, ft);
+              let res = await this.$app.uploadPicture(picture.path);
               let name = getUploadedName(res);
               this.$store.commit("lesson_setPictureUrl", {
                 id: picture.id,

@@ -3,7 +3,7 @@
     <div class="basic"
          @click="$router.push('/pages/personal-info')"
          v-if="authenticated">
-      <img :data-src="avatar"
+      <img :data-src="user.avatar"
            class="avatar lazyload">
       <div class="info">
         <div class="username">
@@ -67,14 +67,6 @@
       },
       userlv() {
         return this.$app.textHelper.getUserLevel(this.user);
-      },
-      avatar() {
-        let user = this.user;
-        if (this.user.portrait) {
-          return `${this.$app.config.ossAddress}/portraits/${user._id}_${user.portrait}.jpg`;
-        } else {
-          return "../../img/default-avatar.png";
-        }
       }
     }
   };

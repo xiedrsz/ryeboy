@@ -6,6 +6,7 @@
     <span class="mdl-list__item-secondary-content">{{ secondaryText }}
       <i class="material-icons"
          v-if="route">chevron_right</i>
+      <slot name="secondary"></slot>
     </span>
   </li>
 </template>
@@ -35,11 +36,12 @@
        scoped>
   @import "~scss/main.scss";
   .mdl-list__item-secondary-content {
-    font-size: 14px;
+    font-size: 12px;
     color: $color-secondary-text;
   }
 
   .mdl-list__item-secondary-content i {
+    margin-left: 8px;
     color: $color-disable;
   }
 </style>
