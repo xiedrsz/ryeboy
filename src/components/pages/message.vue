@@ -20,8 +20,7 @@
 <script>
   const viewTypes = {
     0: "comment",
-    1: "like",
-    2: "notice"
+    1: "notice"
   };
 
   export default {
@@ -35,11 +34,6 @@
           },
           {
             id: 1,
-            text: "点赞",
-            active: false
-          },
-          {
-            id: 2,
             text: "通知",
             active: false
           }
