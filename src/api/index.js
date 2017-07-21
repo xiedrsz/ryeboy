@@ -5,6 +5,14 @@ axios.defaults.baseURL = config.apiAddress;
 axios.defaults.headers["Accept"] = "application/json";
 
 class api {
+  static feedback(content, email, userid) {
+    return axios.post("diary/feedback", {
+      content,
+      email,
+      userid
+    });
+  }
+
   static updateUserInfo(id, name, content) {
     return axios.post("users/updateInfo", {
       id,

@@ -1,5 +1,3 @@
-import store from "store";
-
 const home = [
   "diary", "lesson", "dynamic", "personal"
 ];
@@ -8,7 +6,7 @@ const pages = [
   "login", "register", "settings", "channel-manage", "lesson-manage", "change-password",
   "lesson-detail", "lesson-diary", "lesson-publish", "diary-detail",
   "personal-diary", "personal-diary-weekly-list", "message", "diary-like-list", "user-detail",
-  "favorite", "status", "personal-info", "personal-info-edit"
+  "favorite", "status", "personal-info", "personal-info-edit", "feedback"
 ];
 
 const routes = [{
