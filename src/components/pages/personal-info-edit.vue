@@ -60,7 +60,7 @@
           }
 
           try {
-            let r = await this.$app.api.upateUserInfo(this.$app.userid, name, this.content);
+            let r = await this.$app.api.updateUserInfo(this.$app.userid, name, this.content);
             let error = r.data.error;
             if (error) {
               if (error == "duplicate") {

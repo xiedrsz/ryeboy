@@ -48,7 +48,14 @@
         if (this.$app.deviceready) {
           try {
             let filePath = await this.$app.selectPicture();
-            await this.$app.uploadPicture(filePath);
+            let portrait = Number(this.user.portrait) + 1;
+            let filename = `${this.user._id}_${portrait}`;
+            await this.$app.uploadPicture(filePath, filename, "portraits");
+            await this.$app.api.updateUserInfo(this.$app.userid, "portrait", portrait);
+            this.$store.commit("user_updateInfo", {
+              name: "portrait",
+              content: portrait
+            });
           } catch (error) {
             console.log(error);
             this.$app.dialog.text("更换头像失败。");

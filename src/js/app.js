@@ -117,17 +117,23 @@ class app {
     });
   }
 
-  uploadPicture(filePath) {
+  uploadPicture(filePath, filename, type) {
     if (!this.fileTransfer) {
       this.fileTransfer = new FileTransfer();
     }
+
     return new Promise((resolve, reject) => {
+      let params = {
+        filename: `${filename}.jpg`,
+        type
+      };
+
       this.fileTransfer.upload(filePath, encodeURI(`${this.config.apiAddress}/diary/uploadPictures`), res => {
         resolve(res);
       }, error => {
         reject(error);
       }, {
-        fileName: `${_.now()}.jpg`,
+        params
       }, true);
     });
   }

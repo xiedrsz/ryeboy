@@ -60,10 +60,6 @@
     },
     methods: {
       async publish() {
-        let getUploadedName = function(res) {
-          return JSON.parse(res.response).url;
-        };
-
         try {
           let data = await this.$store.dispatch("lesson_getPublishData");
 
@@ -72,15 +68,17 @@
           let length = data.pictures ? data.pictures.length : 0;
 
           if (length > 0) {
-            for (var index = 0; index < length; index++) {
-              var picture = data.pictures[index];
-              let res = await this.$app.uploadPicture(picture.path);
-              let name = getUploadedName(res);
+            for (let index = 0; index < length; index++) {
+              let picture = data.pictures[index];
+              let filename = `${this.$app.userid}_${_.now()}`;
+
+              await this.$app.uploadPicture(picture.path, filename, "pictures");
+              let url = this.$app.textHelper.getPictureUrl(filename);
               this.$store.commit("lesson_setPictureUrl", {
                 id: picture.id,
-                url: `${this.$app.config.apiAddress}/upload/${name}`
+                url 
               });
-              pictures.push(name);
+              pictures.push(filename);
             }
           }
 

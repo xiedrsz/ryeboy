@@ -5,7 +5,7 @@ axios.defaults.baseURL = config.apiAddress;
 axios.defaults.headers["Accept"] = "application/json";
 
 class api {
-  static upateUserInfo(id, name, content) {
+  static updateUserInfo(id, name, content) {
     return axios.post("users/updateInfo", {
       id,
       name,
