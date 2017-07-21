@@ -3,10 +3,11 @@
       @click="click"
       :class="{'mdl-list__item--bottom-divider': divider}">
     <span class="mdl-list__item-primary-content">{{ text }}</span>
-    <span class="mdl-list__item-secondary-content">{{ secondaryText }}
-      <i class="material-icons"
-         v-if="route">chevron_right</i>
+    <span class="mdl-list__item-secondary-content">
+      <div>{{ secondaryText }}</div>
       <slot name="secondary"></slot>
+      <i class="material-icons"
+         v-if="route || showRightArrow">chevron_right</i>
     </span>
   </li>
 </template>
@@ -20,6 +21,10 @@
       divider: {
         type: Boolean,
         default: true
+      },
+      showRightArrow: {
+        type: Boolean,
+        default: false
       }
     },
     methods: {

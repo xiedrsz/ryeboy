@@ -5,6 +5,7 @@
                       :loadstate="loadstate">
       <list>
         <list-item text="头像"
+                   :showRightArrow="true"
                    @click.native="updatePortrait">
           <img slot="secondary"
                class="avatar"
@@ -19,6 +20,7 @@
                    route="/pages/personal-info-edit?name=email&title=修改邮箱"
                    :secondaryText="user.email ? user.email : '[未填]' "></list-item>
         <list-item text="手机号码"
+                   :divider="false"
                    route="/pages/personal-info-edit?name=phone&title=修改手机号码"
                    :secondaryText="user.phone ? user.phone : '[未填]' "></list-item>
       </list>

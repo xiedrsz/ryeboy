@@ -9,6 +9,7 @@
       <list-item text="分享应用"></list-item>
       <list-item text="清除本地缓存"
                  @click.native="clearLocalStorage"></list-item>
+      <list-item text="意见反馈"></list-item>
       <list-item text="检查版本"
                  :divider="false"></list-item>
     </list>
