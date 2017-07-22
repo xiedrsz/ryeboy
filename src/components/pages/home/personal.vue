@@ -18,10 +18,10 @@
     </div>
     <list v-if="!authenticated">
       <list-item text="登录"
-                 @click.native="$router.push('/pages/login')">
+                 route="/pages/login">
       </list-item>
       <list-item text="注册"
-                 @click.native="$router.push('/pages/register')">
+                 route="/pages/register">
       </list-item>
     </list>
     <list v-if="authenticated">
