@@ -17,7 +17,8 @@ const state = {
   actionSheet: {
     show: false,
     actions: []
-  }
+  },
+  spacer: ""
 };
 
 const mutations = {
@@ -40,6 +41,13 @@ const mutations = {
     Object.assign(state.actionSheet, data);
     if (state.dialog.show == false) {
       state.popup = null;
+    }
+  },
+  page_setSpacer(state, spacer) {
+    if (spacer) {
+      state.spacer = spacer;
+    } else {
+      state.spacer = "";
     }
   },
   page_setPopup(state, popup) {

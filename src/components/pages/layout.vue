@@ -7,7 +7,11 @@
       </button>
       <div class="mdl-layout__header-row">
         <span class="mdl-layout-title">{{ $store.state.page.title }}</span>
-        <div class="mdl-layout-spacer"></div>
+        <div class="mdl-layout-spacer">
+          <component v-if="spacer"
+                     :is="spacer">
+          </component>
+        </div>
         <nav class="mdl-navigation"
              v-if="toolbars && toolbars.length > 0">
           <div class="mdl-navigation__link"
@@ -50,9 +54,15 @@
         }
       }
     },
+    components: {
+      "searchbox": require("components/ui/searchbox.vue")
+    },
     computed: {
       toolbars() {
         return this.$store.state.page.toolbars;
+      },
+      spacer() {
+        return this.$store.state.page.spacer;
       }
     },
     beforeMount() {
