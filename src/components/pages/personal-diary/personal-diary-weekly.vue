@@ -97,9 +97,6 @@
         }
       }
     },
-    components: {
-      "loadable-content": require("ui/loadable-content.vue"),
-    },
     async activated() {
       this.userid = this.$route.query.id || this.$store.state.user._id;
       await this.load();

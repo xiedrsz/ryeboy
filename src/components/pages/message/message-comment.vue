@@ -144,7 +144,6 @@
       }
     },
     components: {
-      "loadable-content": require("ui/loadable-content.vue"),
       "button-icon": require("ui/button-icon.vue"),
     },
     async activated() {

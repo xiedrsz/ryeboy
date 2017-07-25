@@ -230,7 +230,6 @@
       }
     },
     components: {
-      "loadable-content": require("ui/loadable-content.vue"),
       "checkbox": require("ui/checkbox.vue"),
     }
   };

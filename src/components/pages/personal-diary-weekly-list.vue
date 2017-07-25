@@ -63,7 +63,6 @@
     },
     components: {
       "personal-diary-item": require("components/pages/personal-diary/personal-diary-item.vue"),
-      "loadable-content": require("ui/loadable-content.vue"),
     },
     async activated() {
       this.userid = this.$route.query.userid || this.$app.userid;

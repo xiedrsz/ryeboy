@@ -63,7 +63,6 @@
       }
     },
     components: {
-      "loadable-content": require("ui/loadable-content.vue"),
       "diary-item": require("components/pages/home/diary-item.vue"),
     },
     async activated() {

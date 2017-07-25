@@ -32,7 +32,6 @@
     components: {
       "list": require("components/ui/list.vue"),
       "list-item": require("components/ui/list-item.vue"),
-      "loadable-content": require("ui/loadable-content.vue"),
     },
     async mounted() {
       try {

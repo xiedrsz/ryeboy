@@ -346,7 +346,6 @@
     components: {
       "textfield": require("ui/textfield.vue"),
       "button-icon": require("ui/button-icon.vue"),
-      "loadable-content": require("ui/loadable-content.vue"),
     },
     computed: {
       authenticated() {

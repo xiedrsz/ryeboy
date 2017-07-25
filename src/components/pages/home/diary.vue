@@ -154,7 +154,6 @@
       "diary-item": require("components/pages/home/diary-item.vue"),
       "swipe": require("ui/swipe.vue"),
       "swipe-slide": require("ui/swipe-slide.vue"),
-      "loadable-content": require("ui/loadable-content.vue"),
     },
     activated() {
       if (this.channelChanged) {
