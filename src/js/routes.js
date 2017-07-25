@@ -6,7 +6,8 @@ const pages = [
   "login", "register", "settings", "channel-manage", "lesson-manage", "change-password",
   "lesson-detail", "lesson-diary", "lesson-publish", "diary-detail",
   "personal-diary", "personal-diary-weekly-list", "message", "diary-like-list", "user-detail",
-  "favorite", "status", "personal-info", "personal-info-edit", "feedback", "share", "search"
+  "favorite", "status", "personal-info", "personal-info-edit", "feedback", "share", "search",
+  "answer-list"
 ];
 
 const routes = [{

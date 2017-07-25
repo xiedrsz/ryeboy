@@ -13,7 +13,8 @@ const config = {
   debug,
   apiAddress: debug ? useLocalApi ? apiAddress : "https://114.215.131.176:2443" : "https://api.ryeboy.org",
   ossAddress: "http://ryeboy-app-apk-1.oss-cn-qingdao.aliyuncs.com",
-  pageSize: 10
+  pageSize: 10,
+  largePageSize: 10,
 };
 
 module.exports = config;

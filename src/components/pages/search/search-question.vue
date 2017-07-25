@@ -16,7 +16,8 @@
         <div class="type-wrap">
           <span class="mdl-chip"
                 v-for="item in types"
-                :key="item._id">
+                :key="item._id"
+                @click="showAnswerList(item)">
             <span class="mdl-chip__text">{{ item.name }}</span>
           </span>
         </div>
@@ -42,19 +43,17 @@
       };
     },
     methods: {
+      showAnswerList(item) {
+        this.$router.push(`/pages/answer-list?title=${item.name}&type=${item._id}`);
+      },
       adjustHeight() {
         this.$app.adjustScrollableElement(".content-wrap", [".tabs"]);
       },
       async getData() {
-        let types = (await this.$app.api.getAnswerTypes()).data;
-        console.log(types);
-        let recommends = (await this.$app.api.getRecommendAnswers()).data;
-        console.log(recommends);
+        this.types = await this.$store.dispatch("search_getAnswerTypes");
+        this.recommends = await this.$store.dispatch("search_getRecommendAnswers");
 
-        this.types = types;
-        this.recommends = recommends;
-
-        return types.length + recommends.length;
+        return this.types.length + this.recommends.length;
       }
     },
     components: {
