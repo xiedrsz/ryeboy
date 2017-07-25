@@ -29,6 +29,13 @@
       }
     },
     async activated() {
+      this.$app.toolbars.create([{
+        text: "复制",
+        click() {
+
+        }
+      }]);
+
       this.loadstate = "loading";
       await this.load();
       this.__restorePosition();
@@ -46,5 +53,9 @@
     margin-bottom: 16px;
     padding-bottom: 16px;
     border-bottom: 1px solid $color-divider;
+  }
+
+  .page-content {
+    font-size: 16px;
   }
 </style>

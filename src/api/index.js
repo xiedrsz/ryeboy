@@ -5,6 +5,15 @@ axios.defaults.baseURL = config.apiAddress;
 axios.defaults.headers["Accept"] = "application/json";
 
 class api {
+  static getSearch(keyword, type) {
+    return axios.get("search/keyword", {
+      params: {
+        keyword,
+        type
+      }
+    });
+  }
+
   static getAnswer(id) {
     return axios.get("search/getAnswer", {
       params: {

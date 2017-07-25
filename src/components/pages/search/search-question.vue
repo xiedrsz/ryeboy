@@ -7,7 +7,8 @@
         <div class="head">热点问题</div>
         <div class="recommend-item"
              v-for="item in recommends"
-             :key="item._id">
+             :key="item._id"
+             @click="$router.push('/pages/answer?id=' + item._id)">
           <div>{{ item.name }}</div>
         </div>
       </div>

@@ -19,9 +19,7 @@
 <script>
   const viewTypes = {
     0: "question",
-    1: "label",
-    2: "lesson",
-    3: "user"
+    1: "user"
   };
   export default {
     data() {
@@ -34,16 +32,6 @@
           },
           {
             id: 1,
-            text: "日记",
-            active: false
-          },
-          {
-            id: 2,
-            text: "功课",
-            active: false
-          },
-          {
-            id: 3,
             text: "用户",
             active: false
           }
@@ -59,7 +47,14 @@
     },
     methods: {
       async submit() {
-
+        this.$el.focus();
+        let keyword = this.$store.state.search.keyword;
+        try {
+          let data = (await this.$app.api.getSearch(keyword, this.viewType)).data;
+          console.log(data);
+        } catch (error) {
+          this.$app.dialog.text("搜索失败。");
+        }
       }
     },
     deactivated() {

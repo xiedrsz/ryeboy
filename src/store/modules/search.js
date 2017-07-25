@@ -4,6 +4,7 @@ import Vue from "vue";
 const config = require("js/config.js");
 
 const state = {
+  keyword: "",
   answers: {
     recommends: [],
     types: [],

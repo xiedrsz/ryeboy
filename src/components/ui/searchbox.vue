@@ -2,15 +2,10 @@
   <div class="searchbox">
     <i class="material-icons md-20">search</i>
     <input type="text"
+           v-model="$store.state.search.keyword"
            class="input">
   </div>
 </template>
-
-<script>
-  export default {
-
-  };
-</script>
 
 <style lang="scss"
        scoped>
