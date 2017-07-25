@@ -8,7 +8,8 @@
       <ul class="mdl-list">
         <li v-for="item in context.items"
             class="answer-item"
-            :key="item._id">
+            :key="item._id"
+            @click="$router.push('/pages/answer?id=' + item._id)">
           <div>
             {{ item.name}}
           </div>
@@ -48,9 +49,6 @@
         });
         await this.$store.dispatch("search_getAnswers_logic", type);
       }
-    },
-    components: {
-      "loadable-content": require("ui/loadable-content.vue"),
     },
     async activated() {
       await this.load();

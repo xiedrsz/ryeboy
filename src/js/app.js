@@ -1,3 +1,4 @@
+import Vue from "vue";
 import axios from "axios";
 import store from "store";
 import api from "api";
@@ -181,6 +182,8 @@ class app {
     } else {
       store.commit("diary_setDefaultChannels");
     }
+
+    Vue.component("loadable-content", require("ui/loadable-content.vue"));
   }
 
   constructor() {

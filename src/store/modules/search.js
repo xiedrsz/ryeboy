@@ -7,7 +7,8 @@ const state = {
   answers: {
     recommends: [],
     types: [],
-    list: {}
+    list: {},
+    map: {},
   },
 };
 
@@ -16,6 +17,19 @@ const mutations = {
 };
 
 const actions = {
+  async search_getAnswer({
+    state
+  }, {
+    id
+  }) {
+    if (state.answers.map[id]) {
+      return state.answers.map[id];
+    }
+    let data = (await api.getAnswer(id)).data;
+    state.answers.map[id] = data;
+    return data;
+  },
+
   async search_getAnswers_data({
     state
   }, {

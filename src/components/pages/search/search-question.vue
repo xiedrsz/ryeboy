@@ -56,9 +56,6 @@
         return this.types.length + this.recommends.length;
       }
     },
-    components: {
-      "loadable-content": require("ui/loadable-content.vue"),
-    },
     async activated() {
       this.$nextTick(() => {
         this.$app.restorePosition(this.$el);
