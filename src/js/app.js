@@ -165,10 +165,14 @@ class app {
     });
 
     axios.interceptors.response.use(response => {
-      this.dialog.hideLoading();
+      if (config.method == "post") {
+        this.dialog.hideLoading();
+      }
       return response;
     }, error => {
-      this.dialog.hideLoading();
+      if (config.method == "post") {
+        this.dialog.hideLoading();
+      }
       return Promise.reject(error);
     });
 

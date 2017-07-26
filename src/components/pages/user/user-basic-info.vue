@@ -22,10 +22,12 @@
     props: {
       user: Object
     },
-    activated() {
-      let el = this.$el.querySelector(".avatar");
-      if (el) {
-        lazySizes.loader.unveil(el);
+    watch: {
+      "user.avatar": function() {
+        let el = this.$el.querySelector(".avatar");
+        if (el) {
+          lazySizes.loader.unveil(el);
+        }
       }
     }
   };

@@ -5,7 +5,7 @@
       <div v-for="(tab, index) in tabs"
            :key="tab.id"
            class="tab-link"
-           @click="switchView(index)"
+           @click="readySwitchView(index)"
            :class="{ active: tab.active }">
         {{ tab.text }}
       </div>
@@ -43,6 +43,13 @@
       };
     },
     methods: {
+      readySwitchView(index) {
+        if (this.tabIndex == index) {
+          return;
+        }
+        this.$app.savePosition(this.$el);
+        this.switchView(index);
+      },
       switchView(index) {
         this.tabs[this.tabIndex].active = false;
         this.tabs[index].active = true;

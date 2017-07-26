@@ -2,7 +2,8 @@
   <loadable-content class="content-wrap keep-scroll-position"
                     :nomore="true"
                     :loadstate="loadstate">
-    <div class="default-content">
+    <div class="default-content"
+         v-show="!hasSearchResult">
       <div class="recommend-section">
         <div class="head">热点问题</div>
         <div class="recommend-item"
@@ -29,26 +30,50 @@
         </div>
       </div>
     </div>
+    <ul class="mdl-list"
+        v-show="hasSearchResult">
+      <li v-for="item in searchResult"
+          class="search-item"
+          :key="item._id"
+          @click="$router.push('/pages/answer?id=' + item._id)">
+        <div>
+          {{ item.name}}
+        </div>
+      </li>
+    </ul>
   </loadable-content>
 </template>
 
 <script>
-  import _ from "lodash";
-
   export default {
     data() {
       return {
         recommends: [],
         types: [],
         loadstate: "loading",
+        hasSearchResult: false,
+        searchResult: []
       };
     },
+    watch: {
+      keyword(newValue) {
+        if (newValue == "") {
+          this.hasSearchResult = false;
+        }
+      }
+    },
+    computed: {
+      keyword() {
+        return this.$store.state.search.keyword;
+      }
+    },
     methods: {
+      showSearchResult(data) {
+        this.hasSearchResult = true;
+        this.searchResult = data;
+      },
       showAnswerList(item) {
         this.$router.push(`/pages/answer-list?title=${item.name}&type=${item._id}`);
-      },
-      adjustHeight() {
-        this.$app.adjustScrollableElement(".content-wrap", [".tabs"]);
       },
       async getData() {
         this.types = await this.$store.dispatch("search_getAnswerTypes");
@@ -63,7 +88,7 @@
       });
     },
     async mounted() {
-      this.adjustHeight();
+      this.$app.adjustScrollableElement(".content-wrap", [".tabs"]);
 
       try {
         let count = await this.getData();
@@ -89,6 +114,7 @@
     color: $color-hint-text;
   }
 
+  .search-item,
   .recommend-item {
     padding-bottom: 8px;
     margin-bottom: 12px;
