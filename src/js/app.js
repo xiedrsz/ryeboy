@@ -157,6 +157,7 @@ class app {
   init() {
     axios.interceptors.request.use(config => {
       if (config.method == "post") {
+        this.posting = true;
         this.dialog.showLoading();
       }
       return config;
@@ -165,13 +166,15 @@ class app {
     });
 
     axios.interceptors.response.use(response => {
-      if (config.method == "post") {
+      if (this.posting) {
         this.dialog.hideLoading();
+        this.posting = false;
       }
       return response;
     }, error => {
-      if (config.method == "post") {
+      if (this.posting) {
         this.dialog.hideLoading();
+        this.posting = false;
       }
       return Promise.reject(error);
     });
