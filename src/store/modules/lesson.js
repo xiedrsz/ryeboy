@@ -77,17 +77,29 @@ const getters = {
   },
 };
 
+function getSelectedCount(record) {
+  let result = 0;
+  _.each(record.selectedCards, item => {
+    if (item) {
+      result++;
+    }
+  });
+  return result;
+}
+
 const mutations = {
   lesson_selectAllCards(state, data) {
     let record = state.records[getDateKey(state)];
-    Vue.set(record.selectedWeights, data.id.toString(), data.checked);
     record.weightedCards.find(weight => weight.value == data.id).cards.forEach(card => {
       Vue.set(record.selectedCards, card.id.toString(), data.checked);
     });
+    record.selectedCount = getSelectedCount(record);
   },
   lesson_selectCard(state, data) {
     let record = state.records[getDateKey(state)];
     Vue.set(record.selectedCards, data.id.toString(), data.checked);
+
+    record.selectedCount = getSelectedCount(record);
   },
   lesson_setPictureUrl(state, data) {
     let dateKey = getDateKey(state);
@@ -145,14 +157,15 @@ const actions = {
     });
     return cards;
   },
-  lesson_selectDate({
+  async lesson_selectDate({
     state,
     dispatch
   }, date) {
     state.selectedDate = date;
-    return dispatch("lesson_assignRecord");
+    let record = await dispatch("lesson_getRecord");
+    return record;
   },
-  async lesson_assignRecord({
+  async lesson_getRecord({
     state,
     rootState
   }) {
@@ -168,7 +181,9 @@ const actions = {
         published: false,
         weightedCards: [],
         selectedWeights: {},
-        selectedCards: {}
+        selectedCards: {},
+        selectedCount: 0,
+        cardCount: 0
       };
       Vue.set(state.records, getDateKey(state), record);
 
@@ -181,6 +196,7 @@ const actions = {
         record.checkedCards.forEach(cardId => {
           Vue.set(record.selectedCards, cardId.toString(), true);
         });
+        record.selectedCount = getSelectedCount(record);
         delete record.checkedCards;
       } else {
         let date = datetime.utcDate(state.selectedDate);
@@ -199,6 +215,10 @@ const actions = {
             res.data.checkedCards.forEach(cardId => {
               Vue.set(record.selectedCards, cardId.toString(), true);
             });
+            record.selectedCount = getSelectedCount(record);
+            if (record.diary.text) {
+              Vue.set(record.selectedCards, "100", true);
+            }
           }
         } catch (error) {
           console.log(error);
@@ -208,6 +228,7 @@ const actions = {
 
     let weightedCards = record.weightedCards;
     weightedCards.splice(0, weightedCards.length);
+    let cardCount = 0;
 
     cards.forEach(card => {
       let cardset = weightedCards[card.weight - 1];
@@ -236,8 +257,22 @@ const actions = {
         }
       }
 
+      // 生成功课等级符号
+      let _card = rootState.user.cards[card.id];
+      if (_card) {
+        let cardlv = _card.lv;
+        if (cardlv > 1) {
+          card.rates = _.fill(Array(cardlv - 1), 0);
+        } else {
+          card.rates = [];
+        }
+      }
+
       cardset.cards.push(Object.assign({}, card));
+      cardCount++;
     });
+
+    record.cardCount = cardCount;
 
     return record;
   },

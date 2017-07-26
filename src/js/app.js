@@ -1,3 +1,4 @@
+import Vue from "vue";
 import axios from "axios";
 import store from "store";
 import api from "api";
@@ -9,6 +10,7 @@ import textHelper from "js/utils/textHelper";
 import collectionHelper from "js/utils/collectionHelper";
 import datetime from "js/utils/datetime";
 import actionSheet from "js/utils/actionSheet";
+import _ from "lodash";
 
 require("lazysizes");
 
@@ -31,6 +33,7 @@ class app {
     localStorage.jwt = data.token;
 
     this.api.setAuthorization();
+    this.userid = data.user._id;
 
     store.commit("user_setAuth", data.user);
     store.commit("diary_setChannelChanged");
@@ -98,6 +101,44 @@ class app {
     });
   }
 
+  selectPicture() {
+    return new Promise((resolve, reject) => {
+      navigator.camera.getPicture(imageUri => {
+        resolve(imageUri);
+      }, error => {
+        reject("Unable to obtain picture: " + error, "app");
+      }, {
+        destinationType: Camera.DestinationType.FILE_URI,
+        sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+        mediaType: Camera.MediaType.PICTURE,
+        targetWidth: 512,
+        targetHeight: 512,
+        quality: 75,
+      });
+    });
+  }
+
+  uploadPicture(filePath, filename, type) {
+    if (!this.fileTransfer) {
+      this.fileTransfer = new FileTransfer();
+    }
+
+    return new Promise((resolve, reject) => {
+      let params = {
+        filename: `${filename}.jpg`,
+        type
+      };
+
+      this.fileTransfer.upload(filePath, encodeURI(`${this.config.apiAddress}/diary/uploadPictures`), res => {
+        resolve(res);
+      }, error => {
+        reject(error);
+      }, {
+        params
+      }, true);
+    });
+  }
+
   show(vue) {
     this.vue = vue;
     this.user = vue.$store.state.user;
@@ -109,9 +150,14 @@ class app {
     });
   }
 
+  login() {
+    this.vue.$refs.login.open();
+  }
+
   init() {
     axios.interceptors.request.use(config => {
       if (config.method == "post") {
+        this.posting = true;
         this.dialog.showLoading();
       }
       return config;
@@ -120,10 +166,16 @@ class app {
     });
 
     axios.interceptors.response.use(response => {
-      this.dialog.hideLoading();
+      if (this.posting) {
+        this.dialog.hideLoading();
+        this.posting = false;
+      }
       return response;
     }, error => {
-      this.dialog.hideLoading();
+      if (this.posting) {
+        this.dialog.hideLoading();
+        this.posting = false;
+      }
       return Promise.reject(error);
     });
 
@@ -137,6 +189,8 @@ class app {
     } else {
       store.commit("diary_setDefaultChannels");
     }
+
+    Vue.component("loadable-content", require("ui/loadable-content.vue"));
   }
 
   constructor() {

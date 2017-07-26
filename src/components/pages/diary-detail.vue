@@ -36,7 +36,7 @@
                 <span class="exp">{{ diary.expectedExp }}成长值</span>
               </div>
               <div class="lesson-list"
-                   :class="{ 'lesson-list-accordion': lessonAccordion }">
+                   :class="{ 'lesson-list-accordion': diary.lessonAccordion }">
                 <div class="lesson"
                      v-for="card in diary.cards"
                      :key="card.id">
@@ -47,7 +47,7 @@
               </div>
               <div class="lesson-show-all"
                    @click="handleShowAllLessons"
-                   v-show="showAllLessons">{{ lessonAccordion ? "全部" : "收起" }}</div>
+                   v-show="diary.showAllLessons">{{ diary.lessonAccordion ? "全部" : "收起" }}</div>
             </div>
             <div class="diary-footer">
               <div>{{ diary.time }}</div>
@@ -125,8 +125,6 @@
         comment: "",
         selectedComment: null,
         reply: null,
-        lessonAccordion: true,
-        showAllLessons: false,
         loadstate: "loading"
       };
     },
@@ -148,7 +146,7 @@
       },
       async setLike() {
         if (!this.authenticated) {
-          this.$app.dialog.text("你还没有登录。");
+          this.$app.login();
           return;
         }
 
@@ -194,7 +192,7 @@
       },
       async sendComment() {
         if (!this.authenticated) {
-          this.$app.dialog.text("你还没有登录。");
+          this.$app.login();
           return;
         }
         if (this.comment) {
@@ -228,7 +226,7 @@
         }
       },
       handleShowAllLessons() {
-        this.lessonAccordion = !this.lessonAccordion;
+        this.diary.lessonAccordion = !this.diary.lessonAccordion;
       },
       async handleComments(data, comments, users) {
         if (!users) {
@@ -320,6 +318,8 @@
             diary.comments = comments;
             diary.nomore = comments.length >= diary.commentCount;
             diary.last = this.$app.config.pageSize;
+            diary.showAllLessons = false;
+            diary.lessonAccordion = true;
             this.diary = (await this.$store.dispatch("diary_addMap", [diary]))[0];
           } catch (error) {
             console.log(error);
@@ -331,7 +331,7 @@
         this.$nextTick(() => {
           try {
             let el = document.querySelector(".lesson-list");
-            this.showAllLessons = el.scrollHeight > el.clientHeight;
+            this.diary.showAllLessons = el.scrollHeight > el.clientHeight || el.clientHeight > 60;
             this.adjustHeight();
 
             this.inputElement = document.querySelector(".input-box");
@@ -346,7 +346,6 @@
     components: {
       "textfield": require("ui/textfield.vue"),
       "button-icon": require("ui/button-icon.vue"),
-      "loadable-content": require("ui/loadable-content.vue"),
     },
     computed: {
       authenticated() {

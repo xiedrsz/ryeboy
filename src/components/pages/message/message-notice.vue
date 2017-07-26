@@ -55,10 +55,6 @@
         await this.getData(this.userid, this.last);
       }
     },
-    components: {
-      "infinite-scroll": require("ui/infinite-scroll.vue"),
-      "loadable-content": require("ui/loadable-content.vue"),
-    },
     async activated() {
       this.$nextTick(() => {
         this.$app.restorePosition(this.$el);

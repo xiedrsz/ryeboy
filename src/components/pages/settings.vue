@@ -2,13 +2,16 @@
   <div class="page"
        title="设置">
     <list>
-      <list-item text="修改密码"
+      <!-- <list-item text="修改密码"
                  @click.native="$router.push('/pages/change-password')"
                  v-if="authenticated"></list-item>
-      <list-item text="应用锁"></list-item>
-      <list-item text="分享应用"></list-item>
+      <list-item text="应用锁"></list-item> -->
+      <list-item text="分享应用"
+                 route="/pages/share"></list-item>
       <list-item text="清除本地缓存"
                  @click.native="clearLocalStorage"></list-item>
+      <list-item text="意见反馈"
+                 route="/pages/feedback"></list-item>
       <list-item text="检查版本"
                  :divider="false"></list-item>
     </list>

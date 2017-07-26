@@ -13,6 +13,7 @@
                   :title="dialog.title"
                   @ok="dialogOkCallback"
                   @cancel="dialogCancelCallback"></modal-dialog>
+    <modal-login ref="login"></modal-login>
     <action-sheet v-show="actionSheet.show"
                   :actions="actionSheet.actions"></action-sheet>
     <gallery ref="gallery"></gallery>
@@ -50,6 +51,7 @@
     components: {
       "modal-loading": require("components/ui/modal-loading.vue"),
       "modal-dialog": require("components/ui/modal-dialog.vue"),
+      "modal-login": require("components/ui/modal-login.vue"),
       "action-sheet": require("components/ui/action-sheet.vue"),
       "gallery": require("ui/gallery.vue"),
       "toast": require("ui/toast.vue"),

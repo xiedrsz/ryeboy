@@ -13,6 +13,7 @@
              class="diary-v">
         <span>{{ username }}</span>
         <span class="diary-userlv">{{ userlv }}</span>
+        <span class="diary-expectedExp">+{{ expectedExp }}</span>
       </div>
       <div class="diary-text"
            v-html="text"></div>
@@ -59,7 +60,8 @@
         type: Number,
         default: 0
       },
-      userlv: [String, Number]
+      userlv: [String, Number],
+      expectedExp: Number
     },
     methods: {
       showUserDetail() {
@@ -82,7 +84,7 @@
   }
 
   .diary-text {
-    color: $color-secondary-text;
+    color: $color-text;
     margin-top: 8px;
     line-height: 20px;
     position: relative;

@@ -80,9 +80,6 @@
         }
       }
     },
-    components: {
-      "loadable-content": require("ui/loadable-content.vue"),
-    },
     async activated() {
       await this.load();
       this.__restorePosition();

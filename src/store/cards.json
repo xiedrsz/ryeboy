@@ -171,12 +171,6 @@
   "value": 1,
   "unlock": 3
 }, {
-  "id": 605,
-  "weight": 1,
-  "name": "生活充实",
-  "value": 1,
-  "unlock": 3
-}, {
   "id": 101,
   "weight": 1,
   "name": "没看黄",
@@ -199,6 +193,12 @@
   "id": 103,
   "weight": 1,
   "name": "没遗精",
+  "value": 1,
+  "unlock": 1
+}, {
+  "id": 105,
+  "weight": 1,
+  "name": "没沉迷游戏",
   "value": 1,
   "unlock": 1
 }, {
@@ -338,6 +338,12 @@
   "id": 604,
   "weight": 3,
   "name": "生活独立",
+  "value": 1,
+  "unlock": 20
+}, {
+  "id": 605,
+  "weight": 3,
+  "name": "生活充实",
   "value": 1,
   "unlock": 20
 }, {
