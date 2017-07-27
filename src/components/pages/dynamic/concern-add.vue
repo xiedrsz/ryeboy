@@ -1,13 +1,22 @@
 <template>
-  <div class="page" title="添加" actions='[{"text":"换一批","clickHandler":"concern-refresh"}]'>
+  <div class="page" title="添加">
     <swipe ref="swipe">
       <swipe-slide>
         <div class="slide-content">
 
           <list>
-            <list-item v-for="(item, index) in newconcern" :text="item.username" lIcon="/img/default-avatar.png">
-              <span slot="note" class="mdl-list__item-note" @click="cancelAdd(index, item.note, item.id)">{{item.note}}</span>
-            </list-item>
+            <div v-for="(item, index) in newconcern" class="member-item">
+              <user-item :id="item.id" class="flex">
+                <template scope="props">
+                  <list-item 
+                   @click.native="$router.push('/pages/user-detail?id=' + item.id)"
+                   :text="props.user.username"
+                   :lIcon="props.user.avatar">
+                    <span slot="note" class="mdl-list__item-note" @click.stop="cancelAdd(index, item.note, item.id)">{{item.note}}</span>
+                  </list-item>
+                </template>
+              </user-item>
+            </div>
           </list>
 
           <unusual-loading :option.syn="loading" @reload="getNewConcern"></unusual-loading>
@@ -65,10 +74,11 @@
       });
       this.getNewConcern();
     },
-    mounted() {
-      this.$on("concern-refresh", () => {
-        this.getNewConcern();
-      })
+    activated() {
+      this.$app.toolbars.create([{
+        text: "换一批",
+        click: this.getNewConcern
+      }]);
     }
   };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="page" title="关注" actions='[{"text":"添加","clickHandler":"concern-add"}]'>
+  <div class="page" title="关注">
     <nav>
       <div class="mdl-grid mdl-grid--no-spacing nav-container">
         <div v-for="item in overview" class="nav-item">
@@ -21,14 +21,6 @@
       overview() {
         return this.$store.state.concern.overview;
       }
-    },
-    mounted() {
-      // 监听 添加 事件
-      this.$on("concern-add", () => {
-        this.$router.push({
-          path: '/dynamic/concern-add'
-        })
-      })
     },
     activated() {
       // 获取 关注概述

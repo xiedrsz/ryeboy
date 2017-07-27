@@ -47,7 +47,7 @@ Vue.use(plugin);
 
 if (localStorage.authenticated) {
   store.commit("user_assignAuth", JSON.parse(localStorage.user));
-  store.dispatch("initSubscribedChannels");
+  // store.dispatch("initSubscribedChannels");
   store.dispatch("lesson_loadSettings");
 } else {
   store.commit("diary_setDefaultChannels");

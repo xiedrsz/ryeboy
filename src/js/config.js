@@ -1,4 +1,5 @@
 const debug = true;
+//const useLocalApi = false;
 const useLocalApi = true;
 
 var configFile, apiAddress;

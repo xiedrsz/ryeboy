@@ -5,6 +5,7 @@
 </template>
 <script>
   import _ from "lodash";
+  import config from "js/config.js";
 
   export default {
     props: {
@@ -15,7 +16,6 @@
         userInfo: {
           id: "",
           username: "",
-          level: "0",
           score: "0"
         }
       }
@@ -30,6 +30,11 @@
           //userId: "59389e3d9c4d0228d7313b1b",
           userId: userId,
           callback: (userInfo) => {
+            if (userInfo.portrait) {
+              userInfo.avatar = `${config.ossAddress}/portraits/${userInfo._id}_${userInfo.portrait}.jpg`;
+            } else {
+              userInfo.avatar = '/img/default-avatar.png';
+            }
             _.assign(this.userInfo, userInfo);
           }
         });

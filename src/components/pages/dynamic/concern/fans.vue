@@ -7,7 +7,10 @@
             <div v-for="item in fans" class="member-item">
               <user-item :id="item.id" class="flex">
                 <template scope="props">
-                  <list-item :text="props.user.username" lIcon="/img/default-avatar.png" />
+                  <list-item 
+                   @click.native="$router.push('/pages/user-detail?id=' + item.id)"
+                   :text="props.user.username"
+                   :lIcon="props.user.avatar"/>
                 </template>
               </user-item>
             </div>
@@ -59,6 +62,17 @@
         });
 
         !this.fans[0] && this.getFans();
+        
+        // 添加
+        let that = this;
+        this.$app.toolbars.create([{
+          text: "添加",
+          click () {
+            that.$router.push({
+              path: '/dynamic/concern-add'
+            });
+          }
+        }]);
       },
       mounted() {
         // 调整动态列表高度

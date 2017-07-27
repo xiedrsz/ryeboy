@@ -6,11 +6,6 @@ import config from "js/config";
 axios.defaults.baseURL = config.apiAddress;
 axios.defaults.headers["Accept"] = "application/json";
 
-axios.defaults.headers = {
-  'Authorization': 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5NjQyM2I5MGMwMzdjMGZjYzkzZmE1YyIsImlhdCI6MTQ5OTc0MTQxNX0.MnvVwdCktpy3vKGmXMnQvUBIgJe4IJZvkmW58uoBwOY',
-  Accept: 'application/json'
-};
-
 class api {
   static getLikes(id, last) {
     return axios.get(`/diary/likes/${id}`, {

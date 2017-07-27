@@ -1,29 +1,33 @@
 <template>
-  <li class="item-container">
-    <div class="item-avatar">
-      <img :data-src="item.avatar" class="lazyload" />
-    </div>
-    <div class="item-content">
-      <div class="item-name">{{ item.username }}</div>
-      <div class="text" :class="{fulltext:!fulltext}" ref="text">{{ item.escapedText }}</div>
-      <div class="showfull" v-show="item.overflow" @click="fulltext=!fulltext">{{fulltext ? '收起' : '全文'}}</div>
-      <div class="comment">
-        <div>{{ item.time | time }}</div>
-        <div class="mdl-layout-spacer" />
-        <div class="counts">
-          <i class="material-icons md-16" @click="like" v-html="item.likeIt ? 'favorite' : 'favorite_border'" :class="{'like-it':item.likeIt}"></i>
-          <span style="margin-right: 24px">{{ item.likeCount }}</span>
-          <i class="material-icons md-16" @click="isComment=!isComment">comment</i>
-          <span>{{ item.commentCount }}</span>
+  <li @click="$router.push('/pages/diary-detail?id=' + item._id)">
+    <user-item :id="item.userid" class="item-container">
+      <template scope="props">
+        <div class="item-avatar">
+          <img :data-src="props.user.avatar" class="lazyload" @click.stop="$router.push('/pages/user-detail?id=' + item.userid)"/>
         </div>
-      </div>
-      <div class="item-lable">
-        <span>案例</span>
-        <span>尿频</span>
-        <span>痘痘</span>
-      </div>
-      <popue-comment :showPopue="isComment" @changeval="comment"></popue-comment>
-    </div>
+        <div class="item-content">
+          <div class="item-name">
+            {{ props.user.nickname||props.user.username }}
+            <span class="gray">{{ ' LV'+ (props.user.level||1) }}</span>
+          </div>
+          <div class="text" :class="{fulltext:!fulltext}" ref="text">{{ item.text }}</div>
+          <div class="showfull" @click.stop="fulltext=!fulltext">{{fulltext ? '收起' : '全文'}}</div>
+          <div class="comment">
+            <div>{{ item.updated_at | time }}</div>
+            <div class="mdl-layout-spacer" />
+            <div class="counts">
+              <i class="material-icons md-16" v-html="item.like ? 'favorite' : 'favorite_border'" :class="{'like-it':item.like}"></i>
+              <span style="margin-right: 24px">{{ item.likeCount || 4 }}</span>
+              <i class="material-icons md-16">comment</i>
+              <span>{{ item.commentCount || 5 }}</span>
+            </div>
+          </div>
+          <div class="item-lable">
+            <span v-for="label in item.labels">{{ label }}</span>
+          </div>
+        </div>
+      </template>
+    </user-item>
   </li>
 </template>
 <script>
@@ -39,7 +43,6 @@
             commentCount: 10,
             text: "abcdefg",
             time: "2月8日 22:56",
-            overflow: false,
             likeIt: false
           }
         }
@@ -47,8 +50,6 @@
     },
     data() {
       return {
-        isComment: false,
-        overflow: false,
         fulltext: false
       }
     },
@@ -57,23 +58,19 @@
         return this.detail
       }
     },
-    methods: {
-      like() {
-          !this.item.likeIt && this.$emit('like', this.item.likeCount);
-        },
-        comment(option) {
-          this.isComment = !this.isComment;
-          option.type && !!option.mess && (option.commentCount = this.item.commentCount, this.$emit('comment', option));
-        }
-    },
     components: {
-      "popue-comment": require("ui/popue-comment.vue")
+      "user-item": require("ui/user-item.vue")
     }
   }
 </script>
 
 <style lang="scss" scoped>
   @import "~scss/main.scss";
+  .gray {
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 13px;
+  }
+  
   .item-container {
     @include flex-row;
     padding: 10px 16px;

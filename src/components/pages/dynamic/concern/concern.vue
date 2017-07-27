@@ -7,8 +7,10 @@
             <div v-for="(item, index) in concern" class="member-item">
               <user-item :id="item.id" class="flex">
                 <template scope="props">
-                  <list-item :text="props.user.username" lIcon="/img/default-avatar.png">
-                    <span slot="note" @click="cancelAdd(index, item.note, item.id)" class="mdl-list__item-note">{{item.note}}</span>
+                  <list-item 
+                    @click.native="$router.push('/pages/user-detail?id=' + item.id)" :text="props.user.username" 
+                    :lIcon="props.user.avatar">
+                    <span slot="note" @click.stop="cancelAdd(index, item.note, item.id)" class="mdl-list__item-note">{{item.note}}</span>
                   </list-item>
                 </template>
               </user-item>
@@ -73,6 +75,17 @@
         });
 
         !this.concern[0] && this.getConcern();
+        
+        // 添加
+        let that = this;
+        this.$app.toolbars.create([{
+          text: "添加",
+          click () {
+            that.$router.push({
+              path: '/dynamic/concern-add'
+            });
+          }
+        }]);
       },
       deactivated() {
         this.$store.commit("concern_filterConcern");
