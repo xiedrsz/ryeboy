@@ -18,7 +18,8 @@
     </div>
     <list v-if="!authenticated">
       <list-item text="登录"
-                 route="/pages/login">
+                 :showRightArrow="true"
+                 @click.native="$app.login('/')">
       </list-item>
       <list-item text="注册"
                  route="/pages/register">

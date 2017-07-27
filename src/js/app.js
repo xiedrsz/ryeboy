@@ -150,7 +150,8 @@ class app {
     });
   }
 
-  login() {
+  login(redirect) {
+    this.vue.$store.state.page.loginRedirect = redirect;
     this.vue.$refs.login.open();
   }
 

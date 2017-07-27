@@ -146,7 +146,7 @@
       },
       async setLike() {
         if (!this.authenticated) {
-          this.$app.login();
+          this.$app.login(this.$route.fullPath);
           return;
         }
 
@@ -192,7 +192,7 @@
       },
       async sendComment() {
         if (!this.authenticated) {
-          this.$app.login();
+          this.$app.login(this.$route.fullPath);
           return;
         }
         if (this.comment) {
