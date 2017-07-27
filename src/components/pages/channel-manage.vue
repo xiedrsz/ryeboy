@@ -6,7 +6,7 @@
         <div class="title-row">
           <div>我的频道</div>
           <div class="mdl-layout-spacer"></div>
-          <button-flat class="sideline"
+          <button-flat :border="true"
                        :text="enableEdit ? '完成' : '编辑'"
                        @click.native="edit" />
         </div>
@@ -261,10 +261,6 @@
 
   .ghost {
     opacity: 0.25;
-  }
-
-  .sideline {
-    border: 1px solid $color-divider
   }
 
   .unsubscribed {

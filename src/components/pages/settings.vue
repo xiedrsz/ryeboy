@@ -18,6 +18,7 @@
     <div v-if="authenticated"
          style="margin-top: 64px; text-align: center">
       <button-flat text="退出登录"
+                   :border="true"
                    @click.native="logout"></button-flat>
     </div>
   </div>

@@ -68,7 +68,15 @@
     </loadable-content>
     <div class="page-layout unauthenticated"
          v-if="!authenticated">
-      (你还没有登录)</div>
+      <div class="intro">
+        功课是由麦式运动、饮食、睡眠、心理、生理等40多种健康习惯所组成的健康系统，帮助你培养良好的生活习惯，从而减轻和消除不良习惯及所导致的亚健康问题。登录后可查看详细的功课教程。
+      </div>
+      <div class="login-block">
+        <button-flat text="登录"
+                     :border="true"
+                     @click.native="$app.login($route.fullPath)"></button-flat>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -251,6 +259,7 @@
     },
     components: {
       "checkbox": require("ui/checkbox.vue"),
+      "button-flat": require("ui/button-flat.vue"),
     }
   };
 </script>
@@ -372,9 +381,10 @@
   }
 
   .unauthenticated {
-    @include flex-row;
-    @include flex-center;
-    height: 128px;
+    display: block;
+    padding: 32px 16px;
+    width: auto;
+    font-size: 16px;
   }
 
   .published {
@@ -383,5 +393,10 @@
 
   .expired {
     color: $color-red;
+  }
+
+  .login-block {
+    text-align: center;
+    margin-top: 64px;
   }
 </style>
