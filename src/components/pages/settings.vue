@@ -35,9 +35,19 @@
         this.$app.afterLogout();
         this.$router.replace("/");
       },
-      clearLocalStorage() {
+      internal_clearLocalStorage() {
         localStorage.clear();
-        this.$app.dialog.text("本地缓存已经清除");
+        this.$app.toast("清除成功。");
+      },
+      clearLocalStorage() {
+        if (this.authenticated) {
+          this.$app.dialog.prompt("清除本地缓存同时会退出登录，你确定清除吗？", () => {
+            this.internal_clearLocalStorage();
+            this.logout();
+          });
+        } else {
+          this.internal_clearLocalStorage();
+        }
       }
     },
     computed: {
