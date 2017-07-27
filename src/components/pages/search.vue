@@ -79,7 +79,7 @@
         text: "搜索",
         click: this.submit
       }]);
-      this.switchView(0);
+      this.readySwitchView(this.tabIndex);
     },
   };
 </script>

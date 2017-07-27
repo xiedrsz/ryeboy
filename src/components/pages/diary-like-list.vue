@@ -8,6 +8,7 @@
       <ul class="mdl-list">
         <li v-for="item in context.items"
             :key="item.userid"
+            @click="$router.push('/pages/user-detail?id=' + item.userid)"
             class="item-container">
           <div class="diary-avatar">
             <img :data-src="item.avatar"
