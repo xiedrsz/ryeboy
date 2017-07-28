@@ -13,24 +13,38 @@
         -->
   <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">-->
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="format-detection" content="telephone=no">
-  <meta name="msapplication-tap-highlight" content="no">
-  <meta name="viewport" content="initial-scale=1, minimum-scale=1, width=device-width">
-  <link rel="stylesheet" href="/vendor/material-design-icons/material-icons.css">
-  <link rel="stylesheet" href="/vendor/material-design-lite/material.min.css" />
-  <link rel="stylesheet" href="/vendor/swipe/swipe.css" />
-  <link rel="stylesheet" href="/css/main.css" />
-  <link rel="stylesheet" href="/css/material-overlay.css" />
+  <meta http-equiv="X-UA-Compatible"
+        content="IE=edge">
+  <meta name="format-detection"
+        content="telephone=no">
+  <meta name="msapplication-tap-highlight"
+        content="no">
+  <meta name="viewport"
+        content="initial-scale=1, minimum-scale=1, width=device-width">
+  <link rel="stylesheet"
+        href="/vendor/material-design-icons/material-icons.css">
+  <link rel="stylesheet"
+        href="/vendor/material-design-lite/material.min.css" />
+  <link rel="stylesheet"
+        href="/vendor/swipe/swipe.css" />
+  <link rel="stylesheet"
+        href="/css/main.css" />
+  <link rel="stylesheet"
+        href="/css/material-overlay.css" />
   <title>麦田男孩</title>
 </head>
 
 <body>
-  <div id="app"></div>
+  <div id="app">
+    <div class="logo">
+      <img src="logo.png">
+    </div>
+  </div>
   <!-- cordova.js -->
-  <script src="/vendor/material-design-lite/material.min.js"></script>
-  <script src="/vendor/swipe/swipe.js"></script>
-  <script src="/dist/bundle.js"></script>
+  <script src="/vendor/script.min.js"></script>
+  <script>
+    $script(["vendor/material-design-lite/material.min.js", "vendor/swipe/swipe.js", "dist/bundle.js"]);
+  </script>
 </body>
 
 </html>

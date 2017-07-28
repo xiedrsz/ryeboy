@@ -155,7 +155,8 @@ class app {
     this.vue.$refs.login.open();
   }
 
-  init() {
+  async init() {
+    // HTTP POST 显示加载图标
     axios.interceptors.request.use(config => {
       if (config.method == "post") {
         this.posting = true;
@@ -180,18 +181,23 @@ class app {
       return Promise.reject(error);
     });
 
+    // 注册全局组件
+    Vue.component("loadable-content", require("ui/loadable-content.vue"));
+
+    // 初始化数据
     if (localStorage.authenticated) {
       api.setAuthorization();
       let user = JSON.parse(localStorage.user);
       this.userid = user._id;
       store.commit("user_assignAuth", user);
+      // store.dispatch("user_loadConfig");
       store.dispatch("diary_initSubscribedChannels");
       store.dispatch("lesson_loadSettings");
     } else {
       store.commit("diary_setDefaultChannels");
     }
 
-    Vue.component("loadable-content", require("ui/loadable-content.vue"));
+    // await this.delay(2000);
   }
 
   constructor() {

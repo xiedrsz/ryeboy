@@ -4,6 +4,7 @@ var replace = require("gulp-replace");
 
 function copyFiles() {
   gulp.src([
+    "src/logo.png",
     "src/dist/**",
     "src/css/**",
     "src/vendor/**",

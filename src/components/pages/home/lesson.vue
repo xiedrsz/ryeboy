@@ -69,7 +69,7 @@
     <div class="page-layout unauthenticated"
          v-if="!authenticated">
       <div class="intro">
-        功课是由麦式运动、饮食、睡眠、心理、生理等40多种健康习惯所组成的健康系统，帮助你培养良好的生活习惯，从而减轻和消除不良习惯及所导致的亚健康问题。登录后可查看详细的功课教程。
+        功课是由麦式运动、饮食、睡眠、心理、生理等40多种健康习惯所组成的健康系统，帮助你培养良好的生活习惯，从而减轻或消除不良习惯及其所导致的亚健康问题。登录后可查看详细的功课教程。
       </div>
       <div class="login-block">
         <button-flat text="登录"

@@ -59,6 +59,17 @@ const mutations = {
 };
 
 const actions = {
+  async user_loadConfig({
+    state,
+    rootState
+  }) {
+    // try {
+    //   let data = (await api.loadServerConfig()).data;
+    // } catch (error) {
+
+    // }
+  },
+
   async user_getCards({
     state
   }) {

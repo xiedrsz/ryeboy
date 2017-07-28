@@ -36,3 +36,15 @@ textarea {
   opacity: 1;
   transition: opacity 300ms;
 }
+
+.logo {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+}
+
+.logo img {
+  height: 22px;
+}

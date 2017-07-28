@@ -17,8 +17,9 @@ const router = new VueRouter({
   routes
 });
 
-app.init();
-app.show(new Vue(Vue.util.extend({
-  router,
-  store
-}, require("components/app.vue"))).$mount("#app"));
+app.init().then(() => {
+  app.show(new Vue(Vue.util.extend({
+    router,
+    store
+  }, require("components/app.vue"))).$mount("#app"));
+});
