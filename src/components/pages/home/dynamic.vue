@@ -44,10 +44,12 @@
     methods: {
       group() {
         // Todo, 判断用户是否加入小组
+        let user = this.$app.user;
         let path = '/dynamic/group';
-        if (false) {
-          path = '/dynamic/group-find'
+        if (!user.groupId) {
+          path = '/dynamic/group-find';
         }
+
         this.$router.push({
           path
         });

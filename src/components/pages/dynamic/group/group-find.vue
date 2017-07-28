@@ -1,6 +1,5 @@
 <template>
-  <div class="page" title="小组列表" icons='[{"text":"search","clickHandler":"group-search"},{"text":"add","clickHandler":"group-create"}]'>
-
+  <div class="page" title="小组列表">
     <div class="channel-container-wrap">
       <div class="channel-container">
         <div v-for="item in groupClass" @click="switchChannel(item.id)" :id="item.id" :class="{ active: item.id == classSelected }" class="channel">
@@ -8,14 +7,13 @@
         </div>
       </div>
     </div>
-
     <div class="page-main">
       <swipe ref="swipe" @slidechanged="slideChanged">
         <swipe-slide v-for="channel in groupClass" :id="channel.id">
           <div class="slide-content">
             <ul class="find-list">
 
-              <li class="mdl-list__item mdl-list__item--bottom-divider" v-for="(item, index) in groups[channel.id]">
+              <li class="mdl-list__item mdl-list__item--bottom-divider" v-for="(item, index) in groups[channel.id]" @click="view(item)">
                 <img :src="item.avatar||'/img/default-avatar.png'" width="36" height="36" />
                 <div class="find-list-content">
                   <span class="group-name">{{item.name}}</span>
@@ -24,7 +22,7 @@
                   </span>
                   <span class="group-info">小组描述:{{item.description}}</span>
                 </div>
-                <span @click="join(item._id, item.note)" class="mdl-list__item-note">{{item.note}}</span>
+                <span @click.stop="join(item._id, item.note)" class="mdl-list__item-note">{{item.note}}</span>
               </li>
 
             </ul>
@@ -32,7 +30,6 @@
         </swipe-slide>
       </swipe>
     </div>
-
   </div>
 </template>
 <script>
@@ -64,13 +61,22 @@
             return this.$store.getters.getGroupList;
           }
       },
-      mounted() {
+      activated() {
         // 监听 创建组 事件
-        this.$on("group-create", () => {
-          this.$router.push({
-            path: '/dynamic/group-create-one'
-          })
-        })
+        let that = this;
+        this.$app.toolbars.create([{
+          icon: "search",
+          click() {
+            console.log('search');
+          }
+        }, {
+          icon: "add",
+          click() {
+            that.$router.push({
+              path: '/dynamic/group-create-one'
+            });
+          }
+        }]);
       },
       methods: {
         // 侧滑
@@ -95,6 +101,14 @@
                 userId: "59389e3d9c4d0228d7313b1b"
               });
             }
+          },
+          // 查看小组资料
+          view(group) {
+            let groupId = group._id;
+            this.$store.dispatch("getGroupInfo", groupId);
+            this.$router.push({
+              path: '/dynamic/group-info'
+            });
           }
       }
   };
@@ -118,9 +132,11 @@
     margin-left: 10px;
     line-height: 16px;
   }
-  .group-name{
+  
+  .group-name {
     font-size: 14px;
   }
+  
   .page-layout {
     @include flex-column;
     width: 100%;

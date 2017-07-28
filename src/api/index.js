@@ -1,5 +1,6 @@
 import axios from "axios";
 import config from "js/config";
+import qs from "qs";
 // 引入 mocks
 //import "../../mocks"
 
@@ -269,7 +270,11 @@ class api {
 
   // 获取小组成员, T
   static getMembers(group_id) {
-    return axios.get(`/group/${group_id}/members`)
+    return axios.get(`/group/${group_id}/members`, {
+      params: {
+        sortBy: 'date DESC'
+      }
+    })
   }
 
   // 清退成员, T
@@ -316,6 +321,18 @@ class api {
   // 设置小组
   static groupSetting(group_id) {
     return axios.post(`/group/${group_id}`)
+  }
+
+  // 上传图片
+  static uploadImage(file) {
+    return axios.post('/assets/uploadImage', {
+      file
+    }, {
+      transformRequest: [(data) => {
+        (!!data) && (data = qs.stringify(data))
+        return data
+      }]
+    })
   }
 
   // 获取麦田计划

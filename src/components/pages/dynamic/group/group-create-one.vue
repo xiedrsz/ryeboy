@@ -1,20 +1,22 @@
 <template>
-  <div class="page full-page" title="创建组(1/3)" actions='[{"text":"下一步","clickHandler":"create-next"}]'>
+  <div class="page full-page" title="创建组(1/3)">
     <div class="create-avater">
       <div class="avater-box">
-        <img src="/img/create-group.png" class="lazyload" width="36" height="36" />
+        <img :src="avater" class="lazyload" width="36" height="36" />
         <span class="add-msg">添加运动团封面</span>
       </div>
       <p class="good-avater">谁不喜欢好看的头像</p>
     </div>
 
     <div class="img-selecte-list">
-      <div class="img-selecte-item">
+      <input ref="album" type="file" accept="image/*" @change="getPicture">
+      <input style="display: none" ref="camera" type="file" accept="image/*" capture="camera" @change="getPicture">
+      <div class="img-selecte-item" @click="album">
         <img src="/img/create-group.png" class="lazyload" width="36" height="24" />
         <span class="img-selecte-way">从相册选一张</span>
         <i class="icon icon-right"></i>
       </div>
-      <div class="img-selecte-item">
+      <div class="img-selecte-item" @click="camera">
         <img src="/img/create-group.png" class="lazyload" width="36" height="24" />
         <span class="img-selecte-way">拍一张照片</span>
         <i class="icon icon-right"></i>
@@ -23,27 +25,54 @@
   </div>
 </template>
 <script>
+  import api from "api";
+  
   export default {
-    components: {},
-    computed: {
-      groupInfoTmp() {
-        return this.$store.state.group.groupInfoTmp;
+    data() {
+        return {
+          avater: '/img/create-group.png'
+        }
+      },
+      components: {},
+      computed: {
+        groupInfoTmp() {
+          return this.$store.state.group.groupInfoTmp;
+        }
+      },
+      activated() {
+        // 监听 下一步 事件
+        let that = this;
+        this.$app.toolbars.create([{
+          text: "下一步",
+          click() {
+            that.$router.push({
+              path: '/dynamic/group-create-two'
+            });
+          }
+      }]);
+      },
+      methods: {
+        // 保存 小组信息
+        saveInfo() {
+            this.$store.commit("group_saveTmp", {});
+          },
+          camera() {
+            this.$refs.camera.click()
+          },
+          album() {
+            this.$refs.album.click()
+          },
+          getPicture(event) {
+            let that = this;
+            let file = event.target.files[0];
+            let reader = new FileReader();
+            reader.onload = function(e) {
+              that.avater = e.target.result
+            }
+            reader.readAsDataURL(file);
+            api.uploadImage(file);
+          }
       }
-    },
-    mounted() {
-      // 监听 下一步 事件
-      this.$on("create-next", () => {
-        this.$router.push({
-          path: '/dynamic/group-create-two'
-        })
-      })
-    },
-    methods: {
-      // 保存 小组信息
-      saveInfo() {
-        this.$store.commit("group_saveTmp", {});
-      }
-    }
   };
 </script>
 

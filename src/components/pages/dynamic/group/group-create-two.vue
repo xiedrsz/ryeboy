@@ -1,5 +1,5 @@
 <template>
-  <div class="page" title="创建组(2/3)" actions='[{"text":"下一步","clickHandler":"create-next"}]'>
+  <div class="page" title="创建组(2/3)">
     <div class="group-info-list">
       <div class="group-info-item">
         <div class="info-item-title">
@@ -28,9 +28,6 @@
           description: ""
         }
       },
-      components: {
-
-      },
       computed: {
         groupInfoTmp() {
           return this.$store.state.group.groupInfoTmp;
@@ -40,15 +37,18 @@
         this.name = this.groupInfoTmp.name;
         this.description = this.groupInfoTmp.description;
       },
-      mounted() {
+      activated() {
         // 监听 下一步 事件
-        this.$on("create-next", () => {
-          this.saveInfo();
-
-          this.$router.push({
-            path: '/dynamic/group-create-three'
-          })
-        })
+        let that = this;
+        this.$app.toolbars.create([{
+          text: "下一步",
+          click() {
+            that.saveInfo();
+            that.$router.push({
+              path: '/dynamic/group-create-three'
+            })
+          }
+        }]);
       },
       methods: {
         // 保存 小组信息
