@@ -45,7 +45,7 @@ const actions = {
     if (data.length == 0) {
       context.nomore = true;
     } else {
-      context.nomore = data.length < config.largePageSize;
+      context.nomore = data.length < config.pageSize.answer;
       context.last = _.last(data).createdAt;
     }
 

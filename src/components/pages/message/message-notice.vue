@@ -46,7 +46,7 @@
           this.items.push(item);
         });
 
-        this.nomore = items.length < this.$app.config.pageSize;
+        this.nomore = items.length < this.$app.config.pageSize.normal;
         this.last = _.last(items).createdAt;
 
         return items.length;

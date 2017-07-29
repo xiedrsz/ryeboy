@@ -393,7 +393,7 @@ const actions = {
     updateData(diaries);
     addMap(diaries);
 
-    let nomore = diaries.length < config.pageSize;
+    let nomore = diaries.length < config.pageSize.normal;
 
     commit("diary_setChannelData", {
       label,
@@ -416,10 +416,10 @@ const actions = {
 
     if (channelData) {
       switch (channelData.loadstate) {
-      case "loading":
-      case "loaded":
-      case "empty":
-        return;
+        case "loading":
+        case "loaded":
+        case "empty":
+          return;
       }
 
       filter = channelData.activedFilter;
@@ -478,7 +478,7 @@ const actions = {
       commit("diary_setChannelData", {
         label,
         assign: {
-          nomore: diaries.length < config.pageSize,
+          nomore: diaries.length < config.pageSize.normal,
           loadstate: diaries.length == 0 ? "empty" : "loaded",
         },
         diaries

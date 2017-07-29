@@ -58,7 +58,7 @@
         await this.$store.dispatch("diary_ensureUsers", items);
         await this.$store.dispatch("diary_updateUserInfo", items);
         this.context.last += items.length;
-        this.context.nomore = items.length < this.$app.config.pageSize;
+        this.context.nomore = items.length < this.$app.config.pageSize.user;
 
         items.forEach(item => {
           this.context.items.push(item);

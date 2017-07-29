@@ -22,4 +22,6 @@ app.init().then(() => {
     router,
     store
   }, require("components/app.vue"))).$mount("#app"));
+}).catch(() => {
+  app.showStarupError();
 });
