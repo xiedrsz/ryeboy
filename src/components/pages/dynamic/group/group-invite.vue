@@ -2,12 +2,16 @@
   <div class="page" title="邀请好友">
 
     <label v-for="item in concern" class="invite-list">
-      <div class="invite-item">
-        <img src="/img/default-avatar.png" class="lazyload" width="48" height="48" />
-        <span class="invite-content">{{item.username}}</span>
-        <input type="checkbox">
-        <i class="material-icons">{{checked?'radio_button_unchecked':'check_circle'}}</i>
-      </div>
+      <user-item :id="item.id" class="invite-item">
+        <template scope="props">
+          <!--          <div class="invite-item">-->
+          <img :src="props.user.avatar||'/img/default-avatar.png'" class="lazyload" width="48" height="48" />
+          <span class="invite-content">{{props.user.username}}</span>
+          <input type="checkbox" @click="check(item)">
+          <i class="material-icons">{{item.checked?'check_circle':'radio_button_unchecked'}}</i>
+          <!--          </div>-->
+        </template>
+      </user-item>
     </label>
 
     <button @click="invite" class="mdl-button mdl-js-button">邀请加入</button>
@@ -15,34 +19,41 @@
 </template>
 <script>
   export default {
+    components: {
+      "user-item": require("ui/user-item.vue"),
+    },
     data() {
-        return {
-          checked: true
-        }
-      },
-      created() {
-        !this.concern[0] && this.getConcern();
-      },
-      computed: {
-        concern() {
-          return this.$store.state.concern.concern;
-        }
-      },
-      methods: {
-        // 获取关注人
-        getConcern() {
-            this.$store.dispatch("getConcern");
-          },
-          // 邀请
-          invite() {
-            this.$store.dispatch("inviteFriends", {
-              userId: "123",
-              callback: () => {
-                window.history.go(-1);
-              }
-            });
-          }
+      return {
+        checked: true
       }
+    },
+    created() {
+      !this.concern[0] && this.getConcern();
+    },
+    computed: {
+      concern() {
+        return this.$store.state.concern.concern;
+      }
+    },
+    methods: {
+      // 获取关注人
+      getConcern() {
+          this.$store.dispatch("getConcern");
+        },
+        // 邀请
+        invite() {
+          this.$store.dispatch("inviteFriends", {
+            userId: "123",
+            callback: () => {
+              window.history.go(-1);
+            }
+          });
+        },
+        // 选择
+        check(item) {
+          this.$store.commit("concern_checked", item);
+        }
+    }
   };
 </script>
 

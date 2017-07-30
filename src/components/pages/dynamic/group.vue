@@ -43,7 +43,6 @@
             that.$store.dispatch("getGroupInfo", {
               id: groupId,
               callback() {
-                console.log("lll");
                 that.$router.push({
                   path: '/dynamic/group-info'
                 });

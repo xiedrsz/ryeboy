@@ -41,18 +41,12 @@
       }
     },
     created() {
-      !this.applys[0] && this.getApplys();
-
-      this.$store.dispatch("getUser", {
-        userId: "59389e3d9c4d0228d7313b1b"
-      });
+      this.getApplys();
     },
     methods: {
       // 获取申请列表
       getApplys() {
-          this.$store.dispatch("getApplys", {
-            groupId: "593a4a596d3b3619b82de164"
-          });
+          this.$store.dispatch("getApplys");
         },
         // 拒绝
         reject(uesrId) {

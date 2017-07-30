@@ -1,7 +1,7 @@
 <template>
   <div class="page full-page" title="群介绍" actions='[{"text":"保存","clickHandler":"save-group-msg"}]'>
     <div class="page-main">
-      <textarea v-model="description" rows="8"></textarea>
+      <textarea v-model="description" rows="8" :readonly="!isCreator"></textarea>
     </div>
   </div>
 </template>
@@ -9,18 +9,15 @@
   export default {
     data() {
         return {
-          description: ""
+          description: "",
+          isCreator: false
         }
-      },
-      components: {
-
       },
       methods: {
         save() {
           if (!!this.description) {
             this.$store.dispatch("saveGroupInfo", {
               groupInfo: {
-                _id: "593a4a596d3b3619b82de164",
                 description: this.description
               },
               callback: () => {
@@ -28,8 +25,21 @@
               }
             });
           } else {
-            // Todo, 弹出提示
+            this.$promp("请输入组群介绍");
           }
+        }
+      },
+      activated() {
+        // 监听 保存 事件
+        let groupInfo = this.$store.state.group.groupInfo;
+        let user = this.$app.user;
+        let creator = groupInfo.creator;
+        let isCreator = this.isCreator = creator === user._id;
+        if (isCreator) {
+          this.$app.toolbars.create([{
+            text: "保存",
+            click: this.save
+          }]);
         }
       },
       mounted() {

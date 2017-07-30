@@ -93,6 +93,8 @@ const state = {
   // 花生小组信息，用于修改或查看小组信息
   groupInfo: {
     name: "",
+    avatar: "",
+    description: "",
 
     // 缺少参数
     memNum: 1,
@@ -251,7 +253,6 @@ const mutations = {
      * @Param obj Object 新小组资料
      */
     group_saveInfo(state, obj) {
-      !!obj.avatar && (obj.avatar = config.apiAddress + obj.avatar);
       _.assign(state.groupInfo, obj);
     },
 
@@ -362,10 +363,11 @@ const actions = {
 
     // 获取申请列表, 基本完成
     async getApplys({
-      commit
+      commit,
+      state
     }, option) {
-      let groupId = option.groupId,
-        res = await api.getApplys(groupId);
+      let groupId = state.groupInfo._id;
+      let res = await api.getApplys(groupId);
 
       commit("group_pushApplys", res.data);
     },
@@ -438,7 +440,8 @@ const actions = {
       let id = option.id;
       let callback = option.callback;
       let res = await api.getGroupInfo(id);
-      commit("group_saveInfo", res.data);
+      let newGroupInfo = res.data;
+      commit("group_saveInfo", newGroupInfo);
       !!callback && callback();
     },
 
@@ -449,9 +452,9 @@ const actions = {
     }, option) {
       let groupInfo = option.groupInfo;
       let callback = option.callback;
-      let res = await api.saveGroupInfo(groupInfo);
-      let newGroupInfo = res.data;
-      commit("group_saveInfo", newGroupInfo);
+      
+      commit("group_saveInfo", groupInfo);
+      await api.saveGroupInfo(state.groupInfo);
 
       !!callback && callback();
     },

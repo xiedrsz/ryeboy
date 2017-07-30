@@ -1,31 +1,26 @@
 <template>
   <div class="page" :title="title" actions='[{"text":"排序","clickHandler":"member-rank"}]'>
     <div class="page-main">
+
       <ul class="member-list">
-
-        <li v-for="item in members" class="member-item">
-          <user-item :id="item.id" class="flex">
-            <template scope="props">
-              <img :src="props.user.avatar||'/img/default-avatar.png'" class="lazyload" width="48" height="48" />
-              <div class="member-info">
-                <div class="member-info-top">
-                  <span class="member-name">{{props.user.username+" LV"+props.user.level}}</span>
-                  <span class="member-score">{{props.user.score+"分"}}</span>
-                </div>
-                <div class="member-info-bottom">
-                  <span class="member-code">入组：{{item.createdAt|time}}</span>
-                  <!--<span class="member-code">编号：{{item.no||'Todo'}}</span>
+        <li v-for="item in members" class="member-item" @click="$router.push('/pages/user-detail?id=' + item._id)">
+          <img :src="item.avatar||'/img/default-avatar.png'" class="lazyload" width="48" height="48" />
+          <div class="member-info">
+            <div class="member-info-top">
+              <span class="member-name">{{item.username+" LV"+(item.level||1)}}</span>
+              <span class="member-score">{{(item.score||0)+"分"}}</span>
+            </div>
+            <div class="member-info-bottom">
+              <span class="member-code">入组：{{item.createdAt|time}}</span>
+              <!--<span class="member-code">编号：{{item.no||'Todo'}}</span>
                   <span class="member-addgroup-time">入组：{{item.createdAt|time}}</span>-->
-                </div>
-              </div>
-              <a v-show="!!item.statusMsg" class="member-delete" @click="expell(item.id, item.statusMsg)">{{item.statusMsg}}</a>
-            </template>
-          </user-item>
+            </div>
+          </div>
+          <a v-show="(groupInfo.creator!==item._id)&&!!item.statusMsg" class="member-delete" @click.stop="expell(item.id, item.statusMsg)">{{item.statusMsg}}</a>
         </li>
-
       </ul>
 
-      <list>
+      <list v-if="isCreator">
         <router-link to="/dynamic/group-apply" class="mdl-navigation__link">
           <list-item text="群组申请" />
         </router-link>
@@ -41,8 +36,7 @@
   export default {
     components: {
       "list": require("ui/list.vue"),
-      "list-item": require("ui/list-item.vue"),
-      "user-item": require("ui/user-item.vue"),
+      "list-item": require("ui/list-item.vue")
     },
     computed: {
       groupInfo() {
@@ -57,16 +51,22 @@
         // 小组成员
         members() {
           return this.$store.state.group.members;
+        },
+        isCreator() {
+          let user = this.$app.user;
+          let creator = this.groupInfo.creator;
+          return creator === user._id;
         }
     },
     created() {
-      !this.members[0] && this.getMembers();
+      this.getMembers();
     },
     methods: {
       // 获取小组成员
       getMembers() {
+          let groupId = this.groupInfo._id;
           this.$store.dispatch("getMembers", {
-            groupId: "593a4a596d3b3619b82de164"
+            groupId
           });
         },
         // 清退

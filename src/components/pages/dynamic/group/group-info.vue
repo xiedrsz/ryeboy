@@ -5,30 +5,25 @@
         <li class="info-item">
           <span class="info-left">头像</span>
           <span class="info-right">
-            <img :src="groupInfo.avatar||'/img/default-avatar.png'" class="lazyload" width="48" height="48" />
+            <img :src="avatar" class="lazyload" width="48" height="48" />
             <img v-if="isCreator" src="/img/change-avater.png" class="lazyload" width="48" height="48" @click="changeAvater" />
           </span>
         </li>
         <li class="info-item">
-          <!--          <span class="info-left">组名ID</span>-->
           <span class="info-left">组名</span>
           <span class="info-right">
             <span class="group-name">{{groupInfo.name}}</span>
-            <!--            <span class="group-id">{{"ID:"+groupInfo._id}}</span>-->
           </span>
 
         </li>
-        <li class="info-item">
+        <li class="info-item" @click="$router.push('/dynamic/group-member')">
           <span class="info-left">{{"组员"+groupInfo.memNum+"/"+groupInfo.memMax}}</span>
           <span class="info-right right-arrow">
             <img src="/img/default-avatar.png" class="lazyload" width="36" height="36" />
             <img src="/img/default-avatar.png" class="lazyload" width="36" height="36" />
             <img src="/img/default-avatar.png" class="lazyload" width="36" height="36" />
 
-            <!-- <router-link to=''> -->
-            <i class="material-icons md-36 navigate_next" @click="$router.push('/dynamic/group-member')">navigate_next</i>
-            <!-- <i class="icon icon-right"></i> -->
-            <!-- </router-link> -->
+            <i class="material-icons md-36 navigate_next">navigate_next</i>
           </span>
         </li>
 
@@ -88,16 +83,13 @@
         </li>
         <li class="info-item" @click="goToDiary">
           <span class="info-left">组长</span>
-          <user-item :id="groupInfo.creator" class="flex">
+          <user-item :id="groupInfo.creator" class="info-right right-arrow">
             <template scope="props">
-              <span class="info-right right-arrow">
-                <img src="/img/default-avatar.png" class="lazyload" width="36" height="36" />
-                <span class="group-name">你就会更好</span>
-                <i class="material-icons md-36 navigate_next" v-if="false">navigate_next</i>
-              </span>
+              <img :src="props.user.avatar||'/img/default-avatar.png'" class="lazyload" width="36" height="36" />
+              <span class="group-name">{{props.user.username}}</span>
+              <i class="material-icons md-36 navigate_next" v-if="false">navigate_next</i>
             </template>
           </user-item>
-
         </li>
       </ul>
       <ul class="info-list">
@@ -115,18 +107,23 @@
   </div>
 </template>
 <script>
+  import config from "js/config";
+
   export default {
     components: {
       "user-item": require("ui/user-item.vue"),
     },
-    data() {
-      return {
-        msg: '如果你无法简洁的表达你的想法，那只说明你还不够了解它..'
-      }
-    },
     computed: {
       groupInfo() {
           return this.$store.state.group.groupInfo;
+        },
+        avatar() {
+          let tmp = this.groupInfo.avatar
+          if (!!tmp) {
+            return config.apiAddress + tmp;
+          } else {
+            return '/img/default-avatar.png';
+          }
         },
         isCreator() {
           let user = this.$app.user;
@@ -164,21 +161,15 @@
         },
         // 修改群简介，权限：组长
         saveDescrption() {
-          // Todo
-          console.log("未完成，组长才可以修改");
-          if (true) {
-            this.$router.push({
-              path: "/dynamic/group-intro",
-            });
-          }
+          this.$router.push({
+            path: "/dynamic/group-intro",
+          });
         },
         // 跳转到组长日记，有权限
         goToDiary() {
-          // Todo
-          console.log("如果是组长，跳到日记页面，为实现");
-          if (true) {
+          if (this.isCreator) {
             this.$router.push({
-              path: "/home/diary",
+              path: "/pages/personal-diary",
             });
           }
         }

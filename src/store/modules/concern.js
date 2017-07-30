@@ -90,9 +90,13 @@ const mutations = {
     /**
      * @Function 添加关注人
      * @Param list Array 关注人列表
+     * @Note checked 在邀请好友那用到
      */
     concern_addConcern(state, list) {
-      state.concern = list;
+      state.concern = _.map(list, item => {
+        item.checked = false;
+        return item;
+      });
 
       /*list.forEach((item) => {
         state.concern.push(item)
@@ -171,6 +175,18 @@ const mutations = {
      */
     save_loading(state, opt) {
       _.assign(state.loading, opt)
+    },
+    /**
+     * @function 邀请 好友item
+     * @Param item Object 
+     */
+    concern_checked(state, item) {
+      let id = item.id;
+      let checked = item.checked;
+      let temp = _.filter(state.concern, {
+        id
+      });
+      temp[0].checked = !checked;
     }
 };
 

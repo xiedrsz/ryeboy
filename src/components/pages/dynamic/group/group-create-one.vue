@@ -2,7 +2,7 @@
   <div class="page full-page" title="创建组(1/3)">
     <div class="create-avater">
       <div class="avater-box">
-        <img :src="avater" class="lazyload" width="36" height="36" />
+        <img :src="avatar" class="lazyload" width="36" height="36" />
         <span class="add-msg">添加运动团封面</span>
       </div>
       <p class="good-avater">谁不喜欢好看的头像</p>
@@ -26,11 +26,12 @@
 </template>
 <script>
   import api from "api";
+  const defaultImg = '/img/create-group.png';
 
   export default {
     data() {
         return {
-          avater: '/img/create-group.png'
+          avatar: defaultImg
         }
       },
       activated() {
@@ -47,7 +48,7 @@
               path: '/dynamic/group-create-two'
             });
           }
-      }]);
+        }]);
       },
       methods: {
         // 保存 小组信息
@@ -65,7 +66,7 @@
             let file = event.target.files[0];
             let reader = new FileReader();
             reader.onload = function(e) {
-              that.avater = e.target.result
+              that.avatar = e.target.result
             }
             reader.readAsDataURL(file);
             this.$store.dispatch("uploadImage", {

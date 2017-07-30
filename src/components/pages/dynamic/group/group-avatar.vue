@@ -2,7 +2,7 @@
   <div class="page full-page" title="修改小组头像">
     <div class="create-avater">
       <div class="avater-box">
-        <img :src="avatar||groupInfo.avatar" class="lazyload" width="36" height="36" />
+        <img :src="avatar||(apiAddress+groupInfo.avatar)" class="lazyload" width="36" height="36" />
         <span class="add-msg">添加运动团封面</span>
       </div>
       <p class="good-avater">谁不喜欢好看的头像</p>
@@ -25,10 +25,8 @@
   </div>
 </template>
 <script>
-  import api from "api";
-  const defaultImg = '/img/create-group.png';
-
   let urlTmp = '';
+  import config from "js/config";
 
   export default {
     computed: {
@@ -38,7 +36,8 @@
     },
     data() {
       return {
-        avatar: ''
+        avatar: "",
+        apiAddress: config.apiAddress
       }
     },
     activated() {
@@ -51,10 +50,10 @@
             that.$promp("请选择图片");
             return;
           }
-          let groupInfo = that.groupInfo;
-          groupInfo.avatar = urlTmp;
           that.$store.dispatch("saveGroupInfo", {
-            groupInfo,
+            groupInfo: {
+              avatar: urlTmp
+            },
             callback(url) {
               that.$router.push({
                 path: '/dynamic/group-info'
