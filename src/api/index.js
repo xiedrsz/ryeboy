@@ -310,7 +310,7 @@ class api {
   // 修改小组资料, 更新小组, T
   static saveGroupInfo(groupInfo) {
     let group_id = groupInfo._id;
-    return axios.post(`/group/${group_id}`, groupInfo)
+    return axios.post(`/group/${group_id}`, {group: groupInfo})
   }
 
   // 邀请好友, T
