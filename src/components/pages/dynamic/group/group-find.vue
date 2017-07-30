@@ -105,9 +105,14 @@
           // 查看小组资料
           view(group) {
             let groupId = group._id;
-            this.$store.dispatch("getGroupInfo", groupId);
-            this.$router.push({
-              path: '/dynamic/group-info'
+            let that = this;
+            this.$store.dispatch("getGroupInfo", {
+              id: groupId,
+              callback() {
+                that.$router.push({
+                  path: '/dynamic/group-info'
+                });
+              }
             });
           }
       }

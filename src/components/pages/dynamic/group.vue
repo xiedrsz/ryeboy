@@ -25,7 +25,7 @@
 </template>
 <script>
   import _ from "lodash";
-  
+
   export default {
     data() {
         return {
@@ -40,9 +40,14 @@
           click() {
             let user = that.$app.user;
             let groupId = user.groupId;
-            that.$store.dispatch("getGroupInfo", groupId);
-            that.$router.push({
-              path: '/dynamic/group-info'
+            that.$store.dispatch("getGroupInfo", {
+              id: groupId,
+              callback() {
+                console.log("lll");
+                that.$router.push({
+                  path: '/dynamic/group-info'
+                });
+              }
             });
           }
         }]);

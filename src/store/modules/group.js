@@ -434,9 +434,12 @@ const actions = {
     // 获取小组资料, 基本完成
     async getGroupInfo({
       commit
-    }, id) {
+    }, option) {
+      let id = option.id;
+      let callback = option.callback;
       let res = await api.getGroupInfo(id);
       commit("group_saveInfo", res.data);
+      !!callback && callback();
     },
 
     // 修改小组资料, 基本完成

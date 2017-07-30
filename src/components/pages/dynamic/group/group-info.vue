@@ -88,11 +88,16 @@
         </li>
         <li class="info-item" @click="goToDiary">
           <span class="info-left">组长</span>
-          <span class="info-right right-arrow">
-            <img src="/img/default-avatar.png" class="lazyload" width="36" height="36" />
-            <span class="group-name">你就会更好</span>
-            <i class="material-icons md-36 navigate_next" v-if="false">navigate_next</i>
-          </span>
+          <user-item :id="groupInfo.creator" class="flex">
+            <template scope="props">
+              <span class="info-right right-arrow">
+                <img src="/img/default-avatar.png" class="lazyload" width="36" height="36" />
+                <span class="group-name">你就会更好</span>
+                <i class="material-icons md-36 navigate_next" v-if="false">navigate_next</i>
+              </span>
+            </template>
+          </user-item>
+
         </li>
       </ul>
       <ul class="info-list">
@@ -101,7 +106,6 @@
           <span class="info-right right-arrow">
             <router-link to='/dynamic/group-find'>
               <span class="find-more">发现更多小组</span>
-
               <i class="material-icons md-36 navigate_next">navigate_next</i>
             </router-link>
           </span>
@@ -112,70 +116,73 @@
 </template>
 <script>
   export default {
+    components: {
+      "user-item": require("ui/user-item.vue"),
+    },
     data() {
-        return {
-          msg: '如果你无法简洁的表达你的想法，那只说明你还不够了解它..'
-        }
-      },
-      computed: {
-        groupInfo() {
-            return this.$store.state.group.groupInfo;
-          },
-          isCreator() {
-            let user = this.$app.user;
-            let creator = this.groupInfo.creator;
-            return creator === user._id
-          }
-      },
-      created() {
-        // !this.groupInfo._id && this.getGroupInfo();
-      },
-      mounted() {
-        // 监听 设置 事件
-        this.$on("group-setting", () => {
-          // Todo, 判断是否为组长
-          let page = "/dynamic/group-setting";
-          if (false) {
-            // Todo
-            let page = "/dynamic/group-setting-??";
-          }
-          this.$router.push({
-            path: page
-          });
-        });
-      },
-      methods: {
-        // 获取小组信息
-        getGroupInfo() {
-            this.$store.dispatch("getGroupInfo", "593a4a596d3b3619b82de164");
-          },
-          // 更换头像，未实现
-          changeAvater() {
-            this.$router.push({
-              path: "/dynamic/group-avatar",
-            });
-          },
-          // 修改群简介，权限：组长
-          saveDescrption() {
-            // Todo
-            console.log("未完成，组长才可以修改");
-            if (true) {
-              this.$router.push({
-                path: "/dynamic/group-intro",
-              });
-            }
-          },
-          // 跳转到组长日记，有权限
-          goToDiary() {
-            // Todo
-            console.log("如果是组长，跳到日记页面，为实现");
-            if (true) {
-              this.$router.push({
-                path: "/home/diary",
-              });
-            }
-          }
+      return {
+        msg: '如果你无法简洁的表达你的想法，那只说明你还不够了解它..'
       }
+    },
+    computed: {
+      groupInfo() {
+          return this.$store.state.group.groupInfo;
+        },
+        isCreator() {
+          let user = this.$app.user;
+          let creator = this.groupInfo.creator;
+          return creator === user._id;
+        }
+    },
+    created() {
+      // !this.groupInfo._id && this.getGroupInfo();
+    },
+    mounted() {
+      // 监听 设置 事件
+      this.$on("group-setting", () => {
+        // Todo, 判断是否为组长
+        let page = "/dynamic/group-setting";
+        if (false) {
+          // Todo
+          let page = "/dynamic/group-setting-??";
+        }
+        this.$router.push({
+          path: page
+        });
+      });
+    },
+    methods: {
+      // 获取小组信息
+      getGroupInfo() {
+          // this.$store.dispatch("getGroupInfo", "593a4a596d3b3619b82de164");
+        },
+        // 更换头像，未实现
+        changeAvater() {
+          this.$router.push({
+            path: "/dynamic/group-avatar",
+          });
+        },
+        // 修改群简介，权限：组长
+        saveDescrption() {
+          // Todo
+          console.log("未完成，组长才可以修改");
+          if (true) {
+            this.$router.push({
+              path: "/dynamic/group-intro",
+            });
+          }
+        },
+        // 跳转到组长日记，有权限
+        goToDiary() {
+          // Todo
+          console.log("如果是组长，跳到日记页面，为实现");
+          if (true) {
+            this.$router.push({
+              path: "/home/diary",
+            });
+          }
+        }
+    }
   };
 </script>
 
