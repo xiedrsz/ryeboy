@@ -325,14 +325,14 @@ class api {
 
   // 上传图片
   static uploadImage(file) {
-    return axios.post('/assets/uploadImage', {
-      file
-    }, {
-      transformRequest: [(data) => {
-        (!!data) && (data = qs.stringify(data))
-        return data
-      }]
-    })
+    const config = {
+      headers: { 'content-type': 'multipart/form-data' }
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return axios.post('/assets/uploadImage', formData, config);
   }
 
   // 获取麦田计划
