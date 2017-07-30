@@ -1,6 +1,7 @@
 import Vue from "vue";
 import api from "api";
 import _ from "lodash";
+import config from "js/config";
 
 // 默认小组列表分类
 let defaultGroupChannels = [
@@ -118,14 +119,16 @@ const getters = {
         channels = state.channels,
         groupDiaries = state.groupDiaries;
 
-      _.forEach(channels, (item) => {
+      console.log('日记暂未分类');
+      result[channels[0].id] = groupDiaries;
+      /*_.forEach(channels, (item) => {
         label = item.id;
         result[label] = _.filter(state.groupDiaries, {
           channel: label
         });
-      });
+      });*/
 
-      return result
+      return result;
     },
 
     /**
@@ -158,6 +161,9 @@ const mutations = {
    * @Param list Array 新小组列表
    */
   group_pushGroup(state, list) {
+      list.forEach(item => {
+        !!item.avatar && (item.avatar = config.apiAddress + item.avatar);
+      });
       state.groups.push.apply(state.groups, list);
     },
 
@@ -245,6 +251,7 @@ const mutations = {
      * @Param obj Object 新小组资料
      */
     group_saveInfo(state, obj) {
+      !!obj.avatar && (obj.avatar = config.apiAddress + obj.avatar);
       _.assign(state.groupInfo, obj);
     },
 
@@ -392,13 +399,13 @@ const actions = {
       });
     },
 
-    // 获取小组消息, 基本完成
+    // 获取小组日记, 基本完成
     async getGroupDiaries({
       commit
     }, id) {
       let res = await api.getGroupDiaries(id);
 
-      commit("group_pushDiaries", res.data);
+      commit("group_pushDiaries", res.data.diaries);
     },
 
     // 点赞, 基本完成
@@ -437,13 +444,12 @@ const actions = {
       commit,
       state
     }, option) {
-      let groupInfo = option.groupInfo,
-        callback = option.callback,
-        res;
-      commit("group_saveInfo", groupInfo);
-      res = await api.saveGroupInfo(groupInfo);
+      let groupInfo = option.groupInfo;
+      let callback = option.callback;
+      let res = await api.saveGroupInfo(groupInfo);
+      let newGroupInfo = res.data;
+      commit("group_saveInfo", newGroupInfo);
 
-      console.log(res);
       !!callback && callback();
     },
 
@@ -466,6 +472,18 @@ const actions = {
       state
     }) {
       let res = await api.groupSetting();
+    },
+
+    // 上传图片
+    async uploadImage({
+      commit,
+      state
+    }, option) {
+      let file = option.file;
+      let callback = option.callback;
+      let res = await api.uploadImage(file);
+      let url = res.data.url;
+      !!callback && callback(url);
     }
 };
 

@@ -3,7 +3,7 @@
     <user-item :id="item.userid" class="item-container">
       <template scope="props">
         <div class="item-avatar">
-          <img :data-src="props.user.avatar" class="lazyload" @click.stop="$router.push('/pages/user-detail?id=' + item.userid)"/>
+          <img :data-src="props.user.avatar" class="lazyload" @click.stop="$router.push('/pages/user-detail?id=' + item.userid)" />
         </div>
         <div class="item-content">
           <div class="item-name">

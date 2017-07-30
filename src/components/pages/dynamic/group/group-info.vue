@@ -6,7 +6,7 @@
           <span class="info-left">头像</span>
           <span class="info-right">
             <img :src="groupInfo.avatar||'/img/default-avatar.png'" class="lazyload" width="48" height="48" />
-            <img src="/img/change-avater.png" class="lazyload" width="48" height="48" @click="changeAvater" />
+            <img v-if="isCreator" src="/img/change-avater.png" class="lazyload" width="48" height="48" @click="changeAvater" />
           </span>
         </li>
         <li class="info-item">
@@ -26,8 +26,8 @@
             <img src="/img/default-avatar.png" class="lazyload" width="36" height="36" />
 
             <!-- <router-link to=''> -->
-                <i class="material-icons md-36 navigate_next" @click="$router.push('/dynamic/group-member')">navigate_next</i>
-              <!-- <i class="icon icon-right"></i> -->
+            <i class="material-icons md-36 navigate_next" @click="$router.push('/dynamic/group-member')">navigate_next</i>
+            <!-- <i class="icon icon-right"></i> -->
             <!-- </router-link> -->
           </span>
         </li>
@@ -65,7 +65,7 @@
           <span class="info-left">勋章</span>
           <span class="info-right right-arrow">
             <span class="group-name">{{groupInfo.medal+"/"+groupInfo.medalMax}}</span>
-             <!-- <router-link to='/dynamic/group-medal'>
+            <!-- <router-link to='/dynamic/group-medal'>
          <i class="icon icon-right"></i>
         </router-link> -->
             <i class="material-icons md-36 navigate_next" @click="$router.push('/dynamic/group-medal')">navigate_next</i>
@@ -101,8 +101,8 @@
           <span class="info-right right-arrow">
             <router-link to='/dynamic/group-find'>
               <span class="find-more">发现更多小组</span>
-            
-            <i class="material-icons md-36 navigate_next">navigate_next</i>
+
+              <i class="material-icons md-36 navigate_next">navigate_next</i>
             </router-link>
           </span>
         </li>
@@ -117,14 +117,18 @@
           msg: '如果你无法简洁的表达你的想法，那只说明你还不够了解它..'
         }
       },
-      components: {},
       computed: {
         groupInfo() {
-          return this.$store.state.group.groupInfo;
-        }
+            return this.$store.state.group.groupInfo;
+          },
+          isCreator() {
+            let user = this.$app.user;
+            let creator = this.groupInfo.creator;
+            return creator === user._id
+          }
       },
       created() {
-        !this.groupInfo._id && this.getGroupInfo();
+        // !this.groupInfo._id && this.getGroupInfo();
       },
       mounted() {
         // 监听 设置 事件
@@ -147,7 +151,9 @@
           },
           // 更换头像，未实现
           changeAvater() {
-            console.log("更换头像，未实现");
+            this.$router.push({
+              path: "/dynamic/group-avatar",
+            });
           },
           // 修改群简介，权限：组长
           saveDescrption() {
@@ -213,14 +219,16 @@
     span + i {
       margin-left: 10px;
     }
-    &.right-arrow{
+    &.right-arrow {
       padding: 5px 36px 5px 0;
     }
   }
-  .material-icons.navigate_next{
+  
+  .material-icons.navigate_next {
     position: absolute;
     right: 0;
   }
+  
   .group-level {
     color: #ff9800;
   }

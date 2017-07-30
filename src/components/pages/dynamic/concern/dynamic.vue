@@ -6,7 +6,7 @@
           <pull-to-refresh :disabled="disableRefresh" @pulltorefresh="pulltorefresh" />
 
           <ul class="mdl-list">
-            <dynamic-item v-for="(item, index) in dynamic" :detail="item" @like="like(item.id)" @comment="comment($event,item.id)" />
+            <dynamic-item v-for="item in dynamic" :detail="item" />
           </ul>
 
           <unusual-loading :option.syn="loading" @reload="getDynamic"></unusual-loading>
@@ -52,18 +52,6 @@
           },
           infinite(infiniteScroll) {
             this.$store.dispatch("getDynamic", infiniteScroll);
-          },
-          // 点赞
-          like(id) {
-            this.$store.dispatch("like", id);
-          },
-          // 评论
-          comment(event, id) {
-            let option = {
-              id,
-              mess: event.mess
-            };
-            this.$store.dispatch("comment", option);
           }
       },
       components: {

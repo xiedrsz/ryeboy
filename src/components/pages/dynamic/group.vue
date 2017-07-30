@@ -1,5 +1,5 @@
 <template>
-  <div class="page" title="花生小组" actions='[{"text":"小组资料","clickHandler":"/dynamic/group-info"}]'>
+  <div class="page" title="花生小组">
 
     <div class="channel-container-wrap">
       <div class="channel-container">
@@ -14,7 +14,7 @@
         <swipe-slide v-for="channel in channels" :id="channel.id">
           <div class="slide-content">
             <ul class="mdl-list">
-              <dynamic-item v-for="(item, index) in diaries[channel.id]" :detail="item" @like="like($event, item._id)" @comment="comment($event,item._id)" />
+              <dynamic-item v-for="item in diaries[channel.id]" :detail="item" />
             </ul>
           </div>
         </swipe-slide>
@@ -25,12 +25,27 @@
 </template>
 <script>
   import _ from "lodash";
-  import store from "store";
+  
   export default {
     data() {
         return {
           channelSelected: "essence"
         };
+      },
+      activated() {
+        // 小组资料
+        let that = this;
+        this.$app.toolbars.create([{
+          text: "小组资料",
+          click() {
+            let user = that.$app.user;
+            let groupId = user.groupId;
+            that.$store.dispatch("getGroupInfo", groupId);
+            that.$router.push({
+              path: '/dynamic/group-info'
+            });
+          }
+        }]);
       },
       created() {
         let diaries = this.$store.state.group.groupDiaries;
@@ -43,14 +58,6 @@
           diaries() {
             return this.$store.getters.getGroupDiaries;
           }
-      },
-      mounted() {
-        // 监听 添加 事件
-        this.$on("/dynamic/group-info", () => {
-          this.$router.push({
-            path: '/dynamic/group-info'
-          })
-        })
       },
       methods: {
         // 侧滑
@@ -65,23 +72,9 @@
           },
           // 获取日记
           getDiary() {
-            this.$store.dispatch("getGroupDiaries", "123");
-          },
-          // 点赞
-          like(likeCount, _id) {
-            this.$store.dispatch("groupLike", {
-              _id,
-              likeCount
-            });
-          },
-          // 评论
-          comment(event, _id) {
-            let option = {
-              _id: _id,
-              mess: event.mess,
-              commentCount: event.commentCount
-            };
-            this.$store.dispatch("groupComment", option);
+            let user = this.$app.user;
+            let groupId = user.groupId;
+            this.$store.dispatch("getGroupDiaries", groupId);
           }
       },
       components: {
