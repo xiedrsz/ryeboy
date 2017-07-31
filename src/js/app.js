@@ -197,13 +197,13 @@ class app {
     }
 
     // 获取服务端配置数据，如果登录则同时获取用户配置数据
-    try {
-      let data = await api.getServerConfig(this.userid);
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
+    // try {
+    //   let data = await api.getServerConfig(this.userid);
+    //   console.log(data);
+    // } catch (error) {
+    //   console.log(error);
+    //   throw error;
+    // }
 
     // 初始化数据
     if (localStorage.authenticated) {
