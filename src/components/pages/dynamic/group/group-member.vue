@@ -1,5 +1,11 @@
 <template>
   <div class="page" :title="title" actions='[{"text":"排序","clickHandler":"member-rank"}]'>
+    <div class="order" v-show="showOrder">
+      <ul>
+        <li v-for="(item, index) in orders" @click="order(index)">{{item}}</li>
+      </ul>
+    </div>
+
     <div class="page-main">
 
       <ul class="member-list">
@@ -11,7 +17,7 @@
               <span class="member-score">{{(item.score||0)+"分"}}</span>
             </div>
             <div class="member-info-bottom">
-              <span class="member-code">入组：{{item.createdAt|time}}</span>
+              <span class="member-code">入组：{{item.joinTime|time}}</span>
               <!--<span class="member-code">编号：{{item.no||'Todo'}}</span>
                   <span class="member-addgroup-time">入组：{{item.createdAt|time}}</span>-->
             </div>
@@ -38,6 +44,13 @@
       "list": require("ui/list.vue"),
       "list-item": require("ui/list-item.vue")
     },
+    data() {
+      return {
+        showOrder: false,
+        orders: ['入组时间升序', '入组时间降序'],
+        orderBy: 0
+      }
+    },
     computed: {
       groupInfo() {
           return this.$store.state.group.groupInfo;
@@ -56,17 +69,35 @@
           let user = this.$app.user;
           let creator = this.groupInfo.creator;
           return creator === user._id;
+        },
+        orderStr() {
+          let orderBy = this.orderBy;
+          return this.orders[orderBy]
         }
     },
     created() {
       this.getMembers();
     },
+    activated() {
+      // 排序
+      let that = this;
+      this.$app.toolbars.create([{
+        text: this.orderStr,
+        click() {
+          that.showOrder = !that.showOrder;
+        }
+      }]);
+    },
     methods: {
       // 获取小组成员
       getMembers() {
           let groupId = this.groupInfo._id;
+          const orderCodes = ['date ASC', 'date DESC'];
+          let orderBy = this.orderBy;
+          orderBy = orderCodes[orderBy];
           this.$store.dispatch("getMembers", {
-            groupId
+            groupId,
+            orderBy
           });
         },
         // 清退
@@ -76,6 +107,21 @@
               userId
             });
           }
+        },
+        order(index) {
+          this.orderBy = index;
+          this.showOrder = false;
+          
+          let that = this;
+          this.$app.toolbars.clear();
+          this.$app.toolbars.create([{
+            text: this.orderStr,
+            click() {
+              that.showOrder = !that.showOrder;
+            }
+          }]);
+          
+          this.getMembers();
         }
     }
   };
@@ -105,5 +151,19 @@
   .flex {
     display: flex;
     flex: 1;
+  }
+  
+  .order {
+    position: absolute;
+    background-color: rgb(33, 150, 243);
+    color: #fff;
+    border: 1px solid #333;
+    right: 0;
+    li {
+      padding: 5px 10px;
+    }
+    li:active {
+      opacity: .6;
+    }
   }
 </style>

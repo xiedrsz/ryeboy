@@ -269,10 +269,10 @@ class api {
   }
 
   // 获取小组成员, T
-  static getMembers(group_id) {
+  static getMembers(group_id, orderBy = 'date ASC') {
     return axios.get(`/group/${group_id}/members`, {
       params: {
-        sortBy: 'date DESC'
+        sortBy: orderBy
       }
     })
   }
@@ -310,7 +310,9 @@ class api {
   // 修改小组资料, 更新小组, T
   static saveGroupInfo(groupInfo) {
     let group_id = groupInfo._id;
-    return axios.post(`/group/${group_id}`, {group: groupInfo})
+    return axios.post(`/group/${group_id}`, {
+      group: groupInfo
+    })
   }
 
   // 邀请好友, T
@@ -326,7 +328,9 @@ class api {
   // 上传图片
   static uploadImage(file) {
     const config = {
-      headers: { 'content-type': 'multipart/form-data' }
+      headers: {
+        'content-type': 'multipart/form-data'
+      }
     }
 
     const formData = new FormData();

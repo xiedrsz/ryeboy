@@ -331,8 +331,9 @@ const actions = {
       commit,
       state
     }, option) {
-      let groupId = option.groupId,
-        res = await api.getMembers(groupId);
+      let groupId = option.groupId;
+      let orderBy = option.orderBy;
+      let res = await api.getMembers(groupId, orderBy);
 
       // 当前用户是组长
       if (true) {
@@ -452,7 +453,7 @@ const actions = {
     }, option) {
       let groupInfo = option.groupInfo;
       let callback = option.callback;
-      
+
       commit("group_saveInfo", groupInfo);
       await api.saveGroupInfo(state.groupInfo);
 
