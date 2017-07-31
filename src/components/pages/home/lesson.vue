@@ -81,7 +81,6 @@
 </template>
 
 <script>
-  const flatpickr = require("flatpickr");
   const moment = require("moment");
 
   export default {
@@ -263,8 +262,6 @@
     }
   };
 </script>
-
-<style src="flatpickr/dist/flatpickr.css"></style>
 
 <style lang="scss"
        scoped>

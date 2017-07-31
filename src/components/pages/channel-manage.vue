@@ -42,11 +42,10 @@
       </div>
     </div>
   </div>
-  </div>
 </template>
 
 <script>
-  import sortable from "vendor/sortable";
+  import sortable from "lib/sortable";
   import api from "api";
   import _ from "lodash";
 
@@ -56,13 +55,11 @@
       id: "tbs",
       name: "蜕变史",
       active: false
-  },
-    {
+    }, {
       id: "ms",
       name: "麦式",
       active: false
-  },
-    {
+  }, {
       id: "ys",
       name: "饮食",
       active: false

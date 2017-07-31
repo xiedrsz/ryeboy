@@ -1,4 +1,3 @@
-import axios from "axios";
 import config from "js/config";
 
 axios.defaults.baseURL = config.apiAddress;

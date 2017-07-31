@@ -1,5 +1,6 @@
 var path = require("path");
 var webpack = require("webpack");
+var build = (require("./src/js/app.json")).build;
 
 module.exports = {
   context: path.resolve(__dirname, "src"),
@@ -7,7 +8,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "src/dist"),
     publicPath: "dist/",
-    filename: "bundle.js"
+    filename: `bundle.${build}.js`
   },
   module: {
     rules: [{
@@ -51,7 +52,7 @@ module.exports = {
       "css": path.resolve(__dirname, "src/css/"),
       "img": path.resolve(__dirname, "src/img/"),
       "components": path.resolve(__dirname, "src/components/"),
-      "vendor": path.resolve(__dirname, "src/vendor/"),
+      "lib": path.resolve(__dirname, "src/lib/"),
       "ui": path.resolve(__dirname, "src/components/ui")
     }
   },

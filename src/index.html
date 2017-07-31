@@ -22,11 +22,13 @@
   <meta name="viewport"
         content="initial-scale=1, minimum-scale=1, width=device-width">
   <link rel="stylesheet"
-        href="vendor/material-design-icons/material-icons.css">
+        href="lib/material-design-icons/material-icons.css">
   <link rel="stylesheet"
-        href="vendor/material-design-lite/material.min.css" />
+        href="lib/material-design-lite/material.min.css" />
   <link rel="stylesheet"
-        href="vendor/swipe/swipe.css" />
+        href="lib/swipe/swipe.css" />
+        <link rel="stylesheet"
+        href="lib/flatpickr/flatpickr.min.css" />
   <link rel="stylesheet"
         href="css/main.css" />
   <link rel="stylesheet"
@@ -37,18 +39,17 @@
 <body>
   <div id="app">
     <div class="logo">
-      <img src="logo.png">
+      <img src="img/logo.png">
       <div class="startup-status">
         <div class="startup-error">网络请求失败。请检查网络连接。</div>
-        <div class="startup-exit" onclick="history.go(-1)">退出</div>
+        <div class="startup-exit" onclick="exitApp()">退出</div>
       </div>
     </div>
   </div>
   <!-- cordova.js -->
-  <script src="vendor/script.min.js"></script>
-  <script>
-    $script(["vendor/material-design-lite/material.min.js", "vendor/swipe/swipe.js", "dist/bundle.js"]);
-  </script>
+  <script src="lib/jsonp.min.js"></script>
+  <script src="lib/script.min.js"></script>
+  <script src="js/startup.js"></script>
 </body>
 
 </html>
