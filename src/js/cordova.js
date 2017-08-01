@@ -30,7 +30,19 @@ class cordova {
   }
 
   resume() {
-
+    jsonp(`${this.app.config.ossAddress}/config/app.json?callback=jsonpCallback&hash=${(new Date()).getTime()}`, (error, data) => {
+      if (!error) {
+        let key = "hot-update-build";
+        let build = this.app.build;
+        if (localStorage.getItem(key)) {
+          build = Number(localStorage.getItem(key));
+        }
+        if (data.build != build) {
+          localStorage.setItem(key, data.build);
+          location.reload();
+        }
+      }
+    });
   }
 
   pause() {
@@ -55,9 +67,11 @@ class cordova {
     this.keyboardVisible = false;
 
     app.deviceready = false;
+    Object.assign(app, window.app);
 
     document.addEventListener("deviceready", () => {
       app.deviceready = true;
+      app.platform = device.platform.toLowerCase();
       document.addEventListener("backbutton", this.back.bind(this), false);
       document.addEventListener("resume", this.resume.bind(this), false);
       document.addEventListener("pause", this.pause.bind(this), false);

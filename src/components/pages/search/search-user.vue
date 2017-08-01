@@ -15,6 +15,9 @@
         <div>
           {{ item.username}}
         </div>
+        <div class="nickname">
+          {{ item.nickname ? `[${item.nickname}]` : "" }}
+        </div>
       </li>
     </ul>
   </loadable-content>
@@ -57,7 +60,7 @@
     },
     async mounted() {
       this.$app.adjustScrollableElement(".content-wrap", [".tabs"]);
-      
+
       try {
         let count = await this.getData();
         this.loadstate = count == 0 ? "empty" : "loaded";
@@ -76,6 +79,7 @@
   }
 
   .search-item {
+    @include flex-row;
     padding-bottom: 8px;
     margin-bottom: 12px;
     border-bottom: 1px solid $color-divider;
@@ -83,6 +87,12 @@
 
   .info {
     font-size: 14px;
+    color: $color-hint-text;
+  }
+
+  .nickname {
+    font-size: 12px;
+    margin-left: 4px;
     color: $color-hint-text;
   }
 </style>

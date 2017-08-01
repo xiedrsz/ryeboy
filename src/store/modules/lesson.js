@@ -3,12 +3,12 @@ import _ from "lodash";
 import api from "api";
 import datetime from "js/utils/datetime";
 import textHelper from "js/utils/textHelper";
-import collectionHelper from "js/utils/collectionHelper";
+import ch from "js/utils/collectionHelper";
 const cards = require("store/cards.json");
 const moment = require("moment");
 
 function getDateKey(state) {
-  return moment(state.selectedDate).format("YYYY-MM-DD");
+  return moment(state.selectedDate).format("YYYYMMDD");
 }
 
 const state = {
@@ -21,7 +21,8 @@ const state = {
     "401": 401,
     "411": 411
   },
-  records: {}
+  records: {},
+  savedDates: []
 };
 
 const getters = {
@@ -126,7 +127,7 @@ const mutations = {
   },
   lesson_setDeselect(state, data) {
     if (data.checked) {
-      collectionHelper.remove(state.deselects, data.id);
+      ch.remove(state.deselects, data.id);
     } else {
       state.deselects.push(data.id);
     }
@@ -335,7 +336,24 @@ const actions = {
 
     let date = getDateKey(state);
     localStorage[`${userid}_lesson_${date}`] = JSON.stringify(data);
+
+    ch.put(state.savedDates, date);
+    localStorage[`${userid}_lesson_savedDates`] = JSON.stringify(state.savedDates);
   },
+
+  lesson_getSavedDates({
+    state,
+    rootState
+  }) {
+    let userid = rootState.user._id;
+    try {
+      state.savedDates = JSON.parse(localStorage[`${userid}_lesson_savedDates`]);
+      state.savedDates.push("20170718");
+    } catch (error) {
+      state.savedDates = [];
+    }
+  },
+
   lesson_loadSettings({
     commit,
     rootState
@@ -351,6 +369,7 @@ const actions = {
       commit("lesson_assignDeselect", JSON.parse(data));
     }
   },
+
   lesson_saveSettings({
     state,
     rootState

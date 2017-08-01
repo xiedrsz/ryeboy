@@ -6,7 +6,7 @@
         <div class="title-row">
           <div>我的频道</div>
           <div class="mdl-layout-spacer"></div>
-          <button-flat class="sideline"
+          <button-flat :border="true"
                        :text="enableEdit ? '完成' : '编辑'"
                        @click.native="edit" />
         </div>
@@ -42,11 +42,10 @@
       </div>
     </div>
   </div>
-  </div>
 </template>
 
 <script>
-  import sortable from "vendor/sortable";
+  import sortable from "lib/sortable";
   import api from "api";
   import _ from "lodash";
 
@@ -56,13 +55,11 @@
       id: "tbs",
       name: "蜕变史",
       active: false
-  },
-    {
+    }, {
       id: "ms",
       name: "麦式",
       active: false
-  },
-    {
+  }, {
       id: "ys",
       name: "饮食",
       active: false
@@ -261,10 +258,6 @@
 
   .ghost {
     opacity: 0.25;
-  }
-
-  .sideline {
-    border: 1px solid $color-divider
   }
 
   .unsubscribed {

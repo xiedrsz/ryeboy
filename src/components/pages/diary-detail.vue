@@ -146,7 +146,7 @@
       },
       async setLike() {
         if (!this.authenticated) {
-          this.$app.login();
+          this.$app.login(this.$route.fullPath);
           return;
         }
 
@@ -192,7 +192,7 @@
       },
       async sendComment() {
         if (!this.authenticated) {
-          this.$app.login();
+          this.$app.login(this.$route.fullPath);
           return;
         }
         if (this.comment) {
@@ -256,7 +256,7 @@
           this.diary.comments.push(comment);
         });
         this.diary.last += comments.length;
-        this.diary.nomore = comments.length < this.$app.config.pageSize;
+        this.diary.nomore = comments.length < this.$app.config.pageSize.normal;
       },
       adjustHeight() {
         this.$app.adjustScrollableElement("#content", [".input-section"]);
@@ -317,7 +317,7 @@
             });
             diary.comments = comments;
             diary.nomore = comments.length >= diary.commentCount;
-            diary.last = this.$app.config.pageSize;
+            diary.last = this.$app.config.pageSize.normal;
             diary.showAllLessons = false;
             diary.lessonAccordion = true;
             this.diary = (await this.$store.dispatch("diary_addMap", [diary]))[0];

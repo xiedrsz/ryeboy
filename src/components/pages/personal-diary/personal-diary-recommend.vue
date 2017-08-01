@@ -40,7 +40,7 @@
         }
         await this.$store.dispatch("diary_updateData", diaries);
         diaries = await this.$store.dispatch("diary_addMap", diaries);
-        this.context.nomore = diaries.length < this.$app.config.pageSize;
+        this.context.nomore = diaries.length < this.$app.config.pageSize.normal;
 
         diaries.forEach(item => {
           this.context.diaries.push(item);

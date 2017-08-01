@@ -5,6 +5,12 @@ class collectionHelper {
       array.splice(index, 1);
     }
   }
+
+  static put(array, element) {
+    if (!array.includes(element)) {
+      array.push(element);
+    }
+  }
 }
 
 module.exports = collectionHelper;

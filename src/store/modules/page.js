@@ -18,7 +18,8 @@ const state = {
     show: false,
     actions: []
   },
-  spacer: ""
+  spacer: "",
+  loginRedirect: "/"
 };
 
 const mutations = {

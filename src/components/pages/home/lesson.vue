@@ -17,11 +17,15 @@
         <div class="action"
              @click="save">保存</div>
         <div class="action"
-             :class="{ published: published || publishExpire }"
-             @click="publish">{{ publishExpire ? "发布过期" :published ? "已发布": "发布" }}</div>
+             :class="{ disabled: published || expired }"
+             @click="publish">{{ "发布" }}</div>
       </div>
       <div class="info-container">
-        <div>已完成{{ record.selectedCount }}/{{ record.cardCount }}项</div>
+        <div class="published"
+             v-show="published || saved">{{ published ? "已发布" : saved ? "已保存" : "" }}</div>
+        <div>{{ `完成${record.selectedCount}/${record.cardCount}项` }}</div>
+        <div class="expired"
+             v-show="expired && !published">不能发布超过一周的记录</div>
       </div>
       <div class="card-container">
         <div v-for="weight in cards"
@@ -34,7 +38,7 @@
             <div>
               <checkbox :id="weight.value"
                         v-model="record.selectedWeights[weight.value - 1]"
-                        :disabled="published || publishExpire"
+                        :disabled="published"
                         text="全选"
                         :changed="selectAllCards"></checkbox>
             </div>
@@ -54,7 +58,7 @@
               </div>
               <div class="card-name">{{ card.name }}</div>
               <checkbox :id="card.id"
-                        :disabled="published || publishExpire"
+                        :disabled="published"
                         :changed="selectCard"
                         v-model="record.selectedCards[card.id]"></checkbox>
             </div>
@@ -64,12 +68,19 @@
     </loadable-content>
     <div class="page-layout unauthenticated"
          v-if="!authenticated">
-      (你还没有登录)</div>
+      <div class="intro">
+        功课是由麦式运动、饮食、睡眠、心理、生理等40多种健康习惯所组成的健康系统，帮助你培养良好的生活习惯，从而减轻或消除不良习惯及其所导致的亚健康问题。登录后可查看详细的功课教程。
+      </div>
+      <div class="login-block">
+        <button-flat text="登录"
+                     :border="true"
+                     @click.native="$app.login($route.fullPath)"></button-flat>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-  const flatpickr = require("flatpickr");
   const moment = require("moment");
 
   export default {
@@ -95,12 +106,14 @@
             function(date) {
               date = self.$app.datetime.date(date);
               let today = self.$app.datetime.date(moment());
-              return date.isAfter(today);
+              let expire = self.$app.datetime.date(moment().subtract(7, "days"));
+              let d = moment(date).format("YYYYMMDD");
+              return (date.isAfter(today) || date.isBefore(expire)) && !self.publishedDates.includes(d) && !self.savedDates.includes(d);
             }
           ],
           mark: function(date) {
             let d = moment(date).format("YYYYMMDD");
-            return self.publishedDates.indexOf(d) >= 0;
+            return self.publishedDates.includes(d) || self.savedDates.includes(d);
           },
           onChange(selectedDates) {
             self.$app.dialog.showLoading();
@@ -121,7 +134,7 @@
         this.initialized = true;
       },
       save() {
-        if (this.published || this.publishExpire) {
+        if (this.published) {
           return;
         }
         this.$store.dispatch("lesson_save");
@@ -130,7 +143,7 @@
         this.$app.dialog.text(`提醒：${dateText}的功课记录已保存在本地，未发布前可以进行多次编辑。`);
       },
       publish() {
-        if (this.published || this.publishExpire) {
+        if (this.published || this.expired) {
           return;
         }
         this.$router.push("/pages/lesson-publish");
@@ -141,9 +154,7 @@
       },
       cardDetail(cardId) {
         if (cardId == 100) {
-          if (!this.publishExpire) {
-            this.$router.push("/pages/lesson-diary");
-          }
+          this.$router.push("/pages/lesson-diary");
         } else {
           this.$router.push(`/pages/lesson-detail?id=${cardId}`);
         }
@@ -167,9 +178,10 @@
           suffix = "昨天";
         } else if (diffDays == 0) {
           suffix = "今天";
-        } else
-        if (diffDays == -2) {
+        } else if (diffDays == -2) {
           suffix = "前天";
+        } else {
+          suffix = date.format("ddd");
         }
         return date.format("M[月]D[日]" + suffix);
       },
@@ -179,16 +191,21 @@
       published() {
         return this.record.published;
       },
-      publishExpire() {
+      expired() {
         let expire = this.$app.datetime.date(moment().subtract(7, "days"));
-        let date = moment(this.selectedDate);
-        return date.isBefore(expire);
+        return moment(this.selectedDate).isBefore(expire);
       },
       authenticated() {
         return this.$store.state.user.authenticated;
       },
       cards() {
         return this.record.weightedCards;
+      },
+      savedDates() {
+        return this.$store.state.lesson.savedDates;
+      },
+      saved() {
+        return this.savedDates.includes(moment(this.selectedDate).format("YYYYMMDD"));
       }
     },
     beforeDestroy() {
@@ -198,6 +215,13 @@
       if (this.flatpickr) {
         this.flatpickr.destroy();
         delete this.flatpickr;
+      }
+    },
+    watch: {
+      savedDates() {
+        if (this.flatpickr) {
+          this.flatpickr.redraw();
+        }
       }
     },
     async activated() {
@@ -215,6 +239,9 @@
           this.publishedDates.push(moment(item.date).format("YYYYMMDD"));
         });
 
+        // 获取本地保存了日记的日期
+        await this.$store.dispatch("lesson_getSavedDates");
+
         // 获取用户的功课等级信息
         if (!this.$app.user.cards) {
           await this.$store.dispatch("user_getCards");
@@ -231,11 +258,10 @@
     },
     components: {
       "checkbox": require("ui/checkbox.vue"),
+      "button-flat": require("ui/button-flat.vue"),
     }
   };
 </script>
-
-<style src="flatpickr/dist/flatpickr.css"></style>
 
 <style lang="scss"
        scoped>
@@ -274,6 +300,10 @@
     border-bottom: 1px solid $color-divider;
   }
 
+  .info-container div {
+    margin-right: 8px;
+  }
+
   .card-container {
     @include flex-column;
     overflow: auto;
@@ -303,9 +333,8 @@
     flex-wrap: wrap;
   }
 
-  .published {
-    background-color: $color-disable;
-    color: #fff;
+  .disabled {
+    color: $color-disable;
   }
 
   .card {
@@ -349,8 +378,22 @@
   }
 
   .unauthenticated {
-    @include flex-row;
-    @include flex-center;
-    height: 128px;
+    display: block;
+    padding: 32px 16px;
+    width: auto;
+    font-size: 16px;
+  }
+
+  .published {
+    color: $color-orange;
+  }
+
+  .expired {
+    color: $color-red;
+  }
+
+  .login-block {
+    text-align: center;
+    margin-top: 64px;
   }
 </style>

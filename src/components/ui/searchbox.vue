@@ -1,14 +1,24 @@
 <template>
   <div class="searchbox">
     <i class="material-icons md-20">search</i>
-    <input type="text"
-           v-model="$store.state.search.keyword"
-           class="input">
+    <div class="input-wrap">
+      <input type="text"
+             v-model="$store.state.search.keyword"
+             class="input">
+    </div>
     <i class="material-icons md-16"
        @click="$store.state.search.keyword = ''"
        :class="{ white: !$store.state.search.keyword }">clear</i>
   </div>
 </template>
+
+<script>
+  export default {
+    mounted() {
+      this.$el.querySelector(".input").style.width = this.$el.querySelector(".input-wrap").clientWidth + "px";
+    }
+  };
+</script>
 
 <style lang="scss"
        scoped>
@@ -21,15 +31,18 @@
     padding: 4px 0px 4px 0px;
     border: 1px solid $color-blue;
     border-radius: 3px;
-    width: 90%;
   }
 
-  .searchbox input {
+  .input-wrap {
+    flex-grow: 1;
+  }
+
+  .input {
     outline: none;
     resize: none;
     border: none;
     color: $color-text;
-    width: 100%;
+    width: 0;
   }
 
   .searchbox i {

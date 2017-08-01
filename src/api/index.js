@@ -1,10 +1,17 @@
-import axios from "axios";
 import config from "js/config";
 
 axios.defaults.baseURL = config.apiAddress;
 axios.defaults.headers["Accept"] = "application/json";
 
 class api {
+  static getServerConfig(userid) {
+    return axios.get("/config", {
+      params: {
+        userid
+      }
+    });
+  }
+
   static getSearch(keyword, type) {
     return axios.get("search/keyword", {
       params: {

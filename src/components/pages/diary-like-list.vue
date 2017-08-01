@@ -8,6 +8,7 @@
       <ul class="mdl-list">
         <li v-for="item in context.items"
             :key="item.userid"
+            @click="$router.push('/pages/user-detail?id=' + item.userid)"
             class="item-container">
           <div class="diary-avatar">
             <img :data-src="item.avatar"
@@ -57,7 +58,7 @@
         await this.$store.dispatch("diary_ensureUsers", items);
         await this.$store.dispatch("diary_updateUserInfo", items);
         this.context.last += items.length;
-        this.context.nomore = items.length < this.$app.config.pageSize;
+        this.context.nomore = items.length < this.$app.config.pageSize.user;
 
         items.forEach(item => {
           this.context.items.push(item);

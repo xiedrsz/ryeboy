@@ -27,6 +27,10 @@ class app {
     history.go(-1);
   }
 
+  showStarupError() {
+    document.querySelector(".startup-status").style.visibility = "visible";
+  }
+
   // 登录之后的一些处理
   async afterLogin(data) {
     localStorage.authenticated = true;
@@ -150,11 +154,13 @@ class app {
     });
   }
 
-  login() {
+  login(redirect) {
+    this.vue.$store.state.page.loginRedirect = redirect;
     this.vue.$refs.login.open();
   }
 
-  init() {
+  async init() {
+    // HTTP POST 显示加载图标
     axios.interceptors.request.use(config => {
       if (config.method == "post") {
         this.posting = true;
@@ -179,18 +185,35 @@ class app {
       return Promise.reject(error);
     });
 
+    // 注册全局组件
+    Vue.component("loadable-content", require("ui/loadable-content.vue"));
+
+    // 初始化用户授权信息
     if (localStorage.authenticated) {
       api.setAuthorization();
       let user = JSON.parse(localStorage.user);
       this.userid = user._id;
       store.commit("user_assignAuth", user);
+    }
+
+    // 获取服务端配置数据，如果登录则同时获取用户配置数据
+    // try {
+    //   let data = await api.getServerConfig(this.userid);
+    //   console.log(data);
+    // } catch (error) {
+    //   console.log(error);
+    //   throw error;
+    // }
+
+    // 初始化数据
+    if (localStorage.authenticated) {
       store.dispatch("diary_initSubscribedChannels");
       store.dispatch("lesson_loadSettings");
     } else {
       store.commit("diary_setDefaultChannels");
     }
 
-    Vue.component("loadable-content", require("ui/loadable-content.vue"));
+    // await this.delay(2000);
   }
 
   constructor() {
