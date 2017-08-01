@@ -206,7 +206,7 @@ class api {
 
   // 获取订阅列表
   static getSubscribles() {
-    return axios.get("/labels")
+    return axios.get("/subscribed-channels")
   }
 
   // 获取订阅频道内容
@@ -225,9 +225,9 @@ class api {
   }
 
   // 订阅
-  static subscrible(id) {
-    return axios.post("/subscrible", {
-      id: id
+  static subscribe(id) {
+    return axios.post("/subscribe", {
+      ids: [id]
     })
   }
 

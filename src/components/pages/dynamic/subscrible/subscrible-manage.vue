@@ -25,7 +25,7 @@
                     <span class="group-diaries">10万日记</span>
                   </div>
                 </div>
-                <span class="manage-follow" @click="subscribleOrNot('5963323f3292f5bc985acd07',item.note)">{{item.note}}</span>
+                <span class="manage-follow" @click="subscribleOrNot(item)">{{item.note}}</span>
               </li>
 
             </ul>
@@ -81,7 +81,9 @@
             this.$store.dispatch("getLabels");
           },
           //订阅日记
-          subscribleOrNot(id, note) {
+          subscribleOrNot(item) {
+            let id = item.id;
+            let note = item.note;
             if (note === "订阅") {
               this.$store.dispatch("subscrible", {
                 id

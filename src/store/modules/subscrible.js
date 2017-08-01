@@ -189,7 +189,7 @@ const actions = {
       commit
     }, option) {
       let id = option.id,
-        res = await api.subscrible(id);
+        res = await api.subscribe(id);
     }
 };
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="page" :title="title" actions='[{"text":"排序","clickHandler":"member-rank"}]'>
+  <div class="page" :title="title">
     <div class="order" v-show="showOrder">
       <ul>
         <li v-for="(item, index) in orders" @click="order(index)">{{item}}</li>

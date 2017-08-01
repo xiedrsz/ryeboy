@@ -37,14 +37,17 @@
       activated() {
         // 获取 关注概述
         this.$store.dispatch("getSubscribles");
-      },
-      mounted() {
-        // 监听 设置 事件
-        this.$on("add-subscrible", () => {
-          this.$router.push({
-            path: "/dynamic/subscrible-manage"
-          });
-        });
+
+        // 添加
+        let that = this;
+        this.$app.toolbars.create([{
+          text: "添加",
+          click() {
+            that.$router.push({
+              path: "/dynamic/subscrible-manage"
+            });
+          }
+        }]);
       },
       methods: {
         goChannels() {
