@@ -6,7 +6,6 @@ node_modules/
 *.log.*
 memo
 node_modules.zip
-package-lock.json
 *.cmd
 /src/dist/
 src/js/config.json
