@@ -1,22 +1,24 @@
 <template>
   <div class="page"
        title="麦友日记">
-    <div class="user-info">
-      <user-basic-info :user="user"></user-basic-info>
-    </div>
-    <div class="tabs">
-      <div v-for="(tab, index) in tabs"
-           :key="tab.id"
-           class="tab-link"
-           @click="readySwitchView(index)"
-           :class="{ active: tab.active }">
-        {{ tab.text }}
+    <loadable-content :loadstate="loadstate">
+      <div class="user-info">
+        <user-basic-info :user="user"></user-basic-info>
       </div>
-    </div>
-    <keep-alive>
-      <component :is="context.viewType">
-      </component>
-    </keep-alive>
+      <div class="tabs">
+        <div v-for="(tab, index) in tabs"
+             :key="tab.id"
+             class="tab-link"
+             @click="readySwitchView(index)"
+             :class="{ active: tab.active }">
+          {{ tab.text }}
+        </div>
+      </div>
+      <keep-alive>
+        <component :is="context.viewType">
+        </component>
+      </keep-alive>
+    </loadable-content>
   </div>
 </template>
 
@@ -51,7 +53,8 @@
         context: {
           viewType: "daily"
         },
-        user: {}
+        user: {},
+        loadstate: "loading"
       };
     },
     methods: {
@@ -86,14 +89,17 @@
     },
     async activated() {
       let userid = this.$route.query.id;
-
-      this.context = await this.$store.dispatch("diary_getUserData", {
-        userid
-      });
-
-      this.switchView(this.context.index);
-      let user = await this.$app.getUser(userid);
-      this.$set(this.$data, "user", user);
+      if (userid != this.userid) {
+        this.loadstate = "loading";
+        this.context = await this.$store.dispatch("diary_getUserData", {
+          userid
+        });
+        let user = await this.$app.getUser(userid);
+        this.$set(this.$data, "user", user);
+        this.switchView(this.context.index);
+        this.userid = userid;
+        this.loadstate = "loaded";
+      }
     }
   };
 </script>

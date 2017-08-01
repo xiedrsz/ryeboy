@@ -8,6 +8,7 @@ import concern from "./modules/concern";
 import group from "./modules/group";
 import subscrible from "./modules/subscrible";
 import rye from "./modules/rye";
+import search from "./modules/search";
 
 Vue.use(Vuex);
 
@@ -20,6 +21,7 @@ export default new Vuex.Store({
     concern,
     group,
     subscrible,
-    rye
+    rye,
+    search
   },
 });

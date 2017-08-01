@@ -2,6 +2,7 @@ node_modules/
 /plugins/
 /platforms/
 /www/
+/server/
 *.log
 *.log.*
 memo
@@ -9,3 +10,4 @@ node_modules.zip
 *.cmd
 /src/dist/
 src/js/config.json
+src/js/app.json

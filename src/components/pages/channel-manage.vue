@@ -6,14 +6,15 @@
         <div class="title-row">
           <div>我的频道</div>
           <div class="mdl-layout-spacer"></div>
-          <button-flat class="sideline"
+          <button-flat :border="true"
                        :text="enableEdit ? '完成' : '编辑'"
                        @click.native="edit" />
         </div>
         <sortable v-model="subscribedChannels"
-                   :options="{ group: 'label', animation: 150, ghostClass: 'ghost', disabled: !enableEdit}"
-                   class="label-container">
+                  :options="{ group: 'label', animation: 150, ghostClass: 'ghost', disabled: !enableEdit}"
+                  class="label-container">
           <div v-for="item in subscribedChannels"
+               :key="item.id"
                :id="item.id"
                @click="removeSubscribed"
                class="label"
@@ -22,245 +23,251 @@
           </div>
         </sortable>
       </div>
+      <div class="note"
+           v-show="enableEdit">拖拽可以排序</div>
       <div class="unsubscribed">
         <div class="title-row">
           <div>频道推荐</div>
         </div>
         <div class="label-container">
           <div v-for="item in recommendedChannels"
+               :key="item.id"
                :id="item.id"
                @click="addSubscribed"
-               class="label">
+               class="label"
+               :data-badge="enableEdit ? '+' : ''">
             <div class="disabled">{{ item.name }}</div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  </div>
 </template>
 
 <script>
-import sortable from "vendor/sortable";
-import api from "api";
-import _ from "lodash";
+  import sortable from "lib/sortable";
+  import api from "api";
+  import _ from "lodash";
 
-// 默认推荐订阅频道
-const defaultRecommendedChannels = [
-  {
-    id: "tbs",
-    name: "蜕变史",
-    active: false
+  // 默认推荐订阅频道
+  const defaultRecommendedChannels = [
+    {
+      id: "tbs",
+      name: "蜕变史",
+      active: false
+    }, {
+      id: "ms",
+      name: "麦式",
+      active: false
+  }, {
+      id: "ys",
+      name: "饮食",
+      active: false
   },
-  {
-    id: "ms",
-    name: "麦式",
-    active: false
+    {
+      id: "zx",
+      name: "作息",
+      active: false
   },
-  {
-    id: "ys",
-    name: "饮食",
-    active: false
+    {
+      id: "xl",
+      name: "心理",
+      active: false
   },
-  {
-    id: "zx",
-    name: "作息",
-    active: false
+    {
+      id: "qlxy",
+      name: "前列腺炎"
   },
-  {
-    id: "xl",
-    name: "心理",
-    active: false
+    {
+      id: "yj",
+      name: "遗精",
   },
-  {
-    id: "qlxy",
-    name: "前列腺炎"
+    {
+      id: "yyz",
+      name: "抑郁症",
   },
-  {
-    id: "yj",
-    name: "遗精",
+    {
+      id: "kqky",
+      name: "口腔溃疡",
   },
-  {
-    id: "yyz",
-    name: "抑郁症",
+    {
+      id: "sm",
+      name: "失眠",
   },
-  {
-    id: "kqky",
-    name: "口腔溃疡",
+    {
+      id: "npnj",
+      name: "尿频尿急",
   },
-  {
-    id: "sm",
-    name: "失眠",
+    {
+      id: "tyhc",
+      name: "头晕昏沉",
   },
-  {
-    id: "npnj",
-    name: "尿频尿急",
+    {
+      id: "bftf",
+      name: "白发脱发",
   },
-  {
-    id: "tyhc",
-    name: "头晕昏沉",
+    {
+      id: "yy",
+      name: "意淫",
   },
-  {
-    id: "bftf",
-    name: "白发脱发",
+    {
+      id: "sx",
+      name: "肾虚",
   },
-  {
-    id: "yy",
-    name: "意淫",
+    {
+      id: "ywzx",
+      name: "阳痿早泄",
   },
-  {
-    id: "sx",
-    name: "肾虚",
-  },
-  {
-    id: "ywzx",
-    name: "阳痿早泄",
-  },
-  {
-    id: "bm",
-    name: "便秘",
+    {
+      id: "bm",
+      name: "便秘",
   },
 ];
 
-export default {
-  data() {
-    return {
-      enableEdit: false,
-      modified: false,
-      subscribedChannels: [],
-      recommendedChannels: []
-    };
-  },
-  computed: {
-    authenticated() {
-      return this.$store.state.user.authenticated;
+  export default {
+    data() {
+      return {
+        enableEdit: false,
+        modified: false,
+        subscribedChannels: [],
+        recommendedChannels: []
+      };
     },
-  },
-  watch: {
-    subscribedChannels: {
-      handler: function () {
-        this.modified = true;
+    computed: {
+      authenticated() {
+        return this.$store.state.user.authenticated;
       },
-      deep: true
-    }
-  },
-  methods: {
-    edit() {
-      if (this.enableEdit && this.modified) {
-        this.$store.commit("diary_setChannelChanged");
-        this.$store.dispatch("diary_setSubscribedChannels", this.subscribedChannels);
-      }
-      this.enableEdit = !this.enableEdit;
-      if (this.enableEdit) {
-        this.modified = false;
+    },
+    watch: {
+      subscribedChannels: {
+        handler: function() {
+          this.modified = true;
+        },
+        deep: true
       }
     },
-    removeSubscribed(event) {
-      if (!this.enableEdit) return;
-      if (this.subscribedChannels.length <= 1) {
-        this.$store.commit("page_showDialog", {
-          show: true,
-          type: "alert",
-          content: "至少保留一个频道。"
+    methods: {
+      edit() {
+        if (this.enableEdit && this.modified) {
+          this.$store.commit("diary_setChannelChanged");
+          this.$store.dispatch("diary_setSubscribedChannels", this.subscribedChannels);
+        }
+        this.enableEdit = !this.enableEdit;
+        if (this.enableEdit) {
+          this.modified = false;
+        }
+      },
+      removeSubscribed(event) {
+        if (!this.enableEdit) return;
+        if (this.subscribedChannels.length <= 1) {
+          this.$store.commit("page_showDialog", {
+            show: true,
+            type: "alert",
+            content: "至少保留一个频道。"
+          });
+          return;
+        }
+        let index = _.findIndex(this.subscribedChannels, {
+          "id": event.target.id
         });
-        return;
+        this.recommendedChannels.unshift(this.subscribedChannels[index]);
+        this.subscribedChannels.splice(index, 1);
+      },
+      addSubscribed(event) {
+        if (!this.enableEdit) return;
+        let item = _.find(this.recommendedChannels, {
+          "id": event.target.id
+        });
+        _.pull(this.recommendedChannels, item);
+        this.subscribedChannels.push(item);
+      },
+      initRecommendedChannels(channels) {
+        channels.forEach(channel => {
+          if (_.findIndex(this.subscribedChannels, function(subscribedChannel) {
+              return subscribedChannel.id == channel.id;
+            }) == -1) {
+            this.recommendedChannels.push(channel);
+          }
+        });
       }
-      let index = _.findIndex(this.subscribedChannels, { "id": event.target.id });
-      this.recommendedChannels.unshift(this.subscribedChannels[index]);
-      this.subscribedChannels.splice(index, 1);
     },
-    addSubscribed(event) {
-      if (!this.enableEdit) return;
-      let item = _.find(this.recommendedChannels, { "id": event.target.id });
-      _.pull(this.recommendedChannels, item);
-      this.subscribedChannels.push(item);
+    components: {
+      sortable,
+      "button-flat": require("components/ui/button-flat.vue"),
     },
-    initRecommendedChannels(channels) {
-      channels.forEach(channel => {
-        if (_.findIndex(this.subscribedChannels, function (subscribedChannel) {
-          return subscribedChannel.id == channel.id;
-        }) == -1) {
-          this.recommendedChannels.push(channel);
+    mounted() {
+      this.$store.state.diary.channels.forEach(item => {
+        if (item.id != "default") {
+          this.subscribedChannels.push({
+            id: item.id,
+            name: item.name
+          });
         }
       });
+      this.modified = false;
+      api.getRecommendedChannels().then(res => {
+        this.initRecommendedChannels(res.data);
+      }).catch(() => {
+        this.initRecommendedChannels(defaultRecommendedChannels);
+      });
     }
-  },
-  components: {
-    sortable,
-    "button-flat": require("components/ui/button-flat.vue"),
-  },
-  mounted() {
-    this.$store.state.diary.channels.forEach(item => {
-      if (item.id != "default") {
-        this.subscribedChannels.push({
-          id: item.id,
-          name: item.name
-        });
-      }
-    });
-    this.modified = false;
-    api.getRecommendedChannels().then(res => {
-      this.initRecommendedChannels(res.data);
-    }).catch(() => {
-      this.initRecommendedChannels(defaultRecommendedChannels);
-    });
-  }
-};
-
+  };
 </script>
 
-<style lang="scss" scoped>
-@import "~scss/main.scss";
-.title-row {
-  @include flex-row;
-  width: 100%;
-}
+<style lang="scss"
+       scoped>
+  @import "~scss/main.scss";
+  .title-row {
+    @include flex-row;
+    width: 100%;
+  }
 
-.label-container {
-  margin-top: 16px;
-  @include flex-row;
-  flex-wrap: wrap;
-  width: 100%;
-}
+  .label-container {
+    margin-top: 16px;
+    @include flex-row;
+    flex-wrap: wrap;
+    width: 100%;
+  }
 
-.label {
-  @include flex-row;
-  @include flex-center;
-  position: relative;
-  width: 72px;
-  border-radius: 4px;
-  background-color: #dedede;
-  padding: 6px 0;
-  margin-right: 8px;
-  margin-bottom: 8px;
-}
+  .label {
+    @include flex-row;
+    @include flex-center;
+    position: relative;
+    width: 72px;
+    border-radius: 4px;
+    background-color: #dedede;
+    padding: 6px 0;
+    margin-right: 8px;
+    margin-bottom: 8px;
+  }
 
-.label[data-badge]:after {
-  content: attr(data-badge);
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  font-size: 1.2em;
-  color: $color-blue;
-  width: 16px;
-  height: 16px;
-}
+  .label[data-badge]:after {
+    content: attr(data-badge);
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 1.2em;
+    color: $color-blue;
+    width: 16px;
+    height: 16px;
+  }
 
-.disabled {
-  pointer-events: none;
-}
+  .disabled {
+    pointer-events: none;
+  }
 
-.ghost {
-  opacity: 0.25;
-}
+  .ghost {
+    opacity: 0.25;
+  }
 
-.sideline {
-  border: 1px solid $color-divider
-}
+  .unsubscribed {
+    margin-top: 32px;
+    border-top: 1px solid $color-divider;
+    padding-top: 16px;
+  }
 
-.unsubscribed {
-  margin-top: 32px;
-  border-top: 1px solid $color-divider;
-  padding-top: 16px;
-}
+  .note {
+    color: $color-hint-text;
+    margin-top: 16px;
+  }
 </style>

@@ -54,6 +54,11 @@
         if (diaries.length == 0) {
           return 0;
         }
+
+        diaries = _.uniqBy(diaries, item => {
+          return item.year + "," + item.week;
+        });
+
         let index = diaries.length;
         diaries.forEach(item => {
           item.weekCount = index;
@@ -91,9 +96,6 @@
           this.context.loadstate = "error";
         }
       }
-    },
-    components: {
-      "loadable-content": require("ui/loadable-content.vue"),
     },
     async activated() {
       this.userid = this.$route.query.id || this.$store.state.user._id;

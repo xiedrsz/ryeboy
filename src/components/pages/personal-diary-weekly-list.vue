@@ -5,7 +5,7 @@
                       :nomore="true"
                       :loadstate="context.loadstate">
       <ul class="mdl-list">
-        <diary-item v-for="item in context.diaries"
+        <personal-diary-item v-for="item in context.diaries"
                     :key="item._id"
                     :id="item._id"
                     :likeCount="item.likeCount"
@@ -15,7 +15,7 @@
                     :text="item.escapedText"
                     :time="item.time"
                     :date="item.dateWithoutYear"
-                    :week="item.week"></diary-item>
+                    :week="item.week"></personal-diary-item>
       </ul>
     </loadable-content>
   </div>
@@ -62,8 +62,7 @@
       }
     },
     components: {
-      "diary-item": require("components/pages/personal-diary/personal-diary-item.vue"),
-      "loadable-content": require("ui/loadable-content.vue"),
+      "personal-diary-item": require("components/pages/personal-diary/personal-diary-item.vue"),
     },
     async activated() {
       this.userid = this.$route.query.userid || this.$app.userid;

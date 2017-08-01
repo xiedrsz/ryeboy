@@ -129,7 +129,7 @@
         await this.$store.dispatch("diary_updateComments", items);
         items.forEach(item => this.items.push(item));
 
-        this.nomore = items.length < this.$app.config.pageSize;
+        this.nomore = items.length < this.$app.config.pageSize.normal;
         this.last = _.last(items).createdAt;
 
         return items.length;
@@ -144,8 +144,6 @@
       }
     },
     components: {
-      "infinite-scroll": require("ui/infinite-scroll.vue"),
-      "loadable-content": require("ui/loadable-content.vue"),
       "button-icon": require("ui/button-icon.vue"),
     },
     async activated() {

@@ -1,13 +1,13 @@
-import store from "store";
-
 const home = [
   "diary", "lesson", "dynamic", "personal"
 ];
 
 const pages = [
-  "login", "settings", "channel-manage", "lesson-manage", "change-password",
+  "login", "register", "settings", "channel-manage", "lesson-manage", "change-password",
   "lesson-detail", "lesson-diary", "lesson-publish", "diary-detail",
-  "personal-diary", "personal-diary-weekly-list", "message", "diary-like-list", "user-detail"
+  "personal-diary", "personal-diary-weekly-list", "message", "diary-like-list", "user-detail",
+  "favorite", "status", "personal-info", "personal-info-edit", "feedback", "share", "search",
+  "answer-list", "answer"
 ];
 
 const dynamic = [
@@ -90,11 +90,6 @@ const mixin = {
       });
     }
   }
-  // activated() {
-  //   this.$nextTick(() => {
-  //     this.$app.restorePosition(this.$el, this.$route.query.id);
-  //   });
-  // }
 };
 
 routes.forEach(item => {

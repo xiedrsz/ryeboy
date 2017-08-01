@@ -1,4 +1,3 @@
-import axios from "axios";
 import config from "js/config";
 import qs from "qs";
 // 引入 mocks
@@ -8,6 +7,105 @@ axios.defaults.baseURL = config.apiAddress;
 axios.defaults.headers["Accept"] = "application/json";
 
 class api {
+  static getServerConfig(userid) {
+    return axios.get("/config", {
+      params: {
+        userid
+      }
+    });
+  }
+
+  static getSearch(keyword, type) {
+    return axios.get("search/keyword", {
+      params: {
+        keyword,
+        type
+      }
+    });
+  }
+
+  static getAnswer(id) {
+    return axios.get("search/getAnswer", {
+      params: {
+        id
+      }
+    });
+  }
+
+  static getAnswers(type, last) {
+    return axios.get("search/getAnswers", {
+      params: {
+        type,
+        last
+      }
+    });
+  }
+
+  static getAnswerTypes() {
+    return axios.get("search/getAnswerTypes");
+  }
+
+  static getRecommendAnswers() {
+    return axios.get("search/getRecommendAnswers");
+  }
+
+  static feedback(content, email, userid) {
+    return axios.post("diary/feedback", {
+      content,
+      email,
+      userid
+    });
+  }
+
+  static updateUserInfo(id, name, content) {
+    return axios.post("users/updateInfo", {
+      id,
+      name,
+      content
+    });
+  }
+
+  static getUserInfo(id) {
+    return axios.get("users/info", {
+      params: {
+        id
+      }
+    });
+  }
+
+  static getUserStatus(id) {
+    return axios.get("users/status", {
+      params: {
+        id
+      }
+    });
+  }
+
+  static getUserCards(id) {
+    return axios.get("users/cards", {
+      params: {
+        id
+      }
+    });
+  }
+
+  static getPublishedDates(userid) {
+    return axios.get("diary/publishedDates", {
+      params: {
+        userid
+      }
+    });
+  }
+
+  static getFavorites(userid, last) {
+    return axios.get("/favorites", {
+      params: {
+        userid,
+        last
+      }
+    });
+  }
+
   static getLikes(id, last) {
     return axios.get(`/diary/likes/${id}`, {
       params: {
@@ -109,6 +207,13 @@ class api {
       params: {
         userid
       }
+    });
+  }
+
+  static register(account, password) {
+    return axios.post("/register", {
+      account,
+      password
     });
   }
 

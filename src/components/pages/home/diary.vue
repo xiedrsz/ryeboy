@@ -50,6 +50,7 @@
                             :verified="item.verified"
                             :text="item.escapedText"
                             :userlv="item.userlv"
+                            :expectedExp="item.expectedExp"
                             :time="item.time"></diary-item>
               </ul>
             </loadable-content>
@@ -98,26 +99,18 @@
       loadstate(id) {
         return this.channelDatas[id] ? this.channelDatas[id].loadstate : "unload";
       },
-      // 如果已经登录，跳转到目标页面，否则跳转到登录页面
-      authRoute(to) {
-        if (this.authenticated) {
-          this.$router.push(to);
-        } else {
-          this.$router.push({
-            path: "/pages/login",
-            query: {
-              redirect: to
-            }
-          });
-        }
-      },
       setSlideContentHeight() {
         document.querySelectorAll(".slide-content").forEach(item => {
           item.style.height = this.slideContentHeight;
         });
       },
       manageChannel() {
-        this.authRoute("/pages/channel-manage");
+        let path = "/pages/channel-manage";
+        if (this.authenticated) {
+          this.$router.push(path);
+        } else {
+          this.$app.login(path);
+        }
       },
       getDiaries() {
         this.$store.dispatch("diary_getData");
@@ -153,7 +146,6 @@
       "diary-item": require("components/pages/home/diary-item.vue"),
       "swipe": require("ui/swipe.vue"),
       "swipe-slide": require("ui/swipe-slide.vue"),
-      "loadable-content": require("ui/loadable-content.vue"),
     },
     activated() {
       if (this.channelChanged) {

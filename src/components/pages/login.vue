@@ -42,19 +42,6 @@
       "textfield": require("components/ui/textfield.vue"),
       "button-colored": require("components/ui/button-colored.vue"),
     },
-    beforeRouteEnter: (to, from, next) => {
-      if (!to.query.redirect) {
-        to.query.redirect = from.path;
-      }
-      next();
-    },
-    watch: {
-      errorText(newValue) {
-        if (newValue) {
-          this.$app.dialog.hideLoading();
-        }
-      }
-    },
     methods: {
       async submit() {
         if (this.account && this.password) {
@@ -69,8 +56,7 @@
               this.errorText = data.error;
             } else {
               await this.$app.afterLogin(data);
-              let redirect = this.$route.query.redirect;
-              this.$router.replace(redirect ? redirect : "/");
+              this.$router.replace(this.$store.state.page.loginRedirect);
             }
           } catch (err) {
             this.$app.dialog.text("帐号或密码不正确。");
@@ -80,6 +66,15 @@
           this.errorText = "请填写帐号密码。";
         }
       }
+    },
+    mounted() {
+      let router = this.$router;
+      this.$app.toolbars.create([{
+        text: "注册",
+        click() {
+          router.replace("/pages/register");
+        }
+      }]);
     }
   };
 </script>

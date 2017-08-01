@@ -1,8 +1,9 @@
 <template>
   <div>
     <div class="basic"
+         @click="$router.push('/pages/personal-info')"
          v-if="authenticated">
-      <img :data-src="avatar"
+      <img :data-src="user.avatar"
            class="avatar lazyload">
       <div class="info">
         <div class="username">
@@ -17,27 +18,31 @@
     </div>
     <list v-if="!authenticated">
       <list-item text="登录"
-                 v-on:click.native="$router.push('/pages/login')">
+                 :showRightArrow="true"
+                 @click.native="$app.login('/')">
       </list-item>
-      <list-item text="注册">
+      <list-item text="注册"
+                 route="/pages/register">
       </list-item>
     </list>
     <list v-if="authenticated">
-      <list-item text="等级">
+      <list-item text="状态"
+                 route="/pages/status">
       </list-item>
       <list-item text="日记"
-                 v-on:click.native="$router.push('/pages/personal-diary')">
+                 route="/pages/personal-diary">
       </list-item>
       <list-item text="消息"
-                 v-on:click.native="$router.push('/pages/message')">
+                 route="/pages/message">
       </list-item>
-      <list-item text="收藏">
+      <list-item text="收藏"
+                 route="/pages/favorite">
       </list-item>
     </list>
     <list>
       <list-item text="设置"
-                 :divider="false"
-                 v-on:click.native="$router.push('/pages/settings')"></list-item>
+                 route="/pages/settings"
+                 :divider="false"></list-item>
     </list>
   </div>
 </template>
@@ -63,14 +68,6 @@
       },
       userlv() {
         return this.$app.textHelper.getUserLevel(this.user);
-      },
-      avatar() {
-        let user = this.user;
-        if (this.user.portrait) {
-          return `${this.$app.config.ossAddress}/portraits/${user._id}_${user.portrait}.jpg`;
-        } else {
-          return "../../img/default-avatar.png";
-        }
       }
     }
   };

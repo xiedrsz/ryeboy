@@ -3,12 +3,12 @@ import _ from "lodash";
 import api from "api";
 import datetime from "js/utils/datetime";
 import textHelper from "js/utils/textHelper";
-import collectionHelper from "js/utils/collectionHelper";
+import ch from "js/utils/collectionHelper";
 const cards = require("store/cards.json");
 const moment = require("moment");
 
 function getDateKey(state) {
-  return moment(state.selectedDate).format("YYYY-MM-DD");
+  return moment(state.selectedDate).format("YYYYMMDD");
 }
 
 const state = {
@@ -21,7 +21,8 @@ const state = {
     "401": 401,
     "411": 411
   },
-  records: {}
+  records: {},
+  savedDates: []
 };
 
 const getters = {
@@ -77,17 +78,29 @@ const getters = {
   },
 };
 
+function getSelectedCount(record) {
+  let result = 0;
+  _.each(record.selectedCards, item => {
+    if (item) {
+      result++;
+    }
+  });
+  return result;
+}
+
 const mutations = {
   lesson_selectAllCards(state, data) {
     let record = state.records[getDateKey(state)];
-    Vue.set(record.selectedWeights, data.id.toString(), data.checked);
     record.weightedCards.find(weight => weight.value == data.id).cards.forEach(card => {
       Vue.set(record.selectedCards, card.id.toString(), data.checked);
     });
+    record.selectedCount = getSelectedCount(record);
   },
   lesson_selectCard(state, data) {
     let record = state.records[getDateKey(state)];
     Vue.set(record.selectedCards, data.id.toString(), data.checked);
+
+    record.selectedCount = getSelectedCount(record);
   },
   lesson_setPictureUrl(state, data) {
     let dateKey = getDateKey(state);
@@ -114,7 +127,7 @@ const mutations = {
   },
   lesson_setDeselect(state, data) {
     if (data.checked) {
-      collectionHelper.remove(state.deselects, data.id);
+      ch.remove(state.deselects, data.id);
     } else {
       state.deselects.push(data.id);
     }
@@ -145,14 +158,15 @@ const actions = {
     });
     return cards;
   },
-  lesson_selectDate({
+  async lesson_selectDate({
     state,
     dispatch
   }, date) {
     state.selectedDate = date;
-    return dispatch("lesson_assignRecord");
+    let record = await dispatch("lesson_getRecord");
+    return record;
   },
-  async lesson_assignRecord({
+  async lesson_getRecord({
     state,
     rootState
   }) {
@@ -168,7 +182,9 @@ const actions = {
         published: false,
         weightedCards: [],
         selectedWeights: {},
-        selectedCards: {}
+        selectedCards: {},
+        selectedCount: 0,
+        cardCount: 0
       };
       Vue.set(state.records, getDateKey(state), record);
 
@@ -181,6 +197,7 @@ const actions = {
         record.checkedCards.forEach(cardId => {
           Vue.set(record.selectedCards, cardId.toString(), true);
         });
+        record.selectedCount = getSelectedCount(record);
         delete record.checkedCards;
       } else {
         let date = datetime.utcDate(state.selectedDate);
@@ -199,6 +216,10 @@ const actions = {
             res.data.checkedCards.forEach(cardId => {
               Vue.set(record.selectedCards, cardId.toString(), true);
             });
+            record.selectedCount = getSelectedCount(record);
+            if (record.diary.text) {
+              Vue.set(record.selectedCards, "100", true);
+            }
           }
         } catch (error) {
           console.log(error);
@@ -208,6 +229,7 @@ const actions = {
 
     let weightedCards = record.weightedCards;
     weightedCards.splice(0, weightedCards.length);
+    let cardCount = 0;
 
     cards.forEach(card => {
       let cardset = weightedCards[card.weight - 1];
@@ -236,8 +258,22 @@ const actions = {
         }
       }
 
+      // 生成功课等级符号
+      let _card = rootState.user.cards[card.id];
+      if (_card) {
+        let cardlv = _card.lv;
+        if (cardlv > 1) {
+          card.rates = _.fill(Array(cardlv - 1), 0);
+        } else {
+          card.rates = [];
+        }
+      }
+
       cardset.cards.push(Object.assign({}, card));
+      cardCount++;
     });
+
+    record.cardCount = cardCount;
 
     return record;
   },
@@ -300,7 +336,24 @@ const actions = {
 
     let date = getDateKey(state);
     localStorage[`${userid}_lesson_${date}`] = JSON.stringify(data);
+
+    ch.put(state.savedDates, date);
+    localStorage[`${userid}_lesson_savedDates`] = JSON.stringify(state.savedDates);
   },
+
+  lesson_getSavedDates({
+    state,
+    rootState
+  }) {
+    let userid = rootState.user._id;
+    try {
+      state.savedDates = JSON.parse(localStorage[`${userid}_lesson_savedDates`]);
+      state.savedDates.push("20170718");
+    } catch (error) {
+      state.savedDates = [];
+    }
+  },
+
   lesson_loadSettings({
     commit,
     rootState
@@ -316,6 +369,7 @@ const actions = {
       commit("lesson_assignDeselect", JSON.parse(data));
     }
   },
+
   lesson_saveSettings({
     state,
     rootState

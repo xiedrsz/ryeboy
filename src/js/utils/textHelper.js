@@ -2,8 +2,8 @@ import config from "js/config";
 const _ = require("lodash");
 
 class textHelper {
-  static getPictureUrl(name) {
-    return `${config.apiAddress}/upload/${name}`;
+  static getPictureUrl(filename) {
+    return `${config.ossAddress}/pictures/${filename}.jpg`;
   }
 
   static escape(text) {
@@ -18,6 +18,14 @@ class textHelper {
       text = "我在默默地坚持种麦子，请为我加油鼓励吧！";
     }
     return text;
+  }
+
+  static getUserIdent(level) {
+    if (level == "70") {
+      return "麦田学长";
+    } else {
+      return "麦田学员";
+    }
   }
 
   static getUserLevel(user) {
@@ -41,25 +49,25 @@ class textHelper {
 
   static getLessonWeightName(weight) {
     switch (weight) {
-    case 1:
-      return "最重要功课";
-    case 2:
-      return "重要功课";
-    case 3:
-      return "次重要功课";
+      case 1:
+        return "最重要功课";
+      case 2:
+        return "重要功课";
+      case 3:
+        return "次重要功课";
     }
   }
 
   static getLessonGroupName(group) {
     switch (group) {
-    case 304:
-      return "麦式运动";
+      case 304:
+        return "麦式运动";
 
-    case 401:
-      return "早睡";
+      case 401:
+        return "早睡";
 
-    case 411:
-      return "早起";
+      case 411:
+        return "早起";
     }
   }
 }

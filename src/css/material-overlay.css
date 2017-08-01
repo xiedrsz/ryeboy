@@ -89,3 +89,12 @@ h6,
   width: 14px;
   height: 14px;
 }
+
+.mdl-list__item .mdl-list__item-secondary-content {
+  -webkit-flex-flow: row;
+  -ms-flex-flow: row;
+  flex-flow: row;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}

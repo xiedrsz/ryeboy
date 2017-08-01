@@ -55,35 +55,24 @@
         });
         this.pictures.splice(index, 1);
       },
-      insertPicture() {
+      async insertPicture() {
         if (this.pictures.length >= 3) {
           this.$app.dialog.text("只能插入3张图片。");
           return;
         }
 
         if (this.$app.deviceready) {
-          navigator.camera.getPicture(imageUri => {
-            console.log(imageUri);
-            this.pictures.push({
-              id: _.uniqueId(_.now()),
-              path: imageUri
-            });
-          }, error => {
-            console.debug("Unable to obtain picture: " + error, "app");
-          }, {
-            destinationType: Camera.DestinationType.FILE_URI,
-            sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-            mediaType: Camera.MediaType.PICTURE,
-            targetWidth: 512,
-            targetHeight: 512,
-            quality: 75,
+          let imageUri = await this.$app.selectPicture();
+          this.pictures.push({
+            id: _.uniqueId(_.now()),
+            path: imageUri
           });
         } else {
           // this.pictures.push({
           //   id: _.uniqueId(_.now()),
           //   path: "img/default-avatar.png"
           // });
-          this.$app.dialog.text("电脑版暂未实现。");
+          this.$app.dialog.text("PC端暂未开放该功能。");
         }
       },
       init() {
@@ -129,7 +118,7 @@
         click: this.finish
       }]);
 
-      this.$store.dispatch("lesson_assignRecord").then(res => {
+      this.$store.dispatch("lesson_getRecord").then(res => {
         this.record = res;
         this.$el.getElementsByClassName("input-box")[0].value = this.record.diary.text;
         // document.querySelector("textarea").focus();

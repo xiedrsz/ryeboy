@@ -4,7 +4,7 @@
                       :loadstate="context.loadstate"
                       :infinite="infinite">
       <ul class="mdl-list">
-        <diary-item v-for="item in context.diaries"
+        <personal-diary-item v-for="item in context.diaries"
                     :key="item._id"
                     :id="item._id"
                     :likeCount="item.likeCount"
@@ -14,7 +14,7 @@
                     :text="item.escapedText"
                     :time="item.time"
                     :date="item.dateWithoutYear"
-                    :week="item.week"></diary-item>
+                    :week="item.week"></personal-diary-item>
       </ul>
     </loadable-content>
   </div>
@@ -40,7 +40,7 @@
         }
         await this.$store.dispatch("diary_updateData", diaries);
         diaries = await this.$store.dispatch("diary_addMap", diaries);
-        this.context.nomore = diaries.length < this.$app.config.pageSize;
+        this.context.nomore = diaries.length < this.$app.config.pageSize.normal;
 
         diaries.forEach(item => {
           this.context.diaries.push(item);
@@ -71,9 +71,7 @@
       }
     },
     components: {
-      "infinite-scroll": require("ui/infinite-scroll.vue"),
-      "diary-item": require("components/pages/personal-diary/personal-diary-item.vue"),
-      "loadable-content": require("ui/loadable-content.vue"),
+      "personal-diary-item": require("components/pages/personal-diary/personal-diary-item.vue"),
     },
     async activated() {
       this.userid = this.$route.query.id || this.$app.userid;
