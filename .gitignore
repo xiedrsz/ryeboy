@@ -9,4 +9,3 @@ memo
 *.cmd
 /src/dist/
 src/js/config.json
-src/js/app.json
