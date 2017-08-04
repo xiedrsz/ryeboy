@@ -146,6 +146,12 @@
         if (this.published || this.expired) {
           return;
         }
+
+        if (this.record.selectedCount == 0) {
+          this.$app.dialog.text("提醒：还没有功课记录。");
+          return;
+        }
+
         this.$router.push("/pages/lesson-publish");
       },
       selectDate() {

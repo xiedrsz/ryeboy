@@ -307,9 +307,12 @@ const actions = {
   lesson_publish({
     state,
     dispatch
+  }, {
+    exp
   }) {
     let record = state.records[getDateKey(state)];
     record.published = true;
+    record.exp = exp;
     return dispatch("lesson_save");
   },
   async lesson_save({
@@ -331,7 +334,8 @@ const actions = {
     let data = {
       diary: record.diary,
       published: record.published,
-      checkedCards
+      checkedCards,
+      exp: record.exp
     };
 
     let date = getDateKey(state);
