@@ -184,7 +184,8 @@ const actions = {
         selectedWeights: {},
         selectedCards: {},
         selectedCount: 0,
-        cardCount: 0
+        cardCount: 0,
+        exp: 0
       };
       Vue.set(state.records, getDateKey(state), record);
 
@@ -205,6 +206,7 @@ const actions = {
           let res = await api.getLesson(userid, date);
           if (res.status == 200) {
             record.published = true;
+            record.exp = res.data.exp;
             record.diary.text = res.data.text;
             if (res.data.pictures) {
               res.data.pictures.forEach(item => {
@@ -335,7 +337,7 @@ const actions = {
       diary: record.diary,
       published: record.published,
       checkedCards,
-      exp: record.exp
+      exp: record.exp || 0
     };
 
     let date = getDateKey(state);
