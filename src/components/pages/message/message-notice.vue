@@ -31,8 +31,7 @@
     },
     methods: {
       async getData(userid, last) {
-        let lastFetchCommentMessageAt = localStorage[`${this.userid}_lastFetchCommentMessageAt`] || new Date();
-        let res = await this.$app.api.getNotices(userid, "system", lastFetchCommentMessageAt, last);
+        let res = await this.$app.api.getNotices(userid, "system", last);
         let items = res.data;
 
         if (items.length == 0) {

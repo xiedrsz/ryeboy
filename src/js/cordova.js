@@ -43,6 +43,8 @@ class cordova {
         }
       }
     });
+
+    this.app.vue.$store.dispatch("user_getNewMessageCount");
   }
 
   pause() {

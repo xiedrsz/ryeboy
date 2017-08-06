@@ -4,6 +4,7 @@ import store from "store";
 import api from "api";
 import config from "js/config";
 import cordova from "js/cordova";
+import storage from "js/utils/storage";
 import dialog from "js/utils/dialog";
 import toolbars from "js/utils/toolbars";
 import textHelper from "js/utils/textHelper";
@@ -42,6 +43,7 @@ class app {
     store.commit("user_setAuth", data.user);
     store.commit("diary_setChannelChanged");
     await store.dispatch("diary_getSubscribedChannels");
+    store.dispatch("user_getNewMessageCount");
   }
 
   //注销之后的一些处理
@@ -209,6 +211,7 @@ class app {
     if (localStorage.authenticated) {
       store.dispatch("diary_initSubscribedChannels");
       store.dispatch("lesson_loadSettings");
+      store.dispatch("user_getNewMessageCount");
     } else {
       store.commit("diary_setDefaultChannels");
     }
@@ -220,6 +223,7 @@ class app {
     this.config = config;
     this.api = api;
     this.cordova = new cordova(this);
+    this.storage = storage;
     this.dialog = dialog;
     this.toolbars = toolbars;
     this.textHelper = textHelper;

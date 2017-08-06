@@ -4,6 +4,15 @@ axios.defaults.baseURL = config.apiAddress;
 axios.defaults.headers["Accept"] = "application/json";
 
 class api {
+  static getNewMessageCount(userid, fetchTime) {
+    return axios.get("/users/newMessageCount", {
+      params: {
+        userid,
+        fetchTime
+      }
+    });
+  }
+
   static getServerConfig(userid) {
     return axios.get("/config", {
       params: {
@@ -117,13 +126,12 @@ class api {
     });
   }
 
-  static getNotices(userid, type, lastFetchAt, last) {
+  static getNotices(userid, type, last) {
     return axios.get("/notices", {
       params: {
         userid,
         type,
-        last,
-        lastFetchAt: new Date("2017-5-20"),
+        last
       }
     });
   }
