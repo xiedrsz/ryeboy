@@ -269,6 +269,13 @@ const actions = {
     }
   },
 
+  diary_resetLikeData({
+    state
+  }, id) {
+    let likeDatas = state.likeDatas;
+    likeDatas[id] = undefined;
+  },
+
   diary_getLikeData({
     state
   }, id) {

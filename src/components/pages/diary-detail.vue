@@ -171,6 +171,8 @@
           }
           this.diary.likeCount--;
         }
+
+        this.$store.dispatch("diary_resetLikeData", this.diary._id);
       },
       copyComment() {},
       replyComment() {

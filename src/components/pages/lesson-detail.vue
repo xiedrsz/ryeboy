@@ -14,7 +14,8 @@
       </div>
       <div class="card-description">
         <div class="card-name">{{ card.name }}</div>
-        <div class="card-value">{{ progress }}</div>
+        <div class="card-value"
+             v-if="progress">{{ progress }}</div>
       </div>
     </div>
     <div class="content-main">
@@ -91,15 +92,13 @@
       },
       rates() {
         if (this.userCard && this.userCard.lv > 1) {
-          let a = _.fill(Array(this.userCard.lv - 1), 0);
-          console.log(a);
-          return a;
+          return _.fill(Array(this.userCard.lv - 1), 0);
         } else {
           return [];
         }
       },
       progress() {
-        if (!this.userCard) return 0;
+        if (!this.userCard) return null;
         let progress = this.card.progress || [3, 7, 20, 60, 120];
         return `完成${ this.userCard.exp }天，还差${ progress[this.userCard.lv - 1] - this.userCard.exp }天升级`;
       }
