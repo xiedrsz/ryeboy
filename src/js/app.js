@@ -52,7 +52,6 @@ class app {
     localStorage.removeItem("authenticated");
     localStorage.removeItem("user");
     store.commit("user_deleteAuth");
-    store.commit("diary_setChannelChanged");
   }
 
   async getUser(userid) {

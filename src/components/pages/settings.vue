@@ -34,7 +34,7 @@
     methods: {
       logout() {
         this.$app.afterLogout();
-        this.$router.replace("/");
+        window.location.href = window.location.origin;
       },
       internal_clearLocalStorage() {
         localStorage.clear();

@@ -12,16 +12,26 @@ function getDateKey(state) {
 }
 
 const state = {
-  settingsLoaded: false,
+  // 当前选定功课日期
   selectedDate: datetime.date(moment()).subtract(1, "days").toDate(),
+
+  // 功课卡数据
   cards,
+
+  // 未开启的功课
   deselects: [],
+
+  // 功课难度
   difficulties: {
     "304": 304,
     "401": 401,
     "411": 411
   },
+
+  // 选定的功课数据记录
   records: {},
+
+  // 已保存的功课日期
   savedDates: []
 };
 
@@ -29,28 +39,7 @@ const getters = {
   lesson_getDateKey(state) {
     return getDateKey(state);
   },
-  lesson_getDifficultCards() {
-    let result = [];
-    let group;
 
-    cards.forEach(card => {
-      if (card.group) {
-        if (group === undefined || group.id != card.group) {
-          group = {
-            id: card.group,
-            options: []
-          };
-          result.push(group);
-        }
-        group.options.push({
-          value: card.id,
-          text: card.name
-        });
-      }
-    });
-
-    return result;
-  },
   lesson_getManagedCards(state) {
     let result = [];
 
@@ -384,7 +373,41 @@ const actions = {
 
     localStorage[`${userid}_lessonDifficulties`] = JSON.stringify(state.difficulties);
     localStorage[`${userid}_lessonDeselects`] = JSON.stringify(state.deselects);
-  }
+  },
+
+  lesson_getDifficultCards({
+    rootState
+  }) {
+    let result = [];
+    let group;
+    let userCards = rootState.user.cards;
+
+    cards.forEach(card => {
+      if (card.group) {
+        if (group === undefined || group.id != card.group) {
+          group = {
+            id: card.group,
+            options: []
+          };
+          result.push(group);
+        }
+
+        // 处理麦式运动难度
+        if (card.id >= 305 && card.id <= 313) {
+          if (!userCards) return;
+          let userCard = userCards[card.id - 1];
+          if (!userCard) return;
+          if (userCard.lv < 2) return;
+        }
+        group.options.push({
+          value: card.id,
+          text: card.name
+        });
+      }
+    });
+
+    return result;
+  },
 };
 
 export default {
