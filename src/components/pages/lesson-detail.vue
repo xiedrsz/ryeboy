@@ -2,18 +2,26 @@
   <div class="page"
        title="功课详情">
     <div class="content-top content-block">
-      <img class="card-icon"
-           :src="require('img/card-' + card.id + '.png')">
+      <div>
+        <img class="card-icon"
+             :src="require('img/card-' + card.id + '.png')">
+        <div class="card-lv"
+             v-if="userCard">
+          <i v-for="(rate, index) in rates"
+             :key="index"
+             class="material-icons md-14">grade</i>
+        </div>
+      </div>
       <div class="card-description">
         <div class="card-name">{{ card.name }}</div>
-        <!--<div class="card-value">{{ card.value }}</div>-->
+        <div class="card-value">{{ progress }}</div>
       </div>
     </div>
     <div class="content-main">
       <div class="tab-header-container">
         <div v-for="tab in tabs"
-             :id="tab.id"
-             @click="switchTab"
+             :key="tab.id"
+             @click="switchTab(tab.id)"
              :class="{ active: tab.active }"
              class="tab-header">
           {{ tab.text }}
@@ -22,7 +30,7 @@
       <swipe @slidechanged="slideChanged"
              ref="swipe">
         <swipe-slide v-for="tab in tabs"
-                     :id="tab.id">
+                     :key="tab.id">
           <div class="slide-content">
             <div class="html-content"
                  v-html="tab.content"></div>
@@ -35,6 +43,7 @@
 
 <script>
   import api from "api";
+  import _ from "lodash";
 
   export default {
     data() {
@@ -59,8 +68,7 @@
         this.activatedTab = index;
         this.tabs[this.activatedTab].active = true;
       },
-      switchTab(event) {
-        let id = event.target.id;
+      switchTab(id) {
         let index = this.tabs.findIndex(item => item.id == id);
         this.$refs.swipe.slideTo(index);
       },
@@ -72,6 +80,28 @@
     computed: {
       card() {
         return this.$store.state.lesson.cards.find(card => card.id == this.$route.query.id);
+      },
+      userCard() {
+        let user = this.$store.state.user;
+        if (user.cards) {
+          return user.cards[this.$route.query.id];
+        } else {
+          return null;
+        }
+      },
+      rates() {
+        if (this.userCard && this.userCard.lv > 1) {
+          let a = _.fill(Array(this.userCard.lv - 1), 0);
+          console.log(a);
+          return a;
+        } else {
+          return [];
+        }
+      },
+      progress() {
+        if (!this.userCard) return 0;
+        let progress = this.card.progress || [3, 7, 20, 60, 120];
+        return `完成${ this.userCard.exp }天，还差${ progress[this.userCard.lv - 1] - this.userCard.exp }天升级`;
       }
     },
     mounted() {
@@ -138,7 +168,8 @@
   }
 
   .card-value {
-    margin-top: 8px;
+    color: $color-hint-text;
+    font-size: 12px;
   }
 
   .card-icon {
@@ -147,5 +178,15 @@
     border: 1px solid $color-disable;
     border-radius: 4px 2px 2px 2px;
     background-color: $color-divider;
+  }
+
+  .card-lv {
+    color: $color-orange;
+    margin-top: -7px;
+    text-align: center;
+  }
+
+  .card-lv i {
+    margin-left: -5px;
   }
 </style>
