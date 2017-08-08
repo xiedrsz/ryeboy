@@ -14,7 +14,6 @@
           <span class="info-right">
             <span class="group-name">{{groupInfo.name}}</span>
           </span>
-
         </li>
         <li class="info-item" @click="$router.push('/dynamic/group-member')">
           <span class="info-left">{{"组员"+groupInfo.memNum+"/"+groupInfo.memMax}}</span>
@@ -22,19 +21,20 @@
             <img src="/img/default-avatar.png" class="lazyload" width="36" height="36" />
             <img src="/img/default-avatar.png" class="lazyload" width="36" height="36" />
             <img src="/img/default-avatar.png" class="lazyload" width="36" height="36" />
-
             <i class="material-icons md-36 navigate_next">navigate_next</i>
           </span>
         </li>
 
-        <li class="info-item">
+        <!-- 功能未实现，暂时屏蔽 -->
+        <!--<li class="info-item">
           <span class="info-left"></span>
           <span class="info-right right-arrow">
             <router-link to='/dynamic/group-card'>
               <span class="group-name">分享小组二维码</span>
             </router-link>
           </span>
-        </li>
+        </li>-->
+        
         <li class="info-item">
           <span class="info-left"></span>
           <span class="info-right right-arrow">
@@ -43,31 +43,25 @@
             </router-link>
           </span>
         </li>
-      </ul>
-      <ul class="info-list">
+        <!-- 功能未实现，暂时屏蔽跳转 -->
+        <!-- @click="$router.push('/dynamic/group-grade')" -->
         <li class="info-item">
           <span class="info-left">等级</span>
           <span class="info-right right-arrow">
             <span class="group-name">{{groupInfo.level+"/"+groupInfo.levelMax}}</span>
             <i class="material-icons md-16 group-level">favorite</i>
-            <!-- <router-link to='/dynamic/group-grade'>
-              <i class="icon icon-right"></i>
-            </router-link> -->
-            <i class="material-icons md-36 navigate_next" @click="$router.push('/dynamic/group-grade')">navigate_next</i>
+            <!-- <i class="material-icons md-36 navigate_next">navigate_next</i> -->
           </span>
         </li>
+        <!-- 功能未实现，暂时屏蔽跳转 -->
+        <!-- @click="$router.push('/dynamic/group-medal')" -->
         <li class="info-item">
           <span class="info-left">勋章</span>
           <span class="info-right right-arrow">
             <span class="group-name">{{groupInfo.medal+"/"+groupInfo.medalMax}}</span>
-            <!-- <router-link to='/dynamic/group-medal'>
-         <i class="icon icon-right"></i>
-        </router-link> -->
-            <i class="material-icons md-36 navigate_next" @click="$router.push('/dynamic/group-medal')">navigate_next</i>
+            <!-- <i class="material-icons md-36 navigate_next">navigate_next</i> -->
           </span>
         </li>
-      </ul>
-      <ul class="info-list">
         <li class="info-item">
           <span class="info-left">适合人群</span>
           <span class="info-right right-arrow">
@@ -91,15 +85,11 @@
             </template>
           </user-item>
         </li>
-      </ul>
-      <ul class="info-list">
-        <li class="info-item">
+        <li class="info-item" @click="$router.push('/dynamic/group-find')">
           <span class="info-left">发现</span>
           <span class="info-right right-arrow">
-            <router-link to='/dynamic/group-find'>
-              <span class="find-more">发现更多小组</span>
-              <i class="material-icons md-36 navigate_next">navigate_next</i>
-            </router-link>
+            <span class="find-more">发现更多小组</span>
+            <i class="material-icons md-36 navigate_next">navigate_next</i>
           </span>
         </li>
       </ul>
@@ -111,7 +101,7 @@
 
   export default {
     components: {
-      "user-item": require("ui/user-item.vue"),
+      "user-item": require("ui/user-item.vue")
     },
     computed: {
       groupInfo() {

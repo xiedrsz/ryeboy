@@ -2,12 +2,79 @@ import Vue from "vue";
 import api from "api";
 import _ from "lodash";
 
+const config = require("js/config.js");
 const datetime = require("js/utils/datetime.js");
+const textHelper = require("js/utils/textHelper.js");
 
 // 关注动态初始位置
 let last = 0;
 
+/**
+ * @Description 筛选出 state 中未有的用户数据，以便获取
+ * @Param list 数据源列表, 如： 关注动态
+ * @Return Array userid数组
+ */
+function getUnmappedUsers(list) {
+  let result = [];
+  let userid;
+  _.forEach(list, item => {
+    userid = item.userid;
+    !!userid && (state.users[userid] === undefined) && (result.push(userid));
+  });
+  return result;
+}
+
+/**
+ * @Description 为 state 中的 user 对象添加用户信息
+ * @Param users 数据源列表
+ */
+function addUsers(users) {
+  _.forEach(users, user => {
+    user.username = textHelper.getUserName(user);
+    user.userlv = textHelper.getUserLevel(user);
+    user.verified = user.level == "70";
+    if (user.portrait) {
+      user.avatar = `${config.ossAddress}/portraits/${user._id}_${user.portrait}.jpg`;
+    } else {
+      user.avatar = require("img/default-avatar.png");
+    }
+    
+    state.users[user._id] = user;
+  });
+}
+
+function updateDairy(diaries) {
+  _.forEach(diaries, diary => {
+    let pictures = [];
+    if (diary.pictures) {
+      diary.pictures.forEach(item => {
+        pictures.push(textHelper.getPictureUrl(item));
+      });
+    }
+    diary.pictures = pictures;
+
+    diary.time = datetime.formatDiaryCreated(diary.createdAt);
+    diary.dateWithoutYear = datetime.formatDiaryDateWithoutYear(diary.date);
+    diary.week = datetime.formatDiaryWeek(diary.date);
+    diary.escapedText = textHelper.escape(textHelper.getDiaryText(diary));
+  })
+}
+
+/**
+ * @Description 为列表插入用户信息
+ * @Param list 数据源
+ */
+function addMap(list) {
+  let userid;
+  _.forEach(list, item => {
+    userid = item.userid;
+    _.assign(item, state.users[userid]);
+  });
+}
+
 const state = {
+  // 用户映射表
+  users: {},
   // 关注 概述
   overview: [
     {
@@ -24,25 +91,7 @@ const state = {
     }
   ],
   // 关注 动态
-  dynamic: [
-    /*{
-      _id: '589b30c6a3335154090e1682',
-      userid: '588056609a469177ac5302e7',
-      date: '2017-02-08T00:00:00.000Z',
-      text: '刚才尝试了一下完整的麦式一段，麦式运动了不得啊，做的时候感觉整个泌尿系统都在活动，睾丸处能感受到明显的血液流动的感觉，做完神清气爽，口齿生津，照镜子观察自己好像变帅了一点点，哈哈',
-      privacy: 0,
-      createdAt: '2017-02-08T14:52:54.378Z',
-      updatedAt: '2017-02-09T16:21:07.063Z',
-      userLv: 3,
-      likeCount: 10,
-      commentCount: 45,
-
-      username: "张三",
-      avatar: "/img/default-avatar.png",
-      escapedText: '刚才尝试了一下完整的麦式一段，麦式运动了不得啊，做的时候感刚才尝试了一下完整的麦式一段，麦式运动了不得啊，做的时候感刚才尝试了一下完整的麦式一段，麦式运动了不得啊，做的时候感',
-      time: datetime.formatDiaryCreated('2017-02-08T14:52:54.378Z')
-    }*/
-  ],
+  dynamic: [],
   // 关注 关注列表
   concern: [],
   // 关注 粉丝
@@ -84,8 +133,10 @@ const mutations = {
      * @Description 添加 动态
      * @Param list Array 动态列表
      */
-    concern_addDynamic(state, list) {
-      state.dynamic.unshift.apply(state.dynamic, list);
+    concern_addDynamic(state, option) {
+      let list = option.list;
+      let addType = option.addType;
+      state.dynamic[addType].apply(state.dynamic, list);
     },
     /**
      * @Function 添加关注人
@@ -204,16 +255,19 @@ const actions = {
     async getDynamic({
       commit,
       state
-    }, infiniteScroll) {
-      commit("save_loading", {
+    }, option = {}) {
+      let addType = option.addType || 'push';
+      let infiniteScroll = option.infiniteScroll;
+      
+      !infiniteScroll && commit("save_loading", {
         no: false,
         err: false,
         none: false,
         icon: true
       });
 
-      let list = [],
-        len;
+      let list = [];
+      let len;
 
       await api.getDynamicDiaries(last).then((res) => {
         !!res && (list = res.data);
@@ -223,8 +277,21 @@ const actions = {
         });
         !!infiniteScroll && infiniteScroll.$emit("$InfiniteScroll:complete");
       });
+      
+      // 加入用户资料
+      let users = getUnmappedUsers(list);
+      let resTmp;
+      if (users.length > 0) {
+        resTmp = await api.getUsers(users);
+        addUsers(resTmp.data);
+      }
+      addMap(list);
+      updateDairy(list);
 
-      commit("concern_addDynamic", list);
+      commit("concern_addDynamic", {
+        list,
+        addType
+      });
       len = list.length;
       last += len;
       if (len < 20) {
@@ -283,10 +350,19 @@ const actions = {
         });
       });
 
-      _.map(list, (item) => {
+      _.forEach(list, (item) => {
         item.note = "取消";
-        return item;
+        item.userid = item.id;
       });
+      
+      // 加入用户资料
+      let users = getUnmappedUsers(list);
+      let resTmp;
+      if (users.length > 0) {
+        resTmp = await api.getUsers(users);
+        addUsers(resTmp.data);
+      }
+      addMap(list);
 
       commit("concern_addConcern", list);
 
@@ -321,6 +397,19 @@ const actions = {
           err: true
         });
       });
+      
+      _.forEach(list, (item) => {
+        item.userid = item.id;
+      });
+      
+      // 加入用户资料
+      let users = getUnmappedUsers(list);
+      let resTmp;
+      if (users.length > 0) {
+        resTmp = await api.getUsers(users);
+        addUsers(resTmp.data);
+      }
+      addMap(list);
 
       commit("concern_addFans", list);
 
@@ -357,10 +446,19 @@ const actions = {
         });
       });
 
-      _.map(list, (item) => {
+      _.forEach(list, (item) => {
         item.note = "关注";
-        return item;
+        item.userid = item.id;
       });
+      
+      // 加入用户资料
+      let users = getUnmappedUsers(list);
+      let resTmp;
+      if (users.length > 0) {
+        resTmp = await api.getUsers(users);
+        addUsers(resTmp.data);
+      }
+      addMap(list);
 
       commit("concern_initNewConcern", list);
 

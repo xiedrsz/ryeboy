@@ -4,17 +4,15 @@
       <swipe-slide>
         <div class="slide-content">
           <list>
-            <div v-for="(item, index) in concern" class="member-item">
-              <user-item :id="item.id" class="flex">
-                <template scope="props">
-                  <list-item 
-                    @click.native="$router.push('/pages/user-detail?id=' + item.id)" :text="props.user.username" 
-                    :lIcon="props.user.avatar">
-                    <span slot="note" @click.stop="cancelAdd(index, item.note, item.id)" class="mdl-list__item-note">{{item.note}}</span>
-                  </list-item>
-                </template>
-              </user-item>
-            </div>
+            <list-item class="member-item" v-for="(item, index) in concern"
+                       @click.native="$router.push('/pages/user-detail?id=' + item.id)"
+                       :text="item.username"
+                       :lIcon="item.avatar">
+              <span slot="note" class="mdl-list__item-note"
+                    @click.stop="cancelAdd(index, item.note, item.id)">
+                {{item.note}}
+              </span>
+            </list-item>
           </list>
 
           <unusual-loading :option.syn="loading" @dateReloader="getConcern"></unusual-loading>
@@ -100,11 +98,9 @@
         "unusual-loading": require("ui/unusual-loading.vue"),
         "swipe": require("ui/swipe.vue"),
         "swipe-slide": require("ui/swipe-slide.vue"),
-        "dynamic-item": require("components/pages/dynamic/concern/dynamic-item.vue"),
         "infinite-scroll": require("ui/infinite-scroll.vue"),
         "list": require("ui/list.vue"),
-        "list-item": require("ui/list-item.vue"),
-        "user-item": require("ui/user-item.vue")
+        "list-item": require("ui/list-item.vue")
       },
       beforeRouteLeave(to, from, next) {
         //保存滚动的位置

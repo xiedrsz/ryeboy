@@ -1,6 +1,5 @@
 <template>
   <div class="page" title="花生小组">
-
     <div class="channel-container-wrap">
       <div class="channel-container">
         <div v-for="item in channels" @click="switchChannel(item.id)" :id="item.id" :class="{ active: item.id == channelSelected }" class="channel">
@@ -8,25 +7,43 @@
         </div>
       </div>
     </div>
-
     <div class="page-main">
       <swipe ref="swipe" @slidechanged="slideChanged">
         <swipe-slide v-for="channel in channels" :id="channel.id">
           <div class="slide-content">
             <ul class="mdl-list">
-              <dynamic-item v-for="item in diaries[channel.id]" :detail="item" />
+              <diary-item v-for="item in diaries[channel.id]"
+                        :key="item._id"
+                        :id="item._id"
+                        :userid="item.userid"
+                        :like="item.like"
+                        :likeCount="item.likeCount"
+                        :commentCount="item.commentCount"
+                        :avatar="item.avatar"
+                        :username="item.username"
+                        :pictures="item.pictures"
+                        :verified="item.verified"
+                        :text="item.escapedText"
+                        :userlv="item.userlv"
+                        :expectedExp="item.expectedExp"
+                        :time="item.time">
+              </diary-item>
             </ul>
           </div>
         </swipe-slide>
       </swipe>
     </div>
-
   </div>
 </template>
 <script>
   import _ from "lodash";
 
   export default {
+    components: {
+      "swipe": require("ui/swipe.vue"),
+      "swipe-slide": require("ui/swipe-slide.vue"),
+      "diary-item": require("components/pages/home/diary-item.vue")
+    },
     data() {
         return {
           channelSelected: "essence"
@@ -80,14 +97,6 @@
             let groupId = user.groupId;
             this.$store.dispatch("getGroupDiaries", groupId);
           }
-      },
-      components: {
-        "dynamic-item": require("components/pages/dynamic/concern/dynamic-item.vue"),
-        "spinner": require("ui/spinner.vue"),
-        "swipe": require("ui/swipe.vue"),
-        "swipe-slide": require("ui/swipe-slide.vue"),
-        "pull-to-refresh": require("ui/pull-to-refresh.vue"),
-        "infinite-scroll": require("ui/infinite-scroll.vue"),
       }
   };
 </script>

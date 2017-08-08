@@ -2,6 +2,10 @@ import Vue from "vue";
 import api from "api";
 import _ from "lodash";
 
+const config = require("js/config.js");
+const datetime = require("js/utils/datetime.js");
+const textHelper = require("js/utils/textHelper.js");
+
 // 蜕变史分类
 let spallationType = [
   {
@@ -24,7 +28,7 @@ let spallationType = [
     id: "problems",
     name: "提问"
   }
-]
+];
 
 // 频道分类
 let labelTyoe = [
@@ -44,9 +48,75 @@ let labelTyoe = [
     id: "commonState",
     name: "常见状态"
     }
-]
+];
+
+/**
+ * @Description 筛选出 state 中未有的用户数据，以便获取
+ * @Param list 数据源列表, 如： 关注动态
+ * @Return Array userid数组
+ */
+function getUnmappedUsers(list) {
+  let result = [];
+  let userid;
+  _.forEach(list, item => {
+    userid = item.userid;
+    !!userid && (state.users[userid] === undefined) && (result.push(userid));
+  });
+  return result;
+}
+
+/**
+ * @Description 为 state 中的 user 对象添加用户信息
+ * @Param users 数据源列表
+ */
+function addUsers(users) {
+  _.forEach(users, user => {
+    user.username = textHelper.getUserName(user);
+    user.userlv = textHelper.getUserLevel(user);
+    user.verified = user.level == "70";
+    if (user.portrait) {
+      user.avatar = `${config.ossAddress}/portraits/${user._id}_${user.portrait}.jpg`;
+    } else {
+      user.avatar = require("img/default-avatar.png");
+    }
+    
+    state.users[user._id] = user;
+  });
+}
+
+function updateDairy(diaries) {
+  _.forEach(diaries, diary => {
+    let pictures = [];
+    if (diary.pictures) {
+      diary.pictures.forEach(item => {
+        pictures.push(textHelper.getPictureUrl(item));
+      });
+    }
+    diary.pictures = pictures;
+
+    diary.time = datetime.formatDiaryCreated(diary.createdAt);
+    diary.dateWithoutYear = datetime.formatDiaryDateWithoutYear(diary.date);
+    diary.week = datetime.formatDiaryWeek(diary.date);
+    diary.escapedText = textHelper.escape(textHelper.getDiaryText(diary));
+  })
+}
+
+/**
+ * @Description 为列表插入用户信息
+ * @Param list 数据源
+ */
+function addMap(list) {
+  let userid;
+  _.forEach(list, item => {
+    userid = item.userid;
+    _.assign(item, state.users[userid]);
+  });
+}
 
 const state = {
+  // 用户映射表
+  users: {},
+  
   // 频道分类
   channels: labelTyoe,
 

@@ -42,7 +42,6 @@
         };
       },
       components: {
-        "dynamic-item": require("components/pages/dynamic/concern/dynamic-item.vue"),
         "spinner": require("ui/spinner.vue"),
         "swipe": require("ui/swipe.vue"),
         "swipe-slide": require("ui/swipe-slide.vue"),

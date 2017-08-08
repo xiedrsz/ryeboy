@@ -3,20 +3,16 @@
     <swipe ref="swipe">
       <swipe-slide>
         <div class="slide-content">
-
           <list>
-            <div v-for="(item, index) in newconcern" class="member-item">
-              <user-item :id="item.id" class="flex">
-                <template scope="props">
-                  <list-item 
+            <list-item class="member-item" v-for="(item, index) in newconcern"
                    @click.native="$router.push('/pages/user-detail?id=' + item.id)"
-                   :text="props.user.username"
-                   :lIcon="props.user.avatar">
-                    <span slot="note" class="mdl-list__item-note" @click.stop="cancelAdd(index, item.note, item.id)">{{item.note}}</span>
-                  </list-item>
-                </template>
-              </user-item>
-            </div>
+                   :text="item.username"
+                   :lIcon="item.avatar">
+              <span slot="note" class="mdl-list__item-note"
+                    @click.stop="cancelAdd(index, item.note, item.id)">
+                {{item.note}}
+              </span>
+            </list-item>
           </list>
 
           <unusual-loading :option.syn="loading" @reload="getNewConcern"></unusual-loading>

@@ -2,16 +2,12 @@
   <div class="page" title="邀请好友">
 
     <label v-for="item in concern" class="invite-list">
-      <user-item :id="item.id" class="invite-item">
-        <template scope="props">
-          <!--          <div class="invite-item">-->
-          <img :src="props.user.avatar||'/img/default-avatar.png'" class="lazyload" width="48" height="48" />
-          <span class="invite-content">{{props.user.username}}</span>
+      <div class="invite-item">
+        <img :src="item.avatar" class="lazyload" width="48" height="48" />
+          <span class="invite-content">{{item.username}}</span>
           <input type="checkbox" @click="check(item)">
           <i class="material-icons">{{item.checked?'check_circle':'radio_button_unchecked'}}</i>
-          <!--          </div>-->
-        </template>
-      </user-item>
+      </div>
     </label>
 
     <button @click="invite" class="mdl-button mdl-js-button">邀请加入</button>
@@ -20,7 +16,6 @@
 <script>
   export default {
     components: {
-      "user-item": require("ui/user-item.vue"),
     },
     data() {
       return {

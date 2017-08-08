@@ -4,16 +4,10 @@
       <swipe-slide>
         <div class="slide-content">
           <list>
-            <div v-for="item in fans" class="member-item">
-              <user-item :id="item.id" class="flex">
-                <template scope="props">
-                  <list-item 
+            <list-item class="member-item" v-for="item in fans"
                    @click.native="$router.push('/pages/user-detail?id=' + item.id)"
-                   :text="props.user.username"
-                   :lIcon="props.user.avatar"/>
-                </template>
-              </user-item>
-            </div>
+                   :text="item.username"
+                   :lIcon="item.avatar"/>
           </list>
           <unusual-loading :option.syn="loading" @dateReloader="getFans"></unusual-loading>
 
@@ -82,14 +76,11 @@
       },
       components: {
         "unusual-loading": require("ui/unusual-loading.vue"),
-        "spinner": require("ui/spinner.vue"),
         "swipe": require("ui/swipe.vue"),
         "swipe-slide": require("ui/swipe-slide.vue"),
-        "dynamic-item": require("components/pages/dynamic/concern/dynamic-item.vue"),
         "infinite-scroll": require("ui/infinite-scroll.vue"),
         "list": require("ui/list.vue"),
-        "list-item": require("ui/list-item.vue"),
-        "user-item": require("ui/user-item.vue")
+        "list-item": require("ui/list-item.vue")
       },
       beforeRouteLeave(to, from, next) {
         //保存滚动的位置

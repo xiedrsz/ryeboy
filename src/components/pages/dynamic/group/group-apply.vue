@@ -3,15 +3,11 @@
     <ul class="apply-list">
 
       <li v-for="item in applys" class="mdl-list__item mdl-list__item--bottom-divider">
-        <user-item :id="item.id" class="flex">
-          <template scope="props">
-            <img :src="props.user.avatar||'/img/default-avatar.png'" width="36" height="36" />
-            <div class="apply-list-content" @click="detail(item.id)">
-              <span class="apply-name">{{props.user.username}}</span>
-              <span class="apply-name">{{"等级："+props.user.level}}</span>
-            </div>
-          </template>
-        </user-item>
+        <img :src="item.avatar" width="36" height="36" />
+        <div class="apply-list-content" @click="detail(item.id)">
+          <span class="apply-name">{{item.username}}</span>
+          <span class="apply-name">{{"等级："+item.level}}</span>
+        </div>
 
         <span v-show="item.rejected||item.approved" class="mdl-list__item-note">
           {{item.approved?"已通过":"已拒绝"}}
@@ -33,7 +29,6 @@
 <script>
   export default {
     components: {
-      "user-item": require("ui/user-item.vue"),
     },
     computed: {
       applys() {

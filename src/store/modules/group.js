@@ -1,17 +1,16 @@
 import Vue from "vue";
 import api from "api";
 import _ from "lodash";
-import config from "js/config";
+
+const config = require("js/config.js");
+const datetime = require("js/utils/datetime.js");
+const textHelper = require("js/utils/textHelper.js");
 
 // 默认小组列表分类
 let defaultGroupChannels = [
   {
     id: "essence",
     name: "精品"
-  },
-  {
-    id: "changed",
-    name: "蜕变史"
   },
   {
     id: "latest",
@@ -23,13 +22,13 @@ let defaultGroupChannels = [
   },
   {
     id: "unwelcome",
-    name: "最冷"
+    name: "我未评论"
   },
   {
     id: "problems",
-    name: "提问"
+    name: "0-2个评论"
   }
-]
+];
 
 let defaultGroupClass = [
   {
@@ -44,7 +43,7 @@ let defaultGroupClass = [
     id: "welcome",
     name: "最热"
   },
-  {
+  /*{
     id: "level",
     name: "等级"
   },
@@ -57,10 +56,76 @@ let defaultGroupClass = [
   }, {
     id: "BigBoy",
     name: "24-30"
-  }
-]
+  }*/
+];
+
+/**
+ * @Description 筛选出 state 中未有的用户数据，以便获取
+ * @Param list 数据源列表, 如： 关注动态
+ * @Return Array userid数组
+ */
+function getUnmappedUsers(list) {
+  let result = [];
+  let userid;
+  _.forEach(list, item => {
+    userid = item.userid;
+    !!userid && (state.users[userid] === undefined) && (result.push(userid));
+  });
+  return result;
+}
+
+/**
+ * @Description 为 state 中的 user 对象添加用户信息
+ * @Param users 数据源列表
+ */
+function addUsers(users) {
+  _.forEach(users, user => {
+    user.username = textHelper.getUserName(user);
+    user.userlv = textHelper.getUserLevel(user);
+    user.verified = user.level == "70";
+    if (user.portrait) {
+      user.avatar = `${config.ossAddress}/portraits/${user._id}_${user.portrait}.jpg`;
+    } else {
+      user.avatar = require("img/default-avatar.png");
+    }
+    
+    state.users[user._id] = user;
+  });
+}
+
+function updateDairy(diaries) {
+  _.forEach(diaries, diary => {
+    let pictures = [];
+    if (diary.pictures) {
+      diary.pictures.forEach(item => {
+        pictures.push(textHelper.getPictureUrl(item));
+      });
+    }
+    diary.pictures = pictures;
+
+    diary.time = datetime.formatDiaryCreated(diary.createdAt);
+    diary.dateWithoutYear = datetime.formatDiaryDateWithoutYear(diary.date);
+    diary.week = datetime.formatDiaryWeek(diary.date);
+    diary.escapedText = textHelper.escape(textHelper.getDiaryText(diary));
+  })
+}
+
+/**
+ * @Description 为列表插入用户信息
+ * @Param list 数据源
+ */
+function addMap(list) {
+  let userid;
+  _.forEach(list, item => {
+    userid = item.userid;
+    _.assign(item, state.users[userid]);
+  });
+}
 
 const state = {
+  // 用户映射表
+  users: {},
+  
   // 小组列表
   groups: [],
 
@@ -369,8 +434,22 @@ const actions = {
     }, option) {
       let groupId = state.groupInfo._id;
       let res = await api.getApplys(groupId);
+      let list = res.data;
+      
+      _.forEach(list, item => {
+        item.userid = item.id;
+      });
+      
+      // 加入用户资料
+      let users = getUnmappedUsers(list);
+      let resTmp;
+      if (users.length > 0) {
+        resTmp = await api.getUsers(users);
+        addUsers(resTmp.data);
+      }
+      addMap(list);
 
-      commit("group_pushApplys", res.data);
+      commit("group_pushApplys", list);
     },
 
     // 同意申请, 基本完成
@@ -407,8 +486,19 @@ const actions = {
       commit
     }, id) {
       let res = await api.getGroupDiaries(id);
+      let diaries = res.data.diaries;
+      
+      // 加入用户资料
+      let users = getUnmappedUsers(diaries);
+      let resTmp;
+      if (users.length > 0) {
+        resTmp = await api.getUsers(users);
+        addUsers(resTmp.data);
+      }
+      addMap(diaries);
+      updateDairy(diaries);
 
-      commit("group_pushDiaries", res.data.diaries);
+      commit("group_pushDiaries", diaries);
     },
 
     // 点赞, 基本完成
