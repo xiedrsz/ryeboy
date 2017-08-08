@@ -3,8 +3,8 @@
     <div v-if="no" class="unload" @click="reload">
       (未加载)
     </div>
-    <div v-else-if="err" class="loadstate" @click="reload">
-      (加载错误,可点击重新加载)
+    <div v-else-if="!!err" class="loadstate" @click="reload">
+      {{err === true ? '(加载错误,可点击重新加载)' : err }}
     </div>
     <div v-else-if="none" class="loadstate" @click="reload">
       (无内容)

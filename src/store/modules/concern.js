@@ -38,7 +38,7 @@ function addUsers(users) {
     } else {
       user.avatar = require("img/default-avatar.png");
     }
-    
+
     state.users[user._id] = user;
   });
 }
@@ -258,7 +258,7 @@ const actions = {
     }, option = {}) {
       let addType = option.addType || 'push';
       let infiniteScroll = option.infiniteScroll;
-      
+
       !infiniteScroll && commit("save_loading", {
         no: false,
         err: false,
@@ -277,7 +277,7 @@ const actions = {
         });
         !!infiniteScroll && infiniteScroll.$emit("$InfiniteScroll:complete");
       });
-      
+
       // 加入用户资料
       let users = getUnmappedUsers(list);
       let resTmp;
@@ -354,7 +354,7 @@ const actions = {
         item.note = "取消";
         item.userid = item.id;
       });
-      
+
       // 加入用户资料
       let users = getUnmappedUsers(list);
       let resTmp;
@@ -397,11 +397,11 @@ const actions = {
           err: true
         });
       });
-      
+
       _.forEach(list, (item) => {
         item.userid = item.id;
       });
-      
+
       // 加入用户资料
       let users = getUnmappedUsers(list);
       let resTmp;
@@ -439,8 +439,14 @@ const actions = {
       let list = [];
 
       await api.getNewConcern().then((res) => {
-        !!res && (list = res.data);
-      }).catch(() => {
+        if (!!res.message) {
+          commit("save_loading", {
+            err: true
+          });
+        } else {
+          list = res.data;
+        }
+      }).catch((err) => {
         commit("save_loading", {
           err: true
         });
@@ -450,7 +456,7 @@ const actions = {
         item.note = "关注";
         item.userid = item.id;
       });
-      
+
       // 加入用户资料
       let users = getUnmappedUsers(list);
       let resTmp;

@@ -63,19 +63,26 @@
       activated() {
         // 监听 创建组 事件
         let that = this;
-        this.$app.toolbars.create([{
+        let options = [{
           icon: "search",
           click() {
             console.log('search');
           }
-        }, {
-          icon: "add",
-          click() {
-            that.$router.push({
-              path: '/dynamic/group-create-one'
-            });
-          }
-        }]);
+        }];
+        let user = this.$app.user;
+        let lv = user.grade.lv || 1;
+
+        if (lv > 20) {
+          options.push({
+            icon: "add",
+            click() {
+              that.$router.push({
+                path: '/dynamic/group-create-one'
+              });
+            }
+          });
+        }
+        this.$app.toolbars.create(options);
       },
       methods: {
         // 侧滑
