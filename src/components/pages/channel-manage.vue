@@ -15,8 +15,7 @@
                   class="label-container">
           <div v-for="item in subscribedChannels"
                :key="item.id"
-               :id="item.id"
-               @click="removeSubscribed"
+               @click="removeSubscribed(item.id)"
                class="label"
                :data-badge="enableEdit ? '×' : ''">
             <div class="disabled">{{ item.name }}</div>
@@ -30,10 +29,9 @@
           <div>频道推荐</div>
         </div>
         <div class="label-container">
-          <div v-for="item in recommendedChannels"
+          <div v-for="item in activatedChannels"
                :key="item.id"
-               :id="item.id"
-               @click="addSubscribed"
+               @click="addSubscribed(item.id)"
                class="label"
                :data-badge="enableEdit ? '+' : ''">
             <div class="disabled">{{ item.name }}</div>
@@ -49,88 +47,13 @@
   import api from "api";
   import _ from "lodash";
 
-  // 默认推荐订阅频道
-  const defaultRecommendedChannels = [
-    {
-      id: "tbs",
-      name: "蜕变史",
-      active: false
-    }, {
-      id: "ms",
-      name: "麦式",
-      active: false
-  }, {
-      id: "ys",
-      name: "饮食",
-      active: false
-  },
-    {
-      id: "zx",
-      name: "作息",
-      active: false
-  },
-    {
-      id: "xl",
-      name: "心理",
-      active: false
-  },
-    {
-      id: "qlxy",
-      name: "前列腺炎"
-  },
-    {
-      id: "yj",
-      name: "遗精",
-  },
-    {
-      id: "yyz",
-      name: "抑郁症",
-  },
-    {
-      id: "kqky",
-      name: "口腔溃疡",
-  },
-    {
-      id: "sm",
-      name: "失眠",
-  },
-    {
-      id: "npnj",
-      name: "尿频尿急",
-  },
-    {
-      id: "tyhc",
-      name: "头晕昏沉",
-  },
-    {
-      id: "bftf",
-      name: "白发脱发",
-  },
-    {
-      id: "yy",
-      name: "意淫",
-  },
-    {
-      id: "sx",
-      name: "肾虚",
-  },
-    {
-      id: "ywzx",
-      name: "阳痿早泄",
-  },
-    {
-      id: "bm",
-      name: "便秘",
-  },
-];
-
   export default {
     data() {
       return {
         enableEdit: false,
         modified: false,
         subscribedChannels: [],
-        recommendedChannels: []
+        activatedChannels: []
       };
     },
     computed: {
@@ -150,14 +73,14 @@
       edit() {
         if (this.enableEdit && this.modified) {
           this.$store.commit("diary_setChannelChanged");
-          this.$store.dispatch("diary_setSubscribedChannels", this.subscribedChannels);
+          this.$store.dispatch("diary_setUserChannels", this.subscribedChannels);
         }
         this.enableEdit = !this.enableEdit;
         if (this.enableEdit) {
           this.modified = false;
         }
       },
-      removeSubscribed(event) {
+      removeSubscribed(id) {
         if (!this.enableEdit) return;
         if (this.subscribedChannels.length <= 1) {
           this.$store.commit("page_showDialog", {
@@ -168,26 +91,22 @@
           return;
         }
         let index = _.findIndex(this.subscribedChannels, {
-          "id": event.target.id
+          id
         });
-        this.recommendedChannels.unshift(this.subscribedChannels[index]);
+        this.activatedChannels.unshift(this.subscribedChannels[index]);
         this.subscribedChannels.splice(index, 1);
       },
-      addSubscribed(event) {
+      addSubscribed(id) {
         if (!this.enableEdit) return;
-        let item = _.find(this.recommendedChannels, {
-          "id": event.target.id
+        let item = _.find(this.activatedChannels, {
+          id
         });
-        _.pull(this.recommendedChannels, item);
+        _.pull(this.activatedChannels, item);
         this.subscribedChannels.push(item);
       },
-      initRecommendedChannels(channels) {
-        channels.forEach(channel => {
-          if (_.findIndex(this.subscribedChannels, function(subscribedChannel) {
-              return subscribedChannel.id == channel.id;
-            }) == -1) {
-            this.recommendedChannels.push(channel);
-          }
+      setActivatedChannels(channels) {
+        _.differenceBy(channels, this.subscribedChannels, "id").forEach(item => {
+          this.activatedChannels.push(item);
         });
       }
     },
@@ -195,20 +114,29 @@
       sortable,
       "button-flat": require("components/ui/button-flat.vue"),
     },
-    mounted() {
+    async mounted() {
       this.$store.state.diary.channels.forEach(item => {
-        if (item.id != "default") {
+        let {
+          id,
+          name
+        } = item;
+        if (id != "default") {
           this.subscribedChannels.push({
-            id: item.id,
-            name: item.name
+            id,
+            name
           });
         }
       });
       this.modified = false;
-      api.getRecommendedChannels().then(res => {
-        this.initRecommendedChannels(res.data);
-      }).catch(() => {
-        this.initRecommendedChannels(defaultRecommendedChannels);
+      api.getActivatedChannels().then(res => {
+        let channels = res.data;
+        channels.forEach(item => {
+          if (!item.id) {
+            item.id = item.name;
+            item.name = item.displayName;
+          }
+        });
+        this.setActivatedChannels(channels);
       });
     }
   };

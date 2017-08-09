@@ -206,16 +206,13 @@ class app {
     //   throw error;
     // }
 
+    await store.dispatch("diary_getSubscribedChannels");
+
     // 初始化数据
     if (localStorage.authenticated) {
-      store.dispatch("diary_initSubscribedChannels");
       store.dispatch("lesson_loadSettings");
       store.dispatch("user_getNewMessageCount");
-    } else {
-      store.commit("diary_setDefaultChannels");
-    }
-
-    // await this.delay(2000);
+    }  
   }
 
   constructor() {

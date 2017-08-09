@@ -200,14 +200,14 @@ class api {
     });
   }
 
-  static getRecommendedChannels() {
-    return axios.get("/getRecommendedChannels");
+  static getActivatedChannels() {
+    return axios.get("/diary/getActivatedChannels");
   }
 
-  static setSubscribedChannels(userid, channels) {
-    return axios.post("/setSubscribedChannels", {
+  static setUserChannels(userid, data) {
+    return axios.post("/diary/setUserChannels", {
       userid,
-      channels
+      data
     });
   }
 
