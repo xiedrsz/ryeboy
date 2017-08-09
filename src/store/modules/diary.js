@@ -373,6 +373,9 @@ const actions = {
     let channels = defaultSubscribedChannels;
     try {
       let res = await api.getUserChannels(userid);
+      if (_.isEmpty(res.data)) {
+        throw "getUserChannels: not found.";
+      }
       let {
         order,
         content
