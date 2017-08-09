@@ -12,16 +12,26 @@ function getDateKey(state) {
 }
 
 const state = {
-  settingsLoaded: false,
+  // 当前选定功课日期
   selectedDate: datetime.date(moment()).subtract(1, "days").toDate(),
+
+  // 功课卡数据
   cards,
+
+  // 未开启的功课
   deselects: [],
+
+  // 功课难度
   difficulties: {
     "304": 304,
     "401": 401,
     "411": 411
   },
+
+  // 选定的功课数据记录
   records: {},
+
+  // 已保存的功课日期
   savedDates: []
 };
 
@@ -29,28 +39,7 @@ const getters = {
   lesson_getDateKey(state) {
     return getDateKey(state);
   },
-  lesson_getDifficultCards() {
-    let result = [];
-    let group;
 
-    cards.forEach(card => {
-      if (card.group) {
-        if (group === undefined || group.id != card.group) {
-          group = {
-            id: card.group,
-            options: []
-          };
-          result.push(group);
-        }
-        group.options.push({
-          value: card.id,
-          text: card.name
-        });
-      }
-    });
-
-    return result;
-  },
   lesson_getManagedCards(state) {
     let result = [];
 
@@ -184,7 +173,8 @@ const actions = {
         selectedWeights: {},
         selectedCards: {},
         selectedCount: 0,
-        cardCount: 0
+        cardCount: 0,
+        exp: 0
       };
       Vue.set(state.records, getDateKey(state), record);
 
@@ -205,6 +195,7 @@ const actions = {
           let res = await api.getLesson(userid, date);
           if (res.status == 200) {
             record.published = true;
+            record.exp = res.data.exp;
             record.diary.text = res.data.text;
             if (res.data.pictures) {
               res.data.pictures.forEach(item => {
@@ -259,9 +250,9 @@ const actions = {
       }
 
       // 生成功课等级符号
-      let _card = rootState.user.cards[card.id];
-      if (_card) {
-        let cardlv = _card.lv;
+      let userCard = rootState.user.cards[card.id];
+      if (userCard) {
+        let cardlv = userCard.lv;
         if (cardlv > 1) {
           card.rates = _.fill(Array(cardlv - 1), 0);
         } else {
@@ -307,9 +298,12 @@ const actions = {
   lesson_publish({
     state,
     dispatch
+  }, {
+    exp
   }) {
     let record = state.records[getDateKey(state)];
     record.published = true;
+    record.exp = exp;
     return dispatch("lesson_save");
   },
   async lesson_save({
@@ -331,7 +325,8 @@ const actions = {
     let data = {
       diary: record.diary,
       published: record.published,
-      checkedCards
+      checkedCards,
+      exp: record.exp || 0
     };
 
     let date = getDateKey(state);
@@ -378,7 +373,41 @@ const actions = {
 
     localStorage[`${userid}_lessonDifficulties`] = JSON.stringify(state.difficulties);
     localStorage[`${userid}_lessonDeselects`] = JSON.stringify(state.deselects);
-  }
+  },
+
+  lesson_getDifficultCards({
+    rootState
+  }) {
+    let result = [];
+    let group;
+    let userCards = rootState.user.cards;
+
+    cards.forEach(card => {
+      if (card.group) {
+        if (group === undefined || group.id != card.group) {
+          group = {
+            id: card.group,
+            options: []
+          };
+          result.push(group);
+        }
+
+        // 处理麦式运动难度
+        if (card.id >= 305 && card.id <= 313) {
+          if (!userCards) return;
+          let userCard = userCards[card.id - 1];
+          if (!userCard) return;
+          if (userCard.lv < 2) return;
+        }
+        group.options.push({
+          value: card.id,
+          text: card.name
+        });
+      }
+    });
+
+    return result;
+  },
 };
 
 export default {

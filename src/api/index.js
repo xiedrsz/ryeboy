@@ -7,6 +7,15 @@ axios.defaults.baseURL = config.apiAddress;
 axios.defaults.headers["Accept"] = "application/json";
 
 class api {
+  static getNewMessageCount(userid, fetchTime) {
+    return axios.get("/users/newMessageCount", {
+      params: {
+        userid,
+        fetchTime
+      }
+    });
+  }
+
   static getServerConfig(userid) {
     return axios.get("/config", {
       params: {
@@ -120,13 +129,12 @@ class api {
     });
   }
 
-  static getNotices(userid, type, lastFetchAt, last) {
+  static getNotices(userid, type, last) {
     return axios.get("/notices", {
       params: {
         userid,
         type,
-        last,
-        lastFetchAt: new Date("2017-5-20"),
+        last
       }
     });
   }
@@ -191,19 +199,19 @@ class api {
     return axios.get(`/users/${userid}`);
   }
 
-  static getRecommendedChannels() {
-    return axios.get("/getRecommendedChannels");
+  static getActivatedChannels() {
+    return axios.get("/diary/getActivatedChannels");
   }
 
-  static setSubscribedChannels(userid, channels) {
-    return axios.post("/setSubscribedChannels", {
+  static setUserChannels(userid, data) {
+    return axios.post("/diary/setUserChannels", {
       userid,
-      channels
+      data
     });
   }
 
-  static getSubscribedChannels(userid) {
-    return axios.get("/getSubscribedChannels", {
+  static getUserChannels(userid) {
+    return axios.get("/diary/getUserChannels", {
       params: {
         userid
       }

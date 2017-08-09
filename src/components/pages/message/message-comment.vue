@@ -6,7 +6,7 @@
                       :infinite="infinite">
       <ul class="mdl-list">
         <li class="comment-container"
-            v-for="item in items"
+            v-for="(item, index) in items"
             :key="item._id"
             @click="openActions(item)">
           <div class="comment-avatar">
@@ -23,7 +23,9 @@
             </div>
             <div class="comment-text"
                  v-html="item.escapedText"></div>
-            <div class="comment-time">{{ item.time }}</div>
+            <div class="comment-time">
+              {{ item.time }}
+            </div>
           </div>
         </li>
       </ul>
@@ -115,8 +117,7 @@
         ], this);
       },
       async getData(userid, last) {
-        let lastFetchCommentMessageAt = localStorage[`${this.userid}_lastFetchCommentMessageAt`] || new Date();
-        let res = await this.$app.api.getNotices(userid, "comment", lastFetchCommentMessageAt, last);
+        let res = await this.$app.api.getNotices(userid, "comment", last);
         let items = res.data;
 
         if (items.length == 0) {
@@ -141,6 +142,16 @@
     computed: {
       userid() {
         return this.$store.state.user._id;
+      },
+      newContentCount() {
+        let {
+          messageCount
+        } = this.$store.state.user;
+        if (messageCount) {
+          return messageCount.comment;
+        } else {
+          return 0;
+        }
       }
     },
     components: {

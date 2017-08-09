@@ -26,6 +26,10 @@
         <div>{{ `完成${record.selectedCount}/${record.cardCount}项` }}</div>
         <div class="expired"
              v-show="expired && !published">不能发布超过一周的记录</div>
+        <div class="exp"
+             v-show="record.exp">
+          {{ `+${record.exp}成长值` }}
+        </div>
       </div>
       <div class="card-container">
         <div v-for="weight in cards"
@@ -146,6 +150,12 @@
         if (this.published || this.expired) {
           return;
         }
+
+        if (this.record.selectedCount == 0) {
+          this.$app.dialog.text("提醒：还没有功课记录。");
+          return;
+        }
+
         this.$router.push("/pages/lesson-publish");
       },
       selectDate() {

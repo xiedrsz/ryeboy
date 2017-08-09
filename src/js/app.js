@@ -4,6 +4,7 @@ import store from "store";
 import api from "api";
 import config from "js/config";
 import cordova from "js/cordova";
+import storage from "js/utils/storage";
 import dialog from "js/utils/dialog";
 import toolbars from "js/utils/toolbars";
 import textHelper from "js/utils/textHelper";
@@ -40,8 +41,9 @@ class app {
     this.userid = data.user._id;
 
     store.commit("user_setAuth", data.user);
+    await store.dispatch("diary_getUserChannels");
     store.commit("diary_setChannelChanged");
-    await store.dispatch("diary_getSubscribedChannels");
+    store.dispatch("user_getNewMessageCount");
   }
 
   //注销之后的一些处理
@@ -50,7 +52,6 @@ class app {
     localStorage.removeItem("authenticated");
     localStorage.removeItem("user");
     store.commit("user_deleteAuth");
-    store.commit("diary_setChannelChanged");
   }
 
   async getUser(userid) {
@@ -205,21 +206,20 @@ class app {
     //   throw error;
     // }
 
+    await store.dispatch("diary_getUserChannels");
+
     // 初始化数据
     if (localStorage.authenticated) {
-      store.dispatch("diary_initSubscribedChannels");
       store.dispatch("lesson_loadSettings");
-    } else {
-      store.commit("diary_setDefaultChannels");
-    }
-
-    // await this.delay(2000);
+      store.dispatch("user_getNewMessageCount");
+    }  
   }
 
   constructor() {
     this.config = config;
     this.api = api;
     this.cordova = new cordova(this);
+    this.storage = storage;
     this.dialog = dialog;
     this.toolbars = toolbars;
     this.textHelper = textHelper;

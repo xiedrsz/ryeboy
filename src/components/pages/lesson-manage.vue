@@ -100,13 +100,13 @@
     beforeDestroy() {
       this.save();
     },
-    mounted() {
+    async mounted() {
       this.$app.toolbars.create([{
         text: "完成",
         click: this.finish
       }]);
 
-      this.difficulties = this.$store.getters.lesson_getDifficultCards;
+      this.difficulties = await this.$store.dispatch("lesson_getDifficultCards");
       this.lessons = this.$store.getters.lesson_getManagedCards;
     }
   };

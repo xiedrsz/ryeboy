@@ -76,7 +76,7 @@
               let url = this.$app.textHelper.getPictureUrl(filename);
               this.$store.commit("lesson_setPictureUrl", {
                 id: picture.id,
-                url 
+                url
               });
               pictures.push(filename);
             }
@@ -86,8 +86,10 @@
           data.pictures = pictures;
           data.privacy = Number(this.privacy);
           data.time = this.$app.datetime.utcDate(data.time);
-          await api.publishLesson(data);
-          await this.$store.dispatch("lesson_publish");
+          let r = await api.publishLesson(data);
+          await this.$store.dispatch("lesson_publish", {
+            exp: r.exp
+          });
           history.go(-1);
         } catch (error) {
           console.log(error);

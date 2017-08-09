@@ -160,23 +160,23 @@ const mutations = {
     state.channelChanged = changed === undefined ? true : changed;
   },
 
-  diary_setDefaultChannels(state) {
-    state.channels = _.clone(defaultSubscribedChannels);
-    state.channels.forEach(item => {
-      Vue.set(item, "active", false);
-    });
-  },
-
   diary_setChannels(state, data) {
-    state.channels = _.clone(data.channels);
-    state.channels.forEach(item => {
-      Vue.set(item, "active", false);
+    let channels = _.cloneDeep(data.channels);
+    channels.forEach(item => {
+      item.active = false;
+      if (!item.id) {
+        item.id = item.name;
+        item.name = item.displayName;
+      }
     });
+    Vue.set(state, "channels", channels);
+
     // 确保有默认频道
+    let channel = _.cloneDeep(defaultSubscribedChannels[0]);
     if (state.channels.length == 0) {
-      state.channels.push(defaultSubscribedChannels[0]);
-    } else if (state.channels[0].id != defaultSubscribedChannels[0].id) {
-      state.channels.unshift(defaultSubscribedChannels[0]);
+      state.channels.push(channel);
+    } else if (state.channels[0].id != channel.id) {
+      state.channels.unshift(channel);
     }
   },
 
@@ -269,6 +269,13 @@ const actions = {
     }
   },
 
+  diary_resetLikeData({
+    state
+  }, id) {
+    let likeDatas = state.likeDatas;
+    likeDatas[id] = undefined;
+  },
+
   diary_getLikeData({
     state
   }, id) {
@@ -314,63 +321,76 @@ const actions = {
     }
   },
 
-  async diary_setSubscribedChannels({
+  async diary_setUserChannels({
     commit,
     rootState
   }, channels) {
     let userid = rootState.user._id;
+    let key = `${userid}_channels`;
 
-    let _channels = JSON.parse(JSON.stringify(channels));
     commit("diary_setChannels", {
-      channels: _channels
+      channels
     });
-    localStorage[`${userid}_channels`] = JSON.stringify(_channels);
+    localStorage[key] = JSON.stringify(channels);
 
     try {
-      await api.setSubscribedChannels(userid, _channels);
+      let data = _.map(channels, "id");
+      await api.setUserChannels(userid, data);
     } catch (error) {
       console.log(error);
     }
   },
 
-  async diary_initSubscribedChannels({
+  async diary_getUserChannels({
     commit,
     rootState
   }) {
-    let userid = rootState.user._id;
+    let {
+      _id,
+      authenticated
+    } = rootState.user;
 
+    // 未登录用户返回默认频道
+    if (!authenticated) {
+      commit("diary_setChannels", {
+        channels: defaultSubscribedChannels
+      });
+      return;
+    }
+
+    let userid = _id;
     let key = `${userid}_channels`;
+
+    // 从本地存储获取用户日记区显示的频道
     if (localStorage[key]) {
       commit("diary_setChannels", {
         channels: JSON.parse(localStorage[key])
       });
-    } else {
-      commit("diary_setDefaultChannels");
+      return;
     }
-  },
 
-  async diary_getSubscribedChannels({
-    commit,
-    state,
-    rootState
-  }) {
-    let userid = rootState.user._id;
-    let key = `${userid}_channels`;
-
+    // 远程获取用户日记区显示的频道
+    let channels = defaultSubscribedChannels;
     try {
-      let res = await api.getSubscribedChannels(userid);
-      let channels = res.data;
-      commit("diary_setChannels", {
-        channels
-      });
-      localStorage[key] = JSON.stringify(state.channels);
-    } catch (error) {
-      if (localStorage[key]) {
-        commit("diary_setChannels", {
-          channels: JSON.parse(localStorage[key])
+      let res = await api.getUserChannels(userid);
+      let {
+        order,
+        content
+      } = res.data;
+      channels = [];
+      order.forEach(name => {
+        let index = _.findIndex(content, item => {
+          return item.name == name;
         });
-      }
+        channels.push(content[index]);
+      });
+      localStorage[key] = JSON.stringify(channels);
+    } catch (error) {
+      console.log(error);
     }
+    commit("diary_setChannels", {
+      channels
+    });
   },
 
   async diary_getMoreData({

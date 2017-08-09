@@ -34,6 +34,9 @@
       </list-item>
       <list-item text="消息"
                  route="/pages/message">
+        <span slot="secondary"
+              v-show="messageCount"
+              class="badge">{{ messageCount }}</span>
       </list-item>
       <list-item text="收藏"
                  route="/pages/favorite">
@@ -68,6 +71,17 @@
       },
       userlv() {
         return this.$app.textHelper.getUserLevel(this.user);
+      },
+      messageCount() {
+        if (!this.$store.state.user.messageCount) {
+          return 0;
+        }
+        let {
+          comment,
+          system
+        } = this.$store.state.user.messageCount;
+        let r = comment + system;
+        return r > 99 ? "..." : r;
       }
     }
   };
@@ -108,5 +122,17 @@
     width: 18px;
     height: 18px;
     margin-right: 4px;
+  }
+
+  .badge {
+    font-size: 12px;
+    font-family: Arial, Helvetica, sans-serif;
+    background: $color-red;
+    padding: 3px;
+    color: #fff;
+    background: $color-red;
+    border-radius: 2px;
+    min-width: 12px;
+    text-align: center;
   }
 </style>

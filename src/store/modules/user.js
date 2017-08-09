@@ -1,4 +1,5 @@
 import config from "js/config.js";
+import storage from "js/utils/storage.js";
 import _ from "lodash";
 import api from "api";
 import Vue from "vue";
@@ -11,7 +12,7 @@ const state = {
   grade: {
     lv: 1,
     exp: 0
-  }
+  },
 };
 
 function obtain(user) {
@@ -59,6 +60,29 @@ const mutations = {
 };
 
 const actions = {
+  async user_getNewMessageCount({
+    state
+  }) {
+    if (!state.authenticated) {
+      return;
+    }
+
+    let key = `${state._id}_fetchTime`;
+    let fetchTime = storage.getObject(key, {
+      notice: {
+        comment: new Date(),
+        system: new Date()
+      }
+    });
+    Vue.set(state, "fetchTime", fetchTime);
+
+    let {
+      data
+    } = await api.getNewMessageCount(state._id, fetchTime);
+
+    Vue.set(state, "messageCount", data);
+  },
+
   async user_loadConfig({
     state,
     rootState

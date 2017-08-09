@@ -6,7 +6,8 @@
            :key="tab.id"
            class="tab-link"
            @click="readySwitchView(index)"
-           :class="{ active: tab.active }">
+           :data-badge="messageCount[tab.id]"
+           :class="{ active: tab.active, badge: messageCount[tab.id] }">
         {{ tab.text }}
       </div>
     </div>
@@ -42,10 +43,53 @@
         viewType: "comment"
       };
     },
+    computed: {
+      messageCount() {
+        let {
+          messageCount
+        } = this.$store.state.user;
+        let r = [0, 0];
+        if (!messageCount) {
+          return r;
+        }
+        r[0] = messageCount.comment;
+        r[1] = messageCount.system;
+        for (var i = 0; i < r.length; i++) {
+          if (r[i] > 99) {
+            r[i] = "...";
+          }
+        }
+        return r;
+      }
+    },
     methods: {
+      clearMessageCount(index) {
+        let {
+          messageCount,
+          fetchTime,
+          _id
+        } = this.$store.state.user;
+        if (messageCount && fetchTime) {
+          if (index == 0) {
+            messageCount.comment = 0;
+            fetchTime.notice.comment = new Date();
+          } else if (index == 1) {
+            messageCount.system = 0;
+            fetchTime.notice.system = new Date();
+          }
+
+          let key = `${_id}_fetchTime`;
+          this.$app.storage.setObject(key, fetchTime);
+        }
+      },
       readySwitchView(index) {
+        this.clearMessageCount(index);
         if (this.tabIndex == index) {
           return;
+        }
+        if (this.timer) {
+          clearTimeout(this.timer);
+          this.timer = null;
         }
         this.$app.savePosition(this.$el);
         this.switchView(index);
@@ -61,6 +105,11 @@
       "comment": require("components/pages/message/message-comment.vue"),
       "like": require("components/pages/message/message-like.vue"),
       "notice": require("components/pages/message/message-notice.vue"),
+    },
+    activated() {
+      this.timer = setTimeout(() => {
+        this.clearMessageCount(this.tabIndex);
+      }, 8000);
     }
   };
 </script>
@@ -69,4 +118,26 @@
        scoped>
   @import "~scss/main.scss";
   @import "~scss/tabs.scss";
+  .tab-link {
+    height: 100%;
+    @include flex-row;
+    @include flex-center;
+    position: relative;
+  }
+
+  .badge[data-badge]:after {
+    content: attr(data-badge);
+    font-size: 12px;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 0 3px;
+    color: #fff;
+    height: 18px;
+    background: $color-red;
+    border-radius: 2px;
+    position: absolute;
+    right: -14px;
+    top: 2px;
+    min-width: 12px;
+    text-align: center;
+  }
 </style>
