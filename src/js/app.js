@@ -41,8 +41,8 @@ class app {
     this.userid = data.user._id;
 
     store.commit("user_setAuth", data.user);
+    await store.dispatch("diary_getUserChannels");
     store.commit("diary_setChannelChanged");
-    await store.dispatch("diary_getSubscribedChannels");
     store.dispatch("user_getNewMessageCount");
   }
 
@@ -206,7 +206,7 @@ class app {
     //   throw error;
     // }
 
-    await store.dispatch("diary_getSubscribedChannels");
+    await store.dispatch("diary_getUserChannels");
 
     // 初始化数据
     if (localStorage.authenticated) {

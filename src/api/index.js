@@ -211,8 +211,8 @@ class api {
     });
   }
 
-  static getSubscribedChannels(userid) {
-    return axios.get("/getSubscribedChannels", {
+  static getUserChannels(userid) {
+    return axios.get("/diary/getUserChannels", {
       params: {
         userid
       }

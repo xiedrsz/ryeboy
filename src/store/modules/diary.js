@@ -329,7 +329,7 @@ const actions = {
     let key = `${userid}_channels`;
 
     commit("diary_setChannels", {
-      channels 
+      channels
     });
     localStorage[key] = JSON.stringify(channels);
 
@@ -341,7 +341,7 @@ const actions = {
     }
   },
 
-  async diary_getSubscribedChannels({
+  async diary_getUserChannels({
     commit,
     rootState
   }) {
@@ -361,19 +361,29 @@ const actions = {
     let userid = _id;
     let key = `${userid}_channels`;
 
-    // 从本地存储获取用户订阅频道
-    if (localStorage[key]) {
-      commit("diary_setChannels", {
-        channels: JSON.parse(localStorage[key])
-      });
-      return;
-    }
+    // 从本地存储获取用户日记区显示的频道
+    // if (localStorage[key]) {
+    //   commit("diary_setChannels", {
+    //     channels: JSON.parse(localStorage[key])
+    //   });
+    //   return;
+    // }
 
-    // 远程获取用户订阅频道
+    // 远程获取用户日记区显示的频道
     let channels = defaultSubscribedChannels;
     try {
-      let res = await api.getSubscribedChannels(userid);
-      channels = res.data;
+      let res = await api.getUserChannels(userid);
+      let {
+        order,
+        content
+      } = res.data;
+      channels = [];
+      order.forEach(name => {
+        let index = _.findIndex(content, item => {
+          return item.name == name;
+        });
+        channels.push(content[index]);
+      });
       localStorage[key] = JSON.stringify(channels);
     } catch (error) {
       console.log(error);
