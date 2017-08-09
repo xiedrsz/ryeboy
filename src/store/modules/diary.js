@@ -362,12 +362,12 @@ const actions = {
     let key = `${userid}_channels`;
 
     // 从本地存储获取用户日记区显示的频道
-    // if (localStorage[key]) {
-    //   commit("diary_setChannels", {
-    //     channels: JSON.parse(localStorage[key])
-    //   });
-    //   return;
-    // }
+    if (localStorage[key]) {
+      commit("diary_setChannels", {
+        channels: JSON.parse(localStorage[key])
+      });
+      return;
+    }
 
     // 远程获取用户日记区显示的频道
     let channels = defaultSubscribedChannels;
