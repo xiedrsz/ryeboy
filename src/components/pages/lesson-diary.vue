@@ -14,19 +14,34 @@
            v-show="!published">
         <div class="action"
              @click="insertPicture">插入图片</div>
-        <div class="action">添加标签</div>
+        <div class="action"
+             @click="addLabels">添加标签</div>
       </div>
       <div class="picture-container"
            v-if="pictures.length > 0">
-        <div v-for="picture in pictures"
-             :key="picture.id"
-             class="inserted-picture-wrap">
-          <img :src="picture.url ? picture.url: picture.path"
-               @click.stop="showPicture"
-               class="inserted-picture">
-          <i class="material-icons md-18 remove-picture"
-             v-show="!published"
-             @click="removePicture(picture.id)">clear</i>
+        <div class="note">已插入图片</div>
+        <div class="picture-block">
+          <div v-for="picture in pictures"
+               :key="picture.id"
+               class="inserted-picture-wrap">
+            <img :src="picture.url ? picture.url: picture.path"
+                 @click.stop="showPicture"
+                 class="inserted-picture">
+            <i class="material-icons md-18 remove-picture"
+               v-show="!published"
+               @click="removePicture(picture.id)">clear</i>
+          </div>
+        </div>
+      </div>
+      <div class="label-container"
+           v-if="labels.length > 0">
+        <div class="note">已添加标签</div>
+        <div class="label-block">
+          <div v-for="item in labels"
+               class="label"
+               :key="item.name">
+            {{ item.displayName }}
+          </div>
         </div>
       </div>
     </div>
@@ -54,6 +69,9 @@
           return item.id == id;
         });
         this.pictures.splice(index, 1);
+      },
+      addLabels() {
+        this.$router.push("/pages/lesson-add-labels");
       },
       async insertPicture() {
         if (this.pictures.length >= 3) {
@@ -93,6 +111,25 @@
       pictures() {
         return this.record.diary.pictures;
       },
+      labels() {
+        let selectedLabels = this.record.diary.labels;
+        let labels = this.$store.state.lesson.labels;
+
+        if (_.isEmpty(selectedLabels) || _.isEmpty(labels)) {
+          return [];
+        }
+
+        let r = [];
+        selectedLabels.forEach(name => {
+          if (labels[name]) {
+            r.push({
+              name,
+              displayName: labels[name].displayName
+            });
+          }
+        });
+        return r;
+      },
       dateText() {
         return moment(this.selectedDate).format("M[月]D[日]");
       },
@@ -112,12 +149,13 @@
       }
       this.save();
     },
-    mounted() {
+    activated() {
       this.$app.toolbars.create([{
         text: "完成",
         click: this.finish
       }]);
-
+    },
+    mounted() {
       this.$store.dispatch("lesson_getRecord").then(res => {
         this.record = res;
         this.$el.getElementsByClassName("input-box")[0].value = this.record.diary.text;
@@ -171,8 +209,13 @@
   }
 
   .picture-container {
-    @include flex-row;
     margin-top: 16px;
+    padding-top: 8px;
+    border-top: 1px solid $color-divider;
+  }
+
+  .picture-block {
+    @include flex-row;
   }
 
   .inserted-picture-wrap {
@@ -188,5 +231,34 @@
     background-color: white;
     opacity: 0.8;
     color: $color-secondary-text;
+  }
+
+  .label-container {
+    margin-top: 16px;
+    padding-top: 8px;
+    border-top: 1px solid $color-divider;
+  }
+
+  .label-block {
+    @include flex-row;
+    margin-top: 8px;
+  }
+
+  .label {
+    @include flex-row;
+    @include flex-center;
+    font-size: 12px;
+    position: relative;
+    width: 56px;
+    border-radius: 4px;
+    border: 1px solid $color-hint-text;
+    color: $color-text;
+    margin-right: 8px;
+    margin-bottom: 8px;
+  }
+
+  .note {
+    font-size: 12px;
+    color: $color-hint-text;
   }
 </style>

@@ -131,7 +131,7 @@ function updateComments(comments) {
   });
 }
 
-function updateData(diaries) {
+function updateData(diaries, context) {
   updateUserInfo(diaries);
   diaries.forEach(diary => {
     let pictures = [];
@@ -146,6 +146,26 @@ function updateData(diaries) {
     diary.dateWithoutYear = datetime.formatDiaryDateWithoutYear(diary.date);
     diary.week = datetime.formatDiaryWeek(diary.date);
     diary.escapedText = textHelper.escape(textHelper.getDiaryText(diary));
+
+    // 更新标签
+    if (context && !_.isEmpty(diary.labels)) {
+      let {
+        rootState
+      } = context;
+      let labels = rootState.lesson.labels;
+      if (!_.isEmpty(labels)) {
+        let updatedLabels = [];
+        diary.labels.forEach(name => {
+          if (labels[name]) {
+            updatedLabels.push({
+              name,
+              displayName: labels[name].displayName
+            });
+          }
+        });
+        diary.labels = updatedLabels;
+      }
+    }
   });
 }
 
@@ -306,7 +326,7 @@ const actions = {
   },
 
   diary_updateData(context, diaries) {
-    updateData(diaries);
+    updateData(diaries, context);
   },
 
   diary_addMap(context, diaries) {

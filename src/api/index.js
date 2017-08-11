@@ -4,6 +4,10 @@ axios.defaults.baseURL = config.apiAddress;
 axios.defaults.headers["Accept"] = "application/json";
 
 class api {
+  static getAllLabels() {
+    return axios.get("diary/getAllLabels");
+  }
+
   static getNewMessageCount(userid, fetchTime) {
     return axios.get("/users/newMessageCount", {
       params: {

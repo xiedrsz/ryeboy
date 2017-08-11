@@ -29,6 +29,14 @@
             </div>
             <div class="diary-text"
                  v-html="diary.escapedText"></div>
+            <div class="label-block"
+                 v-if="diary.labels">
+              <div class="label"
+                   v-for="label in diary.labels"
+                   :key="label.name">
+                {{ label.displayName }}
+              </div>
+            </div>
             <div class="lesson-block"
                  v-if="diary.cards">
               <div class="lesson-overview">
@@ -281,6 +289,7 @@
             let res = await api.getDiary(diaryId, this.userid);
             let diary = res.data;
 
+            await this.$store.dispatch("lesson_getLabels");
             diary.cards = await this.$store.dispatch("lesson_getCards", diary.checkedCards);
 
             users.push({
@@ -524,5 +533,24 @@
   .diary-likes i {
     color: $color-red;
     margin-right: 4px;
+  }
+
+  .label-block {
+    @include flex-row;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid $color-divider;
+  }
+
+  .label {
+    @include flex-row;
+    @include flex-center;
+    font-size: 12px;
+    position: relative;
+    width: 56px;
+    border-radius: 4px;
+    border: 1px solid $color-hint-text;
+    color: $color-text;
+    margin-right: 8px;
   }
 </style>
