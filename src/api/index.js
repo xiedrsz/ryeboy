@@ -4,6 +4,31 @@ axios.defaults.baseURL = config.apiAddress;
 axios.defaults.headers["Accept"] = "application/json";
 
 class api {
+  static getWechatUserInfo(access_token, openid) {
+    return axios.get("https://api.weixin.qq.com/sns/userinfo", {
+      params: {
+        access_token,
+        openid
+      }
+    });
+  }
+
+  static getWechatAccessToken(code) {
+    return axios.get("/getWechatAccessToken", {
+      params: {
+        code,
+      }
+    });
+  }
+
+  static ssoLogin(userid, platform, nickname) {
+    return axios.post("/ssoLogin", {
+      userid,
+      platform,
+      nickname
+    });
+  }
+
   static getAllLabels() {
     return axios.get("diary/getAllLabels");
   }

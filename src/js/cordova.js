@@ -39,7 +39,7 @@ class cordova {
         }
         if (data.build != build) {
           localStorage.setItem(key, data.build);
-          location.reload();
+          window.plugins.webViewReloader.reload();
         }
       }
     });

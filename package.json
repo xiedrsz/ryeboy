@@ -24,7 +24,10 @@
         "photoswipe": "^4.1.2",
         "vue": "^2.4.2",
         "vue-router": "^2.6.0",
-        "vuex": "^2.2.1"
+        "vuex": "^2.2.1",
+        "cordova-plugin-qqsdk": "https://github.com/iVanPan/Cordova_QQ",
+        "cordova-plugin-wechat": "https://github.com/xu-li/cordova-plugin-wechat",
+        "com.malex.cordova.plugin.webview-reloader": "https://github.com/osiuan/cordova-plugin-restarter"
     },
     "devDependencies": {
         "babel-core": "^6.24.0",
@@ -43,10 +46,12 @@
         "node-sass": "^4.5.3",
         "sass-loader": "^6.0.2",
         "vue-loader": "^10.3.0",
-        "vue-style-loader": "^3.0.1",
         "vue-template-compiler": "^2.4.2",
         "webpack": "^2.2.0",
         "webpack-dev-server": "^2.2.0"
+    },
+    "optionalDependencies": {
+        "fsevents": "*"
     },
     "cordova": {
         "plugins": {
@@ -54,7 +59,14 @@
             "cordova-plugin-device": {},
             "cordova-plugin-file-transfer": {},
             "cordova-plugin-whitelist": {},
-            "ionic-plugin-keyboard": {}
+            "ionic-plugin-keyboard": {},
+            "cordova-plugin-qqsdk": {
+                "QQ_APP_ID": "1105107986"
+            },
+            "cordova-plugin-wechat": {
+                "WECHATAPPID": "wxaab270fcdb52cebc"
+            },
+            "com.malex.cordova.plugin.webview-reloader": {}
         },
         "platforms": [
             "android"

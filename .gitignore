@@ -9,3 +9,5 @@ memo
 *.cmd
 /src/dist/
 src/js/config.json
+tools/ryeboy.keystore
+build.json

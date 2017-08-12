@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="org.ryeboy.app2" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="org.ryeboy.app.android" version="2.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>麦田男孩</name>
     <description />
     <author email="dev@ryeboy.org" href="http://ryeboy.org">ryeboy.org</author>
@@ -19,9 +19,16 @@
         <allow-intent href="itms-apps:*" />
     </platform>
     <engine name="android" spec="~6.2.3" />
+    <plugin name="com.malex.cordova.plugin.webview-reloader" spec="https://github.com/osiuan/cordova-plugin-restarter" />
     <plugin name="cordova-plugin-camera" spec="https://github.com/osiuan/cordova-plugin-camera.git" />
     <plugin name="cordova-plugin-device" spec="~1.1.6" />
     <plugin name="cordova-plugin-file-transfer" spec="~1.6.3" />
+    <plugin name="cordova-plugin-qqsdk" spec="https://github.com/iVanPan/Cordova_QQ">
+        <variable name="QQ_APP_ID" value="1105107986" />
+    </plugin>
+    <plugin name="cordova-plugin-wechat" spec="https://github.com/xu-li/cordova-plugin-wechat">
+        <variable name="WECHATAPPID" value="wxaab270fcdb52cebc" />
+    </plugin>
     <plugin name="cordova-plugin-whitelist" spec="1" />
     <plugin name="ionic-plugin-keyboard" spec="~2.2.1" />
 </widget>

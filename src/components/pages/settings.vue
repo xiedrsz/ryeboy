@@ -34,7 +34,7 @@
     methods: {
       logout() {
         this.$app.afterLogout();
-        window.location.href = window.location.origin;
+        window.plugins.webViewReloader.reload();
       },
       internal_clearLocalStorage() {
         localStorage.clear();
