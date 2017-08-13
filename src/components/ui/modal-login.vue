@@ -85,7 +85,6 @@
         account,
         password
       }) {
-        console.log(account, password);
         let res = await this.$app.api.login(account, password);
         let data = res.data;
 
@@ -105,12 +104,10 @@
           let clientInstalled = await wechat_checkClientInstalled();
           if (clientInstalled) {
             let res = await wechat_ssoLogin();
-            console.log(res);
             let {
               access_token,
               openid
             } = (await this.$app.api.getWechatAccessToken(res.code)).data;
-            console.log(access_token, openid);
             if (!openid) {
               throw "invalid openid";
             }
@@ -119,13 +116,12 @@
               nickname
             } = (await this.$app.api.getWechatUserInfo(access_token, openid)).data;
             res = await this.$app.api.ssoLogin(userid, "wechat", nickname);
-            await this.relatedLogin(res);
+            await this.relatedLogin(res.data);
           } else {
             this.$app.toast("你还没有安装微信");
           }
         } catch (error) {
           this.$app.toast("登录失败");
-          console.log(error);
         }
       },
       async qqLogin() {
@@ -136,7 +132,6 @@
           let clientInstalled = await qq_checkClientInstalled();
           if (clientInstalled) {
             let res = await qq_ssoLogin();
-            console.log(res);
             res = await this.$app.api.ssoLogin(res.userid, "qq");
             await this.relatedLogin(res.data);
           } else {
@@ -144,7 +139,6 @@
           }
         } catch (error) {
           this.$app.toast("登录失败");
-          console.log(error);
         }
       },
       accountLogin() {
