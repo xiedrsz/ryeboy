@@ -67,7 +67,9 @@
             "cordova-plugin-wechat": {
                 "WECHATAPPID": "wxaab270fcdb52cebc"
             },
-            "com.malex.cordova.plugin.webview-reloader": {}
+            "com.malex.cordova.plugin.webview-reloader": {},
+            "cordova-plugin-fileopener": {},
+            "cordova-plugin-inappbrowser": {}
         },
         "platforms": [
             "android"

@@ -13,6 +13,8 @@
       <list-item text="意见反馈"
                  route="/pages/feedback"></list-item>
       <list-item text="检查版本"
+                 @click.native="checkVersion"
+                 :secondaryText="currentVersion"
                  :divider="false"></list-item>
     </list>
     <div v-if="authenticated"
@@ -32,6 +34,26 @@
       "list-item": require("components/ui/list-item.vue")
     },
     methods: {
+      checkVersion() {
+        try {
+          let platform = this.$app.platform || "android";
+          let {
+            latest,
+            latestDescription
+          } = window.app.serverVersion.client[platform];
+          if (latest > window.app.client) {
+            this.$app.dialog.promptHtml(
+              "发现新版本：" + latestDescription + "<br><br><div style='color:rgba(0,0,0,.87)'>你确定要更新吗？</div>",
+               this.$app.updateClient);
+          } else {
+            this.$app.dialog.text("已经是最新版本。");
+          }
+        } catch (error) {
+          console.log(error);
+        }
+
+        // if (window.app.client)
+      },
       logout() {
         this.$app.afterLogout();
         this.$app.reload();
@@ -52,6 +74,9 @@
       }
     },
     computed: {
+      currentVersion() {
+        return "当前版本 " + window.app.version;
+      },
       authenticated() {
         return this.$store.state.user.authenticated;
       }

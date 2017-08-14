@@ -24,6 +24,36 @@ class app {
     }
   }
 
+  // 更新客户端
+  updateClient() {
+    if (!this.deviceready) {
+      return;
+    }
+
+    if (this.platform == "ios") {
+      this.toast("下载和安装会在后台进行");
+
+      let {
+        latest
+      } = window.app.serverVersion.client[this.platform];
+      let url = `itms-services://?action=download-manifest&url=${config.ossAddress}/ios/${latest}/manifest.plist`;
+      cordova.exec(null, null, "InAppBrowser", "open", [encodeURI("itms-services://?action=download-manifest&url=" + url), "_system"]);
+    } else {
+      this.toast("开始后台下载更新包");
+
+      let {
+        latestUrl
+      } = window.app.serverVersion.client[this.platform];
+      window.cordova.plugins.FileOpener.openFile(
+        latestUrl,
+        function() {},
+        function(error) {
+          console.log(error);
+        }
+      );
+    }
+  }
+
   delay(timeout) {
     return new Promise(resolve => {
       setTimeout(() => {

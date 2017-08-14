@@ -10,6 +10,7 @@
     <modal-dialog v-show="dialog.show"
                   :type="dialog.type"
                   :content="dialog.content"
+                  :isHtmlContent="dialog.isHtmlContent"
                   :title="dialog.title"
                   @ok="dialogOkCallback"
                   @cancel="dialogCancelCallback"></modal-dialog>

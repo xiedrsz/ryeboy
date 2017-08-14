@@ -11,6 +11,7 @@ const state = {
     type: "alert",
     title: "",
     content: "",
+    isHtmlContent: false,
     okCallback: null,
     cancelCallback: null,
   },

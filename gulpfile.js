@@ -5,7 +5,7 @@ var del = require("del");
 var insert = require("gulp-insert");
 
 function outputAppJsonp() {
-  gulp.src("src/js/app.json")
+  gulp.src("src/js/app.version.json")
     .pipe(insert.prepend("jsonpCallback("))
     .pipe(insert.append(");"))
     .pipe(gulp.dest("server"));
