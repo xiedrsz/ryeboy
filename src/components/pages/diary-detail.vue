@@ -61,12 +61,20 @@
               <div>{{ diary.time }}</div>
               <div class="mdl-layout-spacer"></div>
               <div class="diary-counts">
-                <i class="material-icons md-16"
-                   @click="setLike"
-                   :class="{ 'diary-like': diary.like }">{{ diary.like ? "favorite" : "favorite_border" }}</i>
-                <span style="margin-right: 24px">{{ diary.likeCount }}</span>
-                <i class="material-icons md-16">comment</i>
-                <span>{{ diary.commentCount }}</span>
+                <div @click="setLike">
+                  <i class="material-icons md-16"
+                     :class="{ 'diary-like': diary.like }">{{ diary.like ? "favorite" : "favorite_border" }}</i>
+                  <span>{{ diary.likeCount }}</span>
+                </div>
+                <div @click="setFavorite">
+                  <i class="material-icons md-16"
+                     :class="{ 'diary-favorite': diary.favorite }">{{ diary.favorite ? "star" : "star_border" }}</i>
+                  <span>{{ diary.favoriteCount }}</span>
+                </div>
+                <div>
+                  <i class="material-icons md-16">comment</i>
+                  <span>{{ diary.commentCount }}</span>
+                </div>
               </div>
             </div>
             <div class="diary-likes"
@@ -137,6 +145,14 @@
       };
     },
     methods: {
+      confirmLogin() {
+        if (this.authenticated) {
+          return true;
+        } else {
+          this.$app.login(this.$route.fullPath);
+          return false;
+        }
+      },
       getUsername() {
         return this.$app.textHelper.getUserName(this.$app.user);
       },
@@ -152,35 +168,58 @@
         });
         this.$root.$refs.gallery.open(index, list);
       },
+      async setFavorite() {
+        if (!this.confirmLogin()) {
+          return;
+        }
+        try {
+          let user = this.$app.user;
+          let res = await this.$app.api.setFavorite(this.diary._id, user._id);
+          this.diary.favorite = res.data.favorite;
+          if (res.data.favorite) {
+            this.$app.toast("已收藏");
+            this.diary.favoriteCount++;
+          } else {
+            this.$app.toast("已取消收藏");
+            this.diary.favoriteCount--;
+          }
+        } catch (error) {
+          this.$app.showNetworkError();
+        }
+      },
       async setLike() {
-        if (!this.authenticated) {
-          this.$app.login(this.$route.fullPath);
+        if (!this.confirmLogin()) {
           return;
         }
 
-        let user = this.$app.user;
-        let res = await this.$app.api.setLike(this.diary._id, user._id);
+        try {
+          let user = this.$app.user;
+          let res = await this.$app.api.setLike(this.diary._id, user._id);
 
-        this.diary.like = res.data.like;
+          this.diary.like = res.data.like;
 
-        if (res.data.like) {
-          this.diary.likes.unshift({
-            userid: user._id,
-            username: this.getUsername(),
-            createdAt: res.data.createdAt
-          });
-          this.diary.likeCount++;
-        } else {
-          let index = this.diary.likes.findIndex(item => {
-            return item.userid == user._id;
-          });
-          if (index >= 0) {
-            this.diary.likes.splice(index, 1);
+          if (res.data.like) {
+            this.diary.likes.unshift({
+              userid: user._id,
+              username: this.getUsername(),
+              createdAt: res.data.createdAt
+            });
+            this.diary.likeCount++;
+          } else {
+            let index = this.diary.likes.findIndex(item => {
+              return item.userid == user._id;
+            });
+            if (index >= 0) {
+              this.diary.likes.splice(index, 1);
+            }
+            this.diary.likeCount--;
           }
-          this.diary.likeCount--;
+
+          this.$store.dispatch("diary_resetLikeData", this.diary._id);
+        } catch (error) {
+          this.$app.showNetworkError();
         }
 
-        this.$store.dispatch("diary_resetLikeData", this.diary._id);
       },
       copyComment() {},
       replyComment() {
@@ -201,8 +240,7 @@
         ], this);
       },
       async sendComment() {
-        if (!this.authenticated) {
-          this.$app.login(this.$route.fullPath);
+        if (!this.confirmLogin()) {
           return;
         }
         if (this.comment) {

@@ -34,12 +34,28 @@
   align-items: center;
 }
 
+.diary-counts span {
+  margin-left: 3px;
+}
+
+.diary-counts div {
+  @include flex-row;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  margin-right: 16px;
+}
+
+.diary-counts div:last-child {
+  margin-right: 0;
+}
+
 .diary-like {
   color: $color-red;
 }
 
-.diary-counts span {
-  margin-left: 4px;
+.diary-favorite {
+  color: #FFC107;
 }
 
 .diary-picture {

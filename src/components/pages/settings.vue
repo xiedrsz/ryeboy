@@ -34,7 +34,7 @@
     methods: {
       logout() {
         this.$app.afterLogout();
-        window.plugins.webViewReloader.reload();
+        this.$app.reload();
       },
       internal_clearLocalStorage() {
         localStorage.clear();

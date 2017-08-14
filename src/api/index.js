@@ -133,11 +133,19 @@ class api {
   }
 
   static getFavorites(userid, last) {
-    return axios.get("/favorites", {
+    return axios.get("/getFavorites", {
       params: {
         userid,
         last
       }
+    });
+  }
+
+  static setFavorite(id, userid) {
+    return axios.post("/setFavorite", {
+      id,
+      userid,
+      type: 1
     });
   }
 

@@ -16,6 +16,14 @@ import _ from "lodash";
 require("lazysizes");
 
 class app {
+  reload() {
+    if (window.plugins && window.plugins.webViewReloader) {
+      window.plugins.webViewReloader.reload();
+    } else {
+      window.location.href = window.location.origin;
+    }
+  }
+
   delay(timeout) {
     return new Promise(resolve => {
       setTimeout(() => {
@@ -30,6 +38,10 @@ class app {
 
   showStarupError() {
     document.querySelector(".startup-status").style.visibility = "visible";
+  }
+
+  showNetworkError() {
+    this.toast("无法完成操作，可能是网络不给力。");
   }
 
   // 登录之后的一些处理
@@ -212,7 +224,7 @@ class app {
     if (localStorage.authenticated) {
       store.dispatch("lesson_loadSettings");
       store.dispatch("user_getNewMessageCount");
-    }  
+    }
   }
 
   constructor() {
