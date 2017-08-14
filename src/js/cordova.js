@@ -1,4 +1,4 @@
-class cordova {
+module.exports = class {
   back() {
     let store = this.app.vue.$store;
 
@@ -79,8 +79,12 @@ class cordova {
       document.addEventListener("pause", this.pause.bind(this), false);
       window.addEventListener("native.keyboardhide", this.keyboardhide.bind(this));
       window.addEventListener("native.keyboardshow", this.keyboardshow.bind(this));
+
+      app.plugins = {
+        clipboard: cordova.plugins.clipboard,
+        webViewReloader: window.plugins.webViewReloader,
+        FileOpener: window.cordova.plugins.FileOpener
+      };
     }, false);
   }
-}
-
-module.exports = cordova;
+};

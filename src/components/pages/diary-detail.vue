@@ -223,14 +223,10 @@
 
       },
       copyComment() {
-        if (this.$app.deviceready) {
-          cordova.plugins.clipboard.copy(this.selectedComment.content);
-        }
+        this.$app.copyToClipboard(this.selectedComment.content);
       },
       copyDiaryText() {
-        if (this.$app.deviceready) {
-          cordova.plugins.clipboard.copy(this.diary.text);
-        }
+        this.$app.copyToClipboard(this.diary.text);
       },
       replyComment() {
         this.reply = this.selectedComment.userid;

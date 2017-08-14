@@ -28,7 +28,10 @@
         "vuex": "^2.2.1",
         "cordova-plugin-qqsdk": "https://github.com/iVanPan/Cordova_QQ",
         "cordova-plugin-wechat": "https://github.com/xu-li/cordova-plugin-wechat",
-        "com.malex.cordova.plugin.webview-reloader": "https://github.com/osiuan/cordova-plugin-restarter"
+        "com.malex.cordova.plugin.webview-reloader": "https://github.com/osiuan/cordova-plugin-restarter",
+        "cordova-plugin-fileopener": "~1.0.5",
+        "cordova-plugin-inappbrowser": "~1.7.1",
+        "cordova-universal-clipboard": "~0.1.0"
     },
     "devDependencies": {
         "babel-core": "^6.24.0",

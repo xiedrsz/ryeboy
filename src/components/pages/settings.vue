@@ -44,7 +44,7 @@
           if (latest > window.app.client) {
             this.$app.dialog.promptHtml(
               "发现新版本：" + latestDescription + "<br><br><div style='color:rgba(0,0,0,.87)'>你确定要更新吗？</div>",
-               this.$app.updateClient);
+               this.$app.updateClient.bind(this.$app));
           } else {
             this.$app.dialog.text("已经是最新版本。");
           }

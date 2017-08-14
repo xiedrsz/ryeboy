@@ -90,9 +90,7 @@
         }
       },
       copy() {
-        if (this.$app.deviceready) {
-          cordova.plugins.clipboard.copy(this.selectedItem.content);
-        }
+        this.$app.copyToClipboard(this.selectedItem.content);
       },
       reply() {
         this.enableReply = true;

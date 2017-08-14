@@ -18,7 +18,8 @@
     "Camera": false,
     "FileTransfer": false,
     "QQSDK": false,
-    "Wechat": false
+    "Wechat": false,
+    "cordova": false
   },
   "rules": {
     "indent": [

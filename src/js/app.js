@@ -17,10 +17,17 @@ require("lazysizes");
 
 class app {
   reload() {
-    if (window.plugins && window.plugins.webViewReloader) {
-      window.plugins.webViewReloader.reload();
+    if (this.deviceready) {
+      this.plugins.webViewReloader.reload();
     } else {
       window.location.href = window.location.origin;
+    }
+  }
+
+  copyToClipboard(text) {
+    if (this.deviceready) {
+      this.plugins.clipboard.copy(text);
+      this.toast("已复制");
     }
   }
 
@@ -44,7 +51,7 @@ class app {
       let {
         latestUrl
       } = window.app.serverVersion.client[this.platform];
-      window.cordova.plugins.FileOpener.openFile(
+      this.plugins.FileOpener.openFile(
         latestUrl,
         function() {},
         function(error) {

@@ -23,6 +23,8 @@
     <plugin name="cordova-plugin-camera" spec="https://github.com/osiuan/cordova-plugin-camera.git" />
     <plugin name="cordova-plugin-device" spec="~1.1.6" />
     <plugin name="cordova-plugin-file-transfer" spec="~1.6.3" />
+    <plugin name="cordova-plugin-fileopener" spec="~1.0.5" />
+    <plugin name="cordova-plugin-inappbrowser" spec="~1.7.1" />
     <plugin name="cordova-plugin-qqsdk" spec="https://github.com/iVanPan/Cordova_QQ">
         <variable name="QQ_APP_ID" value="1105107986" />
     </plugin>
@@ -30,8 +32,6 @@
         <variable name="WECHATAPPID" value="wxaab270fcdb52cebc" />
     </plugin>
     <plugin name="cordova-plugin-whitelist" spec="1" />
-    <plugin name="ionic-plugin-keyboard" spec="~2.2.1" />
-    <plugin name="cordova-plugin-fileopener" spec="~1.0.5" />
-    <plugin name="cordova-plugin-inappbrowser" spec="~1.7.1" />
     <plugin name="cordova-universal-clipboard" spec="~0.1.0" />
+    <plugin name="ionic-plugin-keyboard" spec="~2.2.1" />
 </widget>
