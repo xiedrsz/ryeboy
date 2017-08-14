@@ -69,7 +69,8 @@
             },
             "com.malex.cordova.plugin.webview-reloader": {},
             "cordova-plugin-fileopener": {},
-            "cordova-plugin-inappbrowser": {}
+            "cordova-plugin-inappbrowser": {},
+            "cordova-universal-clipboard": {}
         },
         "platforms": [
             "android"

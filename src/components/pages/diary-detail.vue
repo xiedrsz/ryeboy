@@ -28,6 +28,7 @@
               </div>
             </div>
             <div class="diary-text"
+                 @click="openDiaryTextActions"
                  v-html="diary.escapedText"></div>
             <div class="label-block"
                  v-if="diary.labels">
@@ -221,11 +222,27 @@
         }
 
       },
-      copyComment() {},
+      copyComment() {
+        if (this.$app.deviceready) {
+          cordova.plugins.clipboard.copy(this.selectedComment.content);
+        }
+      },
+      copyDiaryText() {
+        if (this.$app.deviceready) {
+          cordova.plugins.clipboard.copy(this.diary.text);
+        }
+      },
       replyComment() {
         this.reply = this.selectedComment.userid;
         this.comment = "";
         this.$el.querySelector(".input-box").focus();
+      },
+      openDiaryTextActions() {
+        this.$app.actionSheet.show([
+          {
+            text: "复制",
+            click: this.copyDiaryText.bind(this),
+          }], this);
       },
       openCommentActions(comment) {
         this.selectedComment = comment;
