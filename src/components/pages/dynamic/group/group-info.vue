@@ -33,8 +33,7 @@
               <span class="group-name">分享小组二维码</span>
             </router-link>
           </span>
-        </li>-->
-        
+        </li>
         <li class="info-item">
           <span class="info-left"></span>
           <span class="info-right right-arrow">
@@ -43,25 +42,22 @@
             </router-link>
           </span>
         </li>
-        <!-- 功能未实现，暂时屏蔽跳转 -->
-        <!-- @click="$router.push('/dynamic/group-grade')" -->
-        <li class="info-item">
+        <li class="info-item" @click="$router.push('/dynamic/group-grade')">
           <span class="info-left">等级</span>
           <span class="info-right right-arrow">
             <span class="group-name">{{groupInfo.level+"/"+groupInfo.levelMax}}</span>
             <i class="material-icons md-16 group-level">favorite</i>
-            <!-- <i class="material-icons md-36 navigate_next">navigate_next</i> -->
+            <i class="material-icons md-36 navigate_next">navigate_next</i>
           </span>
         </li>
-        <!-- 功能未实现，暂时屏蔽跳转 -->
-        <!-- @click="$router.push('/dynamic/group-medal')" -->
-        <li class="info-item">
+        <li class="info-item" @click="$router.push('/dynamic/group-medal')">
           <span class="info-left">勋章</span>
           <span class="info-right right-arrow">
             <span class="group-name">{{groupInfo.medal+"/"+groupInfo.medalMax}}</span>
-            <!-- <i class="material-icons md-36 navigate_next">navigate_next</i> -->
+            <i class="material-icons md-36 navigate_next">navigate_next</i>
           </span>
-        </li>
+        </li>-->
+        
         <li class="info-item">
           <span class="info-left">适合人群</span>
           <span class="info-right right-arrow">
@@ -121,9 +117,6 @@
           return creator === user._id;
         }
     },
-    created() {
-      // !this.groupInfo._id && this.getGroupInfo();
-    },
     mounted() {
       // 监听 设置 事件
       this.$on("group-setting", () => {
@@ -139,12 +132,8 @@
       });
     },
     methods: {
-      // 获取小组信息
-      getGroupInfo() {
-          // this.$store.dispatch("getGroupInfo", "593a4a596d3b3619b82de164");
-        },
-        // 更换头像，未实现
-        changeAvater() {
+      // 更换头像，未实现
+      changeAvater() {
           this.$router.push({
             path: "/dynamic/group-avatar",
           });

@@ -4,9 +4,9 @@
 
       <li v-for="item in applys" class="mdl-list__item mdl-list__item--bottom-divider">
         <img :src="item.avatar" width="36" height="36" />
-        <div class="apply-list-content" @click="detail(item.id)">
+        <div class="apply-list-content" @click="$router.push('/pages/user-detail?id=' + item.id)">
           <span class="apply-name">{{item.username}}</span>
-          <span class="apply-name">{{"等级："+item.level}}</span>
+          <span class="apply-name">{{"LV"+(item.level||1)}}</span>
         </div>
 
         <span v-show="item.rejected||item.approved" class="mdl-list__item-note">
@@ -46,14 +46,12 @@
         // 拒绝
         reject(uesrId) {
           this.$store.dispatch("rejectApply", {
-            groupId: "593a4a596d3b3619b82de164",
             uesrId
           });
         },
         // 同意
         approve(uesrId) {
           this.$store.dispatch("agreeApply", {
-            groupId: "593a4a596d3b3619b82de164",
             uesrId
           });
         },

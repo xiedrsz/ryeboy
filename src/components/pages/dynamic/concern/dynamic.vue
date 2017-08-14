@@ -23,7 +23,6 @@
             </diary-item>
           </ul>
           <unusual-loading :option.syn="loading" @reload="getDynamic"></unusual-loading>
-
           <infinite-scroll v-if="true" :onInfinite="infinite">
             <div slot="no-more">没有更多内容了</div>
           </infinite-scroll>
@@ -79,7 +78,6 @@
             addType: 'push',
             infiniteScroll
           });
-          // this.$store.dispatch("getDynamic", infiniteScroll);
         }
     },
     activated() {

@@ -6,57 +6,56 @@ const config = require("js/config.js");
 const datetime = require("js/utils/datetime.js");
 const textHelper = require("js/utils/textHelper.js");
 
+let gLast = {
+  newest: 0,
+  hottest: 0,
+  level: 0
+};
+let dLast = {
+  recommend: 0,
+  newest: 0,
+  hottest: 0,
+  coldest: 0,
+  untouched: 0
+};
+
 // 默认小组列表分类
 let defaultGroupChannels = [
   {
-    id: "essence",
+    id: "recommend",
     name: "精品"
   },
   {
-    id: "latest",
+    id: "newest",
     name: "最新"
   },
   {
-    id: "welcome",
+    id: "hottest",
     name: "最热"
   },
   {
-    id: "unwelcome",
-    name: "我未评论"
+    id: "coldest",
+    name: "评论数很少"
   },
   {
-    id: "problems",
-    name: "0-2个评论"
+    id: "untouched",
+    name: "我未评论"
   }
 ];
 
 let defaultGroupClass = [
   {
-    id: "all",
-    name: "全部"
-  },
-  {
-    id: "latest",
+    id: "newest",
     name: "最新"
   },
   {
-    id: "welcome",
+    id: "hottest",
     name: "最热"
   },
-  /*{
-    id: "level",
-    name: "等级"
-  },
   {
-    id: "honor",
-    name: "荣誉"
-  }, {
-    id: "littleBoy",
-    name: "16-23"
-  }, {
-    id: "BigBoy",
-    name: "24-30"
-  }*/
+    id: "level",
+    name: "等级从高到低"
+  }
 ];
 
 /**
@@ -88,7 +87,7 @@ function addUsers(users) {
     } else {
       user.avatar = require("img/default-avatar.png");
     }
-    
+
     state.users[user._id] = user;
   });
 }
@@ -125,9 +124,16 @@ function addMap(list) {
 const state = {
   // 用户映射表
   users: {},
-  
+
   // 小组列表
   groups: [],
+
+  // 小组，没有更多
+  gNomore: {
+    newest: false,
+    hottest: false,
+    level: false
+  },
 
   // 查找小组结果页
   searchList: [],
@@ -154,6 +160,15 @@ const state = {
 
   // 小组日记
   groupDiaries: [],
+
+  // 小组日记， 没有更多
+  dNomore: {
+    recommend: false,
+    newest: false,
+    hottest: false,
+    coldest: false,
+    untouched: false
+  },
 
   // 花生小组信息，用于修改或查看小组信息
   groupInfo: {
@@ -186,14 +201,12 @@ const getters = {
         channels = state.channels,
         groupDiaries = state.groupDiaries;
 
-      console.log('日记暂未分类');
-      result[channels[0].id] = groupDiaries;
-      /*_.forEach(channels, (item) => {
+      _.forEach(channels, (item) => {
         label = item.id;
-        result[label] = _.filter(state.groupDiaries, {
-          channel: label
+        result[label] = _.filter(groupDiaries, {
+          filter: label
         });
-      });*/
+      });
 
       return result;
     },
@@ -208,15 +221,12 @@ const getters = {
         groupClass = state.groupClass,
         groups = state.groups;
 
-      // 暂时屏蔽分类
-      /*_.forEach(groupClass, (item) => {
+      _.forEach(groupClass, (item) => {
         label = item.id;
-        result[label] = _.filter(state.groups, (tmp) => {
-          return tmp.classify.indexOf(label) > -1
+        result[label] = _.filter(groups, {
+          filter: label
         });
-      });*/
-
-      result.all = groups;
+      });
 
       return result
     }
@@ -232,6 +242,10 @@ const mutations = {
         !!item.avatar && (item.avatar = config.apiAddress + item.avatar);
       });
       state.groups.push.apply(state.groups, list);
+    },
+
+    group_setGNomore(state, newst) {
+      _.assign(state.gNomore, newst);
     },
 
     /**
@@ -300,6 +314,10 @@ const mutations = {
       state.groupDiaries.push.apply(state.groupDiaries, list);
     },
 
+    group_setdNomore(state, newst) {
+      _.assign(state.dNomore, newst);
+    },
+
     /**
      * @Description 修改小组日记
      * @Param obj Object 新日记信息 eg: { _id: xx, ... }
@@ -337,24 +355,35 @@ const mutations = {
 const actions = {
   // 获取小组列表, 基本完成
   async getGroups({
-      commit
-    }, name) {
-      let res = await api.getGroups(name),
-        groups = res.data,
-        defInfo = {
-          note: "加入",
+      commit,
+      rootState
+    }, option) {
+      let filter = option.filter;
+      let last = gLast[filter];
+      let res = await api.getGroups(filter, last);
+      let groups = res.data;
+      let defInfo = {
+        note: "加入",
+        filter,
 
-          // 补，后期要删除
-          memNum: 1,
-          memMax: 50,
-          levelMax: 5,
-          medalMax: 30
-        };
+        // 补，后期要删除
+        memNum: 1,
+        memMax: 50,
+        levelMax: 5,
+        medalMax: 30
+      };
+      let myGroupId = rootState.user.groupId;
+      !!myGroupId && (defInfo.note = '');
 
       _.forEach(groups, (item) => {
         _.assign(item, defInfo);
+        (item._id === myGroupId) && (item.note = '已加入');
       });
 
+      let nomore = {};
+      nomore[filter] = groups.length < config.pageSize.normal;
+      !nomore[filter] && (gLast[filter] += 20);
+      commit("group_setGNomore", nomore);
       commit("group_pushGroup", res.data);
     },
 
@@ -435,11 +464,11 @@ const actions = {
       let groupId = state.groupInfo._id;
       let res = await api.getApplys(groupId);
       let list = res.data;
-      
+
       _.forEach(list, item => {
         item.userid = item.id;
       });
-      
+
       // 加入用户资料
       let users = getUnmappedUsers(list);
       let resTmp;
@@ -454,12 +483,13 @@ const actions = {
 
     // 同意申请, 基本完成
     async agreeApply({
-      commit
+      commit,
+      state
     }, option) {
-      let groupId = option.groupId,
-        uesrId = option.uesrId,
-        callback = option.callback,
-        res = await api.agreeApply(groupId, uesrId);
+      let groupId = state.groupInfo._id;
+      let uesrId = option.uesrId;
+      let callback = option.callback;
+      let res = await api.agreeApply(groupId, uesrId);
 
       commit("group_saveApplys", {
         id: uesrId,
@@ -469,11 +499,12 @@ const actions = {
 
     // 拒绝申请, 基本完成
     async rejectApply({
-      commit
+      commit,
+      state
     }, option) {
-      let groupId = option.groupId,
-        uesrId = option.uesrId,
-        res = await api.rejectApply(groupId, uesrId);
+      let groupId = state.groupInfo._id;
+      let uesrId = option.uesrId;
+      let res = await api.rejectApply(groupId, uesrId);
 
       commit("group_saveApplys", {
         id: uesrId,
@@ -483,11 +514,15 @@ const actions = {
 
     // 获取小组日记, 基本完成
     async getGroupDiaries({
-      commit
-    }, id) {
-      let res = await api.getGroupDiaries(id);
+      commit,
+      rootState
+    }, option) {
+      let id = rootState.user.groupId;
+      let filter = option.filter;
+      let last = dLast[filter];
+      let res = await api.getGroupDiaries(id, filter, last);
       let diaries = res.data.diaries;
-      
+
       // 加入用户资料
       let users = getUnmappedUsers(diaries);
       let resTmp;
@@ -498,6 +533,14 @@ const actions = {
       addMap(diaries);
       updateDairy(diaries);
 
+      _.forEach(diaries, item => {
+        item.filter = filter;
+      });
+
+      let nomore = {};
+      nomore[filter] = diaries.length < config.pageSize.normal;
+      !nomore[filter] && (dLast[filter] += 20);
+      commit("group_setdNomore", nomore);
       commit("group_pushDiaries", diaries);
     },
 

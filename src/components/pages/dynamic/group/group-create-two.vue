@@ -3,16 +3,16 @@
     <div class="group-info-list">
       <div class="group-info-item">
         <div class="info-item-title">
-          <span>起个好名字，让团更有吸引力</span>
-          <span>12个</span>
+          <span>起个好名字，让小组更有吸引力</span>
+          <span>5个字</span>
         </div>
-        <input type="text" v-model="name" class="info-item" placeholder="12个字以内" />
+        <input type="text" v-model="name" class="info-item" placeholder="2-10个字符，可以是汉字、数字、字母" />
       </div>
     </div>
     <div class="group-info-list">
       <div class="group-info-item">
         <div class="info-item-title">
-          <span>团简介</span>
+          <span>小组简介</span>
           <span>40个</span>
         </div>
         <textarea v-model="description" rows="3" placeholder="40个以内" />
@@ -43,6 +43,10 @@
         this.$app.toolbars.create([{
           text: "下一步",
           click() {
+            if (!that.name) {
+              that.$promp('小组名字不能为空哦！');
+              return
+            }
             that.saveInfo();
             that.$router.push({
               path: '/dynamic/group-create-three'

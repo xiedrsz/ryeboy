@@ -73,7 +73,7 @@
       "spinner": require("ui/spinner.vue"),
       "pull-to-refresh": require("ui/pull-to-refresh.vue"),
       "infinite-scroll": require("ui/infinite-scroll.vue"),
-    },
+    }
   };
 </script>
 

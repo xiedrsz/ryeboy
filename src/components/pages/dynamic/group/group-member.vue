@@ -26,11 +26,11 @@
         </li>
       </ul>
 
-      <list v-if="isCreator">
+      <ul class="member-list" v-if="isCreator">
         <router-link to="/dynamic/group-apply" class="mdl-navigation__link">
           <list-item text="群组申请" />
         </router-link>
-      </list>
+      </ul>
     </div>
   </div>
 </template>
@@ -75,10 +75,8 @@
           return this.orders[orderBy]
         }
     },
-    created() {
-      this.getMembers();
-    },
     activated() {
+      this.getMembers();
       // 排序
       let that = this;
       this.$app.toolbars.create([{

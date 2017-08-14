@@ -1,11 +1,12 @@
 <template>
   <div>
     <div class="dynamic_page" v-if="authenticated">
-      <list>
+      <!-- 功能未完善，暂时屏蔽 -->
+      <!--<list>
         <router-link to="/dynamic/subscrible" class="mdl-navigation__link">
           <list-item text="订阅" to/>
         </router-link>
-      </list>
+      </list>-->
       <list>
         <router-link to="/dynamic/concern/dynamic" class="mdl-navigation__link">
           <list-item text="关注" to/>
@@ -13,15 +14,16 @@
       </list>
       <list>
         <a class="mdl-navigation__link" @click="group">
-          <list-item text="小组" />
+          <list-item text="互助小组" />
         </a>
       </list>
-      <list>
+      <!-- 功能未完善，暂时屏蔽 -->
+      <!--<list>
         <list-item text="晨练" />
         <router-link to="/dynamic/plan" class="mdl-navigation__link">
           <list-item text="麦田" />
         </router-link>
-      </list>
+      </list>-->
     </div>
     <div class="page-layout unauthenticated"
            v-if="!authenticated">

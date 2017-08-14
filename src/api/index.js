@@ -349,11 +349,12 @@ class api {
     return axios.get("/labels")
   }
 
-  // 获取小组列表, T
-  static getGroups(name) {
+  // 获取小组列表, 貌似没有按名字查询的, name
+  static getGroups(filter, last) {
     return axios.get("/groups", {
       params: {
-        name: ""
+        filter,
+        last
       }
     })
   }
@@ -411,8 +412,13 @@ class api {
   }
 
   // 根据id获取对应小组的成员日记, T
-  static getGroupDiaries(id) {
-    return axios.get(`/group/${id}/diaries`)
+  static getGroupDiaries(id, filter, last) {
+    return axios.get(`/group/${id}/diaries`, {
+      params: {
+        filter,
+        last
+      }
+    })
   }
 
   // 获取小组资料, T

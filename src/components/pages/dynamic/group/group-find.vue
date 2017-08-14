@@ -11,21 +11,24 @@
       <swipe ref="swipe" @slidechanged="slideChanged">
         <swipe-slide v-for="channel in groupClass" :id="channel.id">
           <div class="slide-content">
-            <ul class="find-list">
 
-              <li class="mdl-list__item mdl-list__item--bottom-divider" v-for="(item, index) in groups[channel.id]" @click="view(item)">
-                <img :src="item.avatar||'/img/default-avatar.png'" width="36" height="36" />
-                <div class="find-list-content">
-                  <span class="group-name">{{item.name}}</span>
-                  <span class="group-level"> {{item.level+"/"+item.levelMax}}
-                    <i v-for="i in new Array(item.level)" class="material-icons md-12 star-gray">star</i>
-                  </span>
-                  <span class="group-info">小组描述:{{item.description}}</span>
-                </div>
-                <span @click.stop="join(item._id, item.note)" class="mdl-list__item-note">{{item.note}}</span>
-              </li>
+            <loadable-content :nomore="gNomore[channel.id]" loadstate="infin" :infinite="getMore(channel.id)">
+              <ul class="find-list">
+                <li class="mdl-list__item mdl-list__item--bottom-divider" v-for="(item, index) in groups[channel.id]" @click="view(item)">
+                  <img :src="item.avatar||'/img/default-avatar.png'" width="36" height="36" />
+                  <div class="find-list-content">
+                    <span class="group-name">{{item.name}}</span>
+                    <!-- 功能未完善，暂时屏蔽 -->
+                    <!--<span class="group-level"> {{item.level+"/"+item.levelMax}}
+                      <i v-for="i in new Array(item.level)" class="material-icons md-12 star-gray">star</i>
+                    </span>-->
+                    <span class="group-info">小组描述:{{item.description}}</span>
+                  </div>
+                  <span v-if="item.note" @click.stop="join(item._id, item.note)" class="mdl-list__item-note">{{item.note}}</span>
+                </li>
+              </ul>
+            </loadable-content>
 
-            </ul>
           </div>
         </swipe-slide>
       </swipe>
@@ -36,92 +39,101 @@
   import _ from "lodash";
 
   export default {
+    components: {
+      "spinner": require("ui/spinner.vue"),
+      "swipe": require("ui/swipe.vue"),
+      "swipe-slide": require("ui/swipe-slide.vue"),
+      "pull-to-refresh": require("ui/pull-to-refresh.vue")
+    },
     data() {
-        return {
-          classSelected: "all"
-        };
-      },
-      components: {
-        "spinner": require("ui/spinner.vue"),
-        "swipe": require("ui/swipe.vue"),
-        "swipe-slide": require("ui/swipe-slide.vue"),
-        "pull-to-refresh": require("ui/pull-to-refresh.vue"),
-        "infinite-scroll": require("ui/infinite-scroll.vue"),
-      },
-      created() {
-        let groups = this.$store.state.group.groups;
-        !groups[0] && this.getGroups();
-      },
-      computed: {
-        groupClass() {
-            return this.$store.state.group.groupClass;
-          },
-          groups() {
-            return this.$store.getters.getGroupList;
-          }
-      },
-      activated() {
-        // 监听 创建组 事件
-        let that = this;
-        let options = [{
-          icon: "search",
-          click() {
-            console.log('search');
-          }
+      return {
+        classSelected: "newest"
+      };
+    },
+    computed: {
+      groupClass() {
+          return this.$store.state.group.groupClass;
+        },
+        groups() {
+          return this.$store.getters.getGroupList;
+        },
+        gNomore() {
+          return this.$store.state.group.gNomore;
+        },
+        groupInfo() {
+          return this.$store.state.group.groupInfo;
+        }
+    },
+    activated() {
+      // 监听 创建组 事件
+      let that = this;
+      let options = [{
+        icon: "search",
+        click() {
+          console.log('search');
+        }
         }];
-        let user = this.$app.user;
-        let lv = user.grade.lv || 1;
+      let user = this.$app.user;
+      let lv = user.grade.lv || 1;
+      let isCreator = this.groupInfo.creator === user.id
 
-        if (lv > 20) {
-          options.push({
-            icon: "add",
-            click() {
+      if (!isCreator && lv > 20) {
+        options.push({
+          icon: "add",
+          click() {
+            that.$router.push({
+              path: '/dynamic/group-create-one'
+            });
+          }
+        });
+      }
+      this.$app.toolbars.create(options);
+    },
+    methods: {
+      // 侧滑
+      slideChanged(index) {
+          this.classSelected = this.groupClass[index].id;
+        },
+        // 切换频道
+        switchChannel(id) {
+          this.classSelected = id;
+          let index = _.findIndex(this.groupClass, ["id", id]);
+          this.$refs.swipe.slideTo(index);
+        },
+        // 获取小组
+        getMore(filter) {
+          let that = this;
+          async function infinite() {
+            await that.$store.dispatch("getGroups", {
+              filter
+            });
+          }
+          return infinite;
+        },
+        // 加入小组
+        join(id, note) {
+          if (note == "加入") {
+            let user = this.$app.user;
+            this.$store.dispatch("addGroup", {
+              groupId: id,
+              userId: user.id
+            });
+          }
+        },
+        // 查看小组资料
+        view(group) {
+          let groupId = group._id;
+          let that = this;
+          this.$store.dispatch("getGroupInfo", {
+            id: groupId,
+            callback() {
               that.$router.push({
-                path: '/dynamic/group-create-one'
+                path: '/dynamic/group-info'
               });
             }
           });
         }
-        this.$app.toolbars.create(options);
-      },
-      methods: {
-        // 侧滑
-        slideChanged(index) {
-            this.classSelected = this.groupClass[index].id;
-          },
-          // 切换频道
-          switchChannel(id) {
-            this.classSelected = id;
-            let index = _.findIndex(this.groupClass, ["id", id]);
-            this.$refs.swipe.slideTo(index);
-          },
-          // 获取小组
-          getGroups() {
-            this.$store.dispatch("getGroups", "name");
-          },
-          // 加入小组
-          join(id, note) {
-            if (note == "加入") {
-              this.$store.dispatch("addGroup", {
-                groupId: id,
-                userId: "59389e3d9c4d0228d7313b1b"
-              });
-            }
-          },
-          // 查看小组资料
-          view(group) {
-            let groupId = group._id;
-            let that = this;
-            this.$store.dispatch("getGroupInfo", {
-              id: groupId,
-              callback() {
-                that.$router.push({
-                  path: '/dynamic/group-info'
-                });
-              }
-            });
-          }
-      }
+    }
   };
 </script>
 
