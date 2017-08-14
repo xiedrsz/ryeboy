@@ -10,7 +10,7 @@
     <modal-dialog v-show="dialog.show"
                   :type="dialog.type"
                   :content="dialog.content"
-
+                  :isHtmlContent="dialog.isHtmlContent"
                   :title="dialog.title"
                   @ok="dialogOkCallback"
                   @cancel="dialogCancelCallback"></modal-dialog>
@@ -48,9 +48,6 @@
       },
       actionSheet() {
         return this.$store.state.page.actionSheet;
-      },
-      dialog() {
-        return this.$store.state.page.dialog;
       },
       popue() {
         return this.$store.state.page.popue;

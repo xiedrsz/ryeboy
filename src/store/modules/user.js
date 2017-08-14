@@ -21,6 +21,10 @@ function obtain(user) {
     // user.level = "70";
   }
 
+  if (_.isEmpty(user.grade)){
+    delete user.grade;
+  }
+
   Object.assign(state, user);
 
   let avatar = require("img/default-avatar.png");

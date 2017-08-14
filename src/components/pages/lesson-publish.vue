@@ -90,6 +90,7 @@
           await this.$store.dispatch("lesson_publish", {
             exp: r.exp
           });
+          this.$app.toast("发布成功");
           history.go(-1);
         } catch (error) {
           console.log(error);

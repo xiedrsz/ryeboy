@@ -16,7 +16,10 @@
     "Swipe": false,
     "lazySizes": false,
     "Camera": false,
-    "FileTransfer": false
+    "FileTransfer": false,
+    "QQSDK": false,
+    "Wechat": false,
+    "cordova": false
   },
   "rules": {
     "indent": [

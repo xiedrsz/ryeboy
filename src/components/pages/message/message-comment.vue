@@ -90,7 +90,7 @@
         }
       },
       copy() {
-        console.log(this.selectedItem);
+        this.$app.copyToClipboard(this.selectedItem.content);
       },
       reply() {
         this.enableReply = true;

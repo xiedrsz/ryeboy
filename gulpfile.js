@@ -4,8 +4,8 @@ var replace = require("gulp-replace");
 var del = require("del");
 var insert = require("gulp-insert");
 
-function outputAppJsonp() {
-  gulp.src("src/js/app.json")
+function outputJsonp() {
+  gulp.src("src/js/app.version.json")
     .pipe(insert.prepend("jsonpCallback("))
     .pipe(insert.append(");"))
     .pipe(gulp.dest("server"));
@@ -25,7 +25,7 @@ function copyFiles() {
     base: "src"
   }).pipe(gulp.dest("www"));
 
-  outputAppJsonp();
+  outputJsonp();
 }
 
 gulp.task("clean", function() {

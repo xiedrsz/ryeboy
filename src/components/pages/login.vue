@@ -56,7 +56,8 @@
               this.errorText = data.error;
             } else {
               await this.$app.afterLogin(data);
-              this.$router.replace(this.$store.state.page.loginRedirect);
+              this.$router.replace("/home/personal");
+              // this.$router.replace(this.$store.state.page.loginRedirect);
             }
           } catch (err) {
             this.$app.dialog.text("帐号或密码不正确。");
