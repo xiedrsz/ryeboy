@@ -51,8 +51,6 @@
         } catch (error) {
           console.log(error);
         }
-
-        // if (window.app.client)
       },
       logout() {
         this.$app.afterLogout();
