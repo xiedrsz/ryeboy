@@ -31,8 +31,8 @@
       };
     },
     methods: {
-      async getData(last) {
-        let res = await this.$app.api.getPersonalDiaries(this.userid, this.$app.userid, last);
+      async getData() {
+        let res = await this.$app.api.getPersonalDiaries(this.userid, this.$app.userid, this.context.last);
         let diaries = res.data;
         if (diaries.length == 0) {
           this.context.nomore = true;
@@ -40,17 +40,16 @@
         }
         await this.$store.dispatch("diary_updateData", diaries);
         diaries = await this.$store.dispatch("diary_addMap", diaries);
-        this.context.nomore = diaries.length < this.$app.config.pageSize.normal;
-
         diaries.forEach(item => {
           this.context.diaries.push(item);
         });
         this.context.last = _.last(diaries).date;
+        this.context.nomore = diaries.length < this.$app.config.pageSize.normal;
 
         return diaries.length;
       },
       async infinite() {
-        await this.getData(this.context.last);
+        await this.getData();
       },
       async load() {
         this.context = await this.$store.dispatch("diary_getUserData", {

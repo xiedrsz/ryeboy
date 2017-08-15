@@ -280,7 +280,7 @@ const actions = {
           diaries: [],
           loadstate: "loading",
           nomore: true,
-          last: Date
+          last: undefined
         });
       }
       return data[label];
@@ -475,18 +475,15 @@ const actions = {
           id: "recommend",
           name: "精品",
           active: false
-        },
-        {
-          id: "latest",
-          name: "最新",
-          active: false
-        },
-        {
+        }, {
           id: "hot",
           name: "最热",
           active: false
-        },
-        {
+        }, {
+          id: "latest",
+          name: "最新",
+          active: false
+        }, {
           id: "cold",
           name: "最冷",
           active: false
