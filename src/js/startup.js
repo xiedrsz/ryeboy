@@ -21,7 +21,7 @@ function exitApp() {
 XHR("js/app.json", function(responseText) {
   Object.assign(window.app, JSON.parse(responseText));
 
-  jsonp(`${ossAddress}/config/app.json?callback=jsonpCallback&hash=${(new Date()).getTime()}`, function(error, data) {
+  jsonp(`${ossAddress}/config/app.version.json?callback=jsonpCallback&hash=${(new Date()).getTime()}`, function(error, data) {
     if (error) {
       document.querySelector(".startup-status").style.visibility = "visible";
       return;
@@ -29,9 +29,12 @@ XHR("js/app.json", function(responseText) {
 
     var localBundle = `dist/bundle.${window.app.build}.js`;
     var remoteBundle = localBundle;
-    if (data.build != window.app.build) {
+    var remoteBuild = data["build." + window.app.client];
+    if (remoteBuild && remoteBuild > window.app.build) {
       remoteBundle = `${ossAddress}/js/bundle.${data.build}.js`;
     }
+
+    window.app.serverVersion = data;
 
     $script([
       "lib/material-design-lite/material.min.js",

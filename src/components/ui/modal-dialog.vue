@@ -4,9 +4,9 @@
       <h4 v-show="enableTitle"
           class="mdl-dialog__title">{{ title }}</h4>
       <div class="mdl-dialog__content">
-        <p>
-          {{ content }}
-        </p>
+        <div v-if="isHtmlContent"
+             v-html="content"></div>
+        <div v-else> {{ content }}</div>
       </div>
       <div class="mdl-dialog__actions">
         <button type="button"
@@ -35,6 +35,10 @@
       content: {
         type: String,
         default: ""
+      },
+      isHtmlContent: {
+        type: Boolean,
+        default: false
       },
     },
     computed: {

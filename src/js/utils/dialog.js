@@ -13,7 +13,8 @@ class dialog {
     store.commit("page_showDialog", {
       show: true,
       type: "alert",
-      content
+      content,
+      isHtmlContent: false,
     });
     store.commit("page_setPopup", this);
   }
@@ -23,6 +24,19 @@ class dialog {
       show: true,
       type: "prompt",
       content,
+      isHtmlContent: false,
+      okCallback,
+      cancelCallback
+    });
+    store.commit("page_setPopup", this);
+  }
+
+  promptHtml(content, okCallback, cancelCallback) {
+    store.commit("page_showDialog", {
+      show: true,
+      type: "prompt",
+      content,
+      isHtmlContent: true,
       okCallback,
       cancelCallback
     });
@@ -32,8 +46,9 @@ class dialog {
   close() {
     store.commit("page_showDialog", {
       show: false,
+      secondary: "",
       okCallback: null,
-      cancelCallback: null
+      cancelCallback: null,
     });
   }
 }

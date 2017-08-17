@@ -7,6 +7,13 @@ import ch from "js/utils/collectionHelper";
 const cards = require("store/cards.json");
 const moment = require("moment");
 
+export const labelCategory = {
+  1: "推荐",
+  2: "身体症状",
+  3: "心理症状",
+  4: "常见病症",
+};
+
 function getDateKey(state) {
   return moment(state.selectedDate).format("YYYYMMDD");
 }
@@ -30,6 +37,9 @@ const state = {
 
   // 选定的功课数据记录
   records: {},
+
+  // 标签数据
+  labels: {},
 
   // 已保存的功课日期
   savedDates: []
@@ -107,9 +117,11 @@ const mutations = {
     });
     if (data.text) {
       record.diary.text = data.text;
+      record.selectedCount++;
       Vue.set(record.selectedCards, card.id.toString(), true);
     } else {
       record.diary.text = "";
+      record.selectedCount--;
       Vue.set(record.selectedCards, card.id.toString(), false);
     }
     record.diary.pictures = data.pictures;
@@ -133,6 +145,15 @@ const mutations = {
 };
 
 const actions = {
+  async lesson_getLabels({
+    state
+  }) {
+    if (_.isEmpty(state.labels)) {
+      let labels = (await api.getAllLabels()).data;
+      Vue.set(state, "labels", _.keyBy(labels, "name"));
+    }
+  },
+
   lesson_getCards({
     state
   }, cardIdArray) {
@@ -157,16 +178,27 @@ const actions = {
   },
   async lesson_getRecord({
     state,
-    rootState
+    rootState,
+    dispatch
   }) {
     let dateKey = getDateKey(state);
     let record = state.records[dateKey];
+
+    // 获取用户的功课等级信息
+    if (!rootState.user.cards) {
+      await dispatch("user_getCards");
+    }
+
+    // 获取标签信息
+    await dispatch("lesson_getLabels");
 
     if (record === undefined) {
       record = {
         diary: {
           text: "",
-          pictures: []
+          pictures: [],
+          labels: [],
+          options: []
         },
         published: false,
         weightedCards: [],
@@ -195,16 +227,29 @@ const actions = {
           let res = await api.getLesson(userid, date);
           if (res.status == 200) {
             record.published = true;
-            record.exp = res.data.exp;
-            record.diary.text = res.data.text;
-            if (res.data.pictures) {
-              res.data.pictures.forEach(item => {
+
+            let {
+              exp,
+              text,
+              pictures,
+              checkedCards,
+              labels,
+              options
+            } = res.data;
+
+            record.exp = exp;
+            record.diary.text = text;
+            record.diary.labels = labels || [];
+            record.diary.options = options || [];
+
+            if (pictures) {
+              pictures.forEach(item => {
                 record.diary.pictures.push({
                   url: textHelper.getPictureUrl(item)
                 });
               });
             }
-            res.data.checkedCards.forEach(cardId => {
+            checkedCards.forEach(cardId => {
               Vue.set(record.selectedCards, cardId.toString(), true);
             });
             record.selectedCount = getSelectedCount(record);
@@ -290,6 +335,8 @@ const actions = {
       time: state.selectedDate,
       text: record.diary.text,
       pictures: record.diary.pictures,
+      labels: record.diary.labels,
+      options: record.diary.options,
       expectedExp: 0
     };
 
@@ -343,7 +390,6 @@ const actions = {
     let userid = rootState.user._id;
     try {
       state.savedDates = JSON.parse(localStorage[`${userid}_lesson_savedDates`]);
-      state.savedDates.push("20170718");
     } catch (error) {
       state.savedDates = [];
     }

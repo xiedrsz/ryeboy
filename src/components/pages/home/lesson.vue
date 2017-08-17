@@ -252,11 +252,6 @@
         // 获取本地保存了日记的日期
         await this.$store.dispatch("lesson_getSavedDates");
 
-        // 获取用户的功课等级信息
-        if (!this.$app.user.cards) {
-          await this.$store.dispatch("user_getCards");
-        }
-
         // 获取功课记录
         this.record = await this.$store.dispatch("lesson_getRecord");
 

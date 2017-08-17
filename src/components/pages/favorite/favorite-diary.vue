@@ -38,10 +38,24 @@
       };
     },
     methods: {
+      getItems(res) {
+        let {
+          order,
+          content
+        } = res.data;
+
+        let mappedContent = _.keyBy(content, "_id");
+        let items = [];
+        order.forEach(id => {
+          items.push(mappedContent[id]);
+        });
+
+        return items;
+      },
       async getData(last) {
         let userid = this.$app.userid;
         let res = await this.$app.api.getFavorites(userid, last);
-        let items = res.data;
+        let items = this.getItems(res);
 
         if (items.length == 0) {
           this.nomore = true;

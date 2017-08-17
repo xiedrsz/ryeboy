@@ -28,7 +28,16 @@
               </div>
             </div>
             <div class="diary-text"
+                 @click="openDiaryTextActions"
                  v-html="diary.escapedText"></div>
+            <div class="label-block"
+                 v-if="diary.labels">
+              <div class="label"
+                   v-for="label in diary.labels"
+                   :key="label.name">
+                {{ label.displayName }}
+              </div>
+            </div>
             <div class="lesson-block"
                  v-if="diary.cards">
               <div class="lesson-overview">
@@ -53,12 +62,20 @@
               <div>{{ diary.time }}</div>
               <div class="mdl-layout-spacer"></div>
               <div class="diary-counts">
-                <i class="material-icons md-16"
-                   @click="setLike"
-                   :class="{ 'diary-like': diary.like }">{{ diary.like ? "favorite" : "favorite_border" }}</i>
-                <span style="margin-right: 24px">{{ diary.likeCount }}</span>
-                <i class="material-icons md-16">comment</i>
-                <span>{{ diary.commentCount }}</span>
+                <div @click="setLike">
+                  <i class="material-icons md-16"
+                     :class="{ 'diary-like': diary.like }">{{ diary.like ? "favorite" : "favorite_border" }}</i>
+                  <span>{{ diary.likeCount }}</span>
+                </div>
+                <div @click="setFavorite">
+                  <i class="material-icons md-16"
+                     :class="{ 'diary-favorite': diary.favorite }">{{ diary.favorite ? "star" : "star_border" }}</i>
+                  <span>{{ diary.favoriteCount }}</span>
+                </div>
+                <div>
+                  <i class="material-icons md-16">comment</i>
+                  <span>{{ diary.commentCount }}</span>
+                </div>
               </div>
             </div>
             <div class="diary-likes"
@@ -129,6 +146,14 @@
       };
     },
     methods: {
+      confirmLogin() {
+        if (this.authenticated) {
+          return true;
+        } else {
+          this.$app.login(this.$route.fullPath);
+          return false;
+        }
+      },
       getUsername() {
         return this.$app.textHelper.getUserName(this.$app.user);
       },
@@ -144,41 +169,76 @@
         });
         this.$root.$refs.gallery.open(index, list);
       },
+      async setFavorite() {
+        if (!this.confirmLogin()) {
+          return;
+        }
+        try {
+          let user = this.$app.user;
+          let res = await this.$app.api.setFavorite(this.diary._id, user._id);
+          this.diary.favorite = res.data.favorite;
+          if (res.data.favorite) {
+            this.$app.toast("已收藏");
+            this.diary.favoriteCount++;
+          } else {
+            this.$app.toast("已取消收藏");
+            this.diary.favoriteCount--;
+          }
+        } catch (error) {
+          this.$app.showNetworkError();
+        }
+      },
       async setLike() {
-        if (!this.authenticated) {
-          this.$app.login(this.$route.fullPath);
+        if (!this.confirmLogin()) {
           return;
         }
 
-        let user = this.$app.user;
-        let res = await this.$app.api.setLike(this.diary._id, user._id);
+        try {
+          let user = this.$app.user;
+          let res = await this.$app.api.setLike(this.diary._id, user._id);
 
-        this.diary.like = res.data.like;
+          this.diary.like = res.data.like;
 
-        if (res.data.like) {
-          this.diary.likes.unshift({
-            userid: user._id,
-            username: this.getUsername(),
-            createdAt: res.data.createdAt
-          });
-          this.diary.likeCount++;
-        } else {
-          let index = this.diary.likes.findIndex(item => {
-            return item.userid == user._id;
-          });
-          if (index >= 0) {
-            this.diary.likes.splice(index, 1);
+          if (res.data.like) {
+            this.diary.likes.unshift({
+              userid: user._id,
+              username: this.getUsername(),
+              createdAt: res.data.createdAt
+            });
+            this.diary.likeCount++;
+          } else {
+            let index = this.diary.likes.findIndex(item => {
+              return item.userid == user._id;
+            });
+            if (index >= 0) {
+              this.diary.likes.splice(index, 1);
+            }
+            this.diary.likeCount--;
           }
-          this.diary.likeCount--;
+
+          this.$store.dispatch("diary_resetLikeData", this.diary._id);
+        } catch (error) {
+          this.$app.showNetworkError();
         }
 
-        this.$store.dispatch("diary_resetLikeData", this.diary._id);
       },
-      copyComment() {},
+      copyComment() {
+        this.$app.copyToClipboard(this.selectedComment.content);
+      },
+      copyDiaryText() {
+        this.$app.copyToClipboard(this.diary.text);
+      },
       replyComment() {
         this.reply = this.selectedComment.userid;
         this.comment = "";
         this.$el.querySelector(".input-box").focus();
+      },
+      openDiaryTextActions() {
+        this.$app.actionSheet.show([
+          {
+            text: "复制",
+            click: this.copyDiaryText.bind(this),
+          }], this);
       },
       openCommentActions(comment) {
         this.selectedComment = comment;
@@ -193,8 +253,7 @@
         ], this);
       },
       async sendComment() {
-        if (!this.authenticated) {
-          this.$app.login(this.$route.fullPath);
+        if (!this.confirmLogin()) {
           return;
         }
         if (this.comment) {
@@ -281,6 +340,7 @@
             let res = await api.getDiary(diaryId, this.userid);
             let diary = res.data;
 
+            await this.$store.dispatch("lesson_getLabels");
             diary.cards = await this.$store.dispatch("lesson_getCards", diary.checkedCards);
 
             users.push({
@@ -524,5 +584,24 @@
   .diary-likes i {
     color: $color-red;
     margin-right: 4px;
+  }
+
+  .label-block {
+    @include flex-row;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid $color-divider;
+  }
+
+  .label {
+    @include flex-row;
+    @include flex-center;
+    font-size: 12px;
+    position: relative;
+    width: 56px;
+    border-radius: 4px;
+    border: 1px solid $color-hint-text;
+    color: $color-text;
+    margin-right: 8px;
   }
 </style>

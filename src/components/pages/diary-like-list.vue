@@ -84,9 +84,6 @@
     async activated() {
       await this.load();
       this.__restorePosition();
-    },
-    mounted() {
-      this.$app.adjustScrollableElement(".content-wrap");
     }
   };
 </script>

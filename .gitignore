@@ -10,3 +10,6 @@ node_modules.zip
 *.cmd
 /src/dist/
 src/js/config.json
+tools/ryeboy.keystore
+build.json
+src/js/app.version.json
