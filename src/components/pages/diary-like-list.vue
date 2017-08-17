@@ -57,12 +57,13 @@
 
         await this.$store.dispatch("diary_ensureUsers", items);
         await this.$store.dispatch("diary_updateUserInfo", items);
-        this.context.last += items.length;
-        this.context.nomore = items.length < this.$app.config.pageSize.user;
 
         items.forEach(item => {
           this.context.items.push(item);
         });
+
+        this.context.last += items.length;
+        this.context.nomore = items.length < this.$app.config.pageSize.user;
 
         return items.length;
       },
@@ -84,6 +85,9 @@
     async activated() {
       await this.load();
       this.__restorePosition();
+    },
+    mounted() {
+      this.$app.adjustScrollableElement(".content-wrap");
     }
   };
 </script>
