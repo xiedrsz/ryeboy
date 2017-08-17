@@ -1,6 +1,4 @@
 const moment = require("moment");
-moment.locale("zh-CN");
-
 moment.locale('zh-cn');
 
 class datetime {

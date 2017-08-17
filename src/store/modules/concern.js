@@ -66,9 +66,12 @@ function updateDairy(diaries) {
  */
 function addMap(list) {
   let userid;
+  let _id;
   _.forEach(list, item => {
     userid = item.userid;
+    _id = item._id;
     _.assign(item, state.users[userid]);
+    item._id = _id
   });
 }
 

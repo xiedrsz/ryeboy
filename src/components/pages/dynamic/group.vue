@@ -100,7 +100,20 @@
             });
           }
           return infinite;
+        },
+        setSlideContentHeight() {
+          document.querySelectorAll(".slide-content").forEach(item => {
+            item.style.height = this.slideContentHeight;
+          });
         }
+    },
+    mounted() {
+      // 调整日记列表高度
+      let mainContentHeight = document.querySelector("main").clientHeight;
+      this.$el.style.height = mainContentHeight + "px";
+      this.slideContentHeight = (mainContentHeight - document.querySelector(".channel-container").clientHeight - 1) + "px";
+      this.setSlideContentHeight();
+      this.slideChanged(0);
     }
   };
 </script>
