@@ -65,13 +65,14 @@
           document.querySelector(".slide-content").style.height = this.slideContentHeight;
         },
         pulltorefresh() {
-          // this.getDynamic();
           this.$store.dispatch("getDynamic", {
             addType: 'unshift'
           });
         },
         getDynamic() {
-          this.$store.dispatch("getDynamic");
+          this.$store.dispatch("getDynamic", {
+            addType: 'push'
+          });
         },
         infinite(infiniteScroll) {
           this.$store.dispatch("getDynamic", {

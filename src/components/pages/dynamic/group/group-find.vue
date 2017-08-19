@@ -24,7 +24,7 @@
                     </span>-->
                     <span class="group-info">小组描述:{{item.description}}</span>
                   </div>
-                  <span v-if="item.note" @click.stop="join(item._id, item.note)" class="mdl-list__item-note">{{item.note}}</span>
+                  <span v-if="item.note" @click.stop="join(item._id, item.note)" class="mdl-list__item-note" :class="{'disabled':item.note!=='加入'}">{{item.note}}</span>
                 </li>
               </ul>
             </loadable-content>
@@ -145,6 +145,10 @@
   
   .mdl-list__item-note {
     @include btn-self;
+  }
+  
+  .disabled {
+    background-color: $color-disable;
   }
   
   .find-list-content {

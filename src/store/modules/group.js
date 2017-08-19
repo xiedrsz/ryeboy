@@ -102,7 +102,7 @@ function updateDairy(diaries) {
     }
     diary.pictures = pictures;
 
-    diary.time = datetime.formatDiaryCreated(diary.createdAt);
+    diary.time = datetime.formatDiaryCreated(diary.created_at);
     diary.dateWithoutYear = datetime.formatDiaryDateWithoutYear(diary.date);
     diary.week = datetime.formatDiaryWeek(diary.date);
     diary.escapedText = textHelper.escape(textHelper.getDiaryText(diary));
@@ -280,12 +280,13 @@ const mutations = {
      * @Param obj Object 新成员 eg: { _id: xx, ... }
      */
     group_saveMember(state, obj) {
-      let id = obj.id,
-        tmp = _.filter(state.members, {
-          id
-        });
-
-      _.assign(tmp[0], obj);
+      let id = obj.id;
+      let tmp = _.filter(state.members, {
+        id
+      });
+      _.forEach(tmp, item => {
+        _.assign(item, obj);
+      });
     },
 
     /**
@@ -301,12 +302,13 @@ const mutations = {
      * @Param obj Object 新申请对象 eg: { _id: xx, ... }
      */
     group_saveApplys(state, obj) {
-      let id = obj.id,
-        tmp = _.filter(state.applys, {
-          id
-        });
-
-      _.assign(tmp[0], obj);
+      let id = obj.id;
+      let tmp = _.filter(state.applys, {
+        id
+      });
+      _.forEach(tmp, item => {
+        _.assign(item, obj);
+      });
     },
 
     /**
@@ -326,12 +328,13 @@ const mutations = {
      * @Param obj Object 新日记信息 eg: { _id: xx, ... }
      */
     group_saveDiaries(state, obj) {
-      let _id = obj._id,
-        tmp = _.filter(state.groupDiaries, {
-          _id
-        });
-
-      _.assign(tmp[0], obj);
+      let _id = obj._id;
+      let tmp = _.filter(state.groupDiaries, {
+        _id
+      });
+      _.forEach(tmp, item => {
+        _.assign(item, obj);
+      });
     },
 
     /**
@@ -347,11 +350,13 @@ const mutations = {
      * @Param obj Object 新小组资料 eg:{ _id: xx, ... }
      */
     group_saveGroups(state, obj) {
-      let id = obj.id,
-        tmp = _.filter(state.groups, {
-          _id: id
-        });
-      !!tmp[0] && _.assign(tmp[0], obj);
+      let id = obj.id;
+      let tmp = _.filter(state.groups, {
+        _id: id
+      });
+      _.forEach(tmp, item => {
+        _.assign(item, obj);
+      });
     }
 };
 

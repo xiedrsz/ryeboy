@@ -53,7 +53,7 @@ function updateDairy(diaries) {
     }
     diary.pictures = pictures;
 
-    diary.time = datetime.formatDiaryCreated(diary.createdAt);
+    diary.time = datetime.formatDiaryCreated(diary.created_at);
     diary.dateWithoutYear = datetime.formatDiaryDateWithoutYear(diary.date);
     diary.week = datetime.formatDiaryWeek(diary.date);
     diary.escapedText = textHelper.escape(textHelper.getDiaryText(diary));
@@ -160,8 +160,25 @@ const mutations = {
      * @Function 清除暂留关注人
      */
     concern_filterConcern(state, list) {
+      let userids = {};
+      let userid;
+      // 清除关注者
       state.concern = _.filter(state.concern, (item) => {
-        return item.note === "取消";
+        if (item.note === "取消") {
+          return true;
+        } else {
+          userid = item.userid;
+          userids[userid] = true;
+          return false;
+        }
+      });
+      // 清楚动态
+      state.dynamic = _.filter(state.dynamic, item => {
+        userid = item.userid;
+        if (userids[userid]) {
+          return false;
+        }
+        return true;
       });
     },
     /**
@@ -188,9 +205,10 @@ const mutations = {
       let tmp = _.filter(state.dynamic, {
         id
       });
-
-      tmp[0].likeCount++;
-      tmp[0].likeIt = true;
+      _.forEach(tmp, item => {
+        item.likeCount++;
+        item.likeIt = true;
+      })
     },
     /**
      * @function 评论
@@ -200,7 +218,9 @@ const mutations = {
       let tmp = _.filter(state.dynamic, {
         id
       });
-      tmp[0].commentCount++;
+      _.forEach(tmp, item => {
+        item.commentCount++;
+      })
     },
     /**
      * @function 取消关注
@@ -240,7 +260,9 @@ const mutations = {
       let temp = _.filter(state.concern, {
         id
       });
-      temp[0].checked = !checked;
+      _.forEach(temp, item => {
+        item.checked = !checked;
+      })
     }
 };
 

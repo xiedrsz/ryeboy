@@ -94,7 +94,7 @@ function updateDairy(diaries) {
     }
     diary.pictures = pictures;
 
-    diary.time = datetime.formatDiaryCreated(diary.createdAt);
+    diary.time = datetime.formatDiaryCreated(diary.created_at);
     diary.dateWithoutYear = datetime.formatDiaryDateWithoutYear(diary.date);
     diary.week = datetime.formatDiaryWeek(diary.date);
     diary.escapedText = textHelper.escape(textHelper.getDiaryText(diary));
